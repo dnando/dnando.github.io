@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-11T23:09:58+02:00</updated>
+  <updated>2014-09-12T00:40:46+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Not Knowing]]></title>
+    <link href="http://dnando.github.io/blog/2014/09/12/not-knowing/"/>
+    <updated>2014-09-12T00:33:09+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/09/12/not-knowing</id>
+    <content type="html"><![CDATA[<p>I was watching a video of Richard Feynman some time back where he talks about his attitude toward not knowing things. Here is the tail end of it:</p>
+
+<iframe width="640" height="480" src="//www.youtube.com/embed/Bgaw9qe7DEE" frameborder="0" allowfullscreen></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Redefining How I Learn New Technologies]]></title>
