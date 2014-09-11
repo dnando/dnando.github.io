@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Aria Media Blog]]></title>
+  <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-11T16:11:48+02:00</updated>
+  <updated>2014-09-11T17:40:00+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
