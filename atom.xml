@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-12T13:13:19+02:00</updated>
+  <updated>2014-09-12T13:15:12+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -27,95 +27,88 @@
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["Post title here"]
 </span><span class='line'>rake generate
-</span><span class='line'>rake deploy
-</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>Markdown Syntax</h3>
 
 <h4>Headers</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='Clojure'><span class='line'><span class="o">#</span> <span class="nv">This</span> <span class="nv">is</span> <span class="nv">an</span> <span class="nv">&lt;h1&gt;</span> <span class="nv">tag</span>
-</span><span class='line'><span class="o">##</span> <span class="nv">This</span> <span class="nv">is</span> <span class="nv">an</span> <span class="nv">&lt;h2&gt;</span> <span class="nv">tag</span>
-</span><span class='line'><span class="o">######</span> <span class="nv">This</span> <span class="nv">is</span> <span class="nv">an</span> <span class="nv">&lt;h6&gt;</span> <span class="nv">tag</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'># This is an &lt;h1&gt; tag
+</span><span class='line'>## This is an &lt;h2&gt; tag
+</span><span class='line'>###### This is an &lt;h6&gt; tag</span></code></pre></td></tr></table></div></figure>
 
 
 <h4>Emphasis</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='Clojure'><span class='line'><span class="nv">*This</span> <span class="nv">text</span> <span class="nv">will</span> <span class="nv">be</span> <span class="nv">italic*</span>
-</span><span class='line'><span class="nv">_This</span> <span class="nv">will</span> <span class="nv">also</span> <span class="nv">be</span> <span class="nv">italic_</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*This text will be italic*
+</span><span class='line'>_This will also be italic_
 </span><span class='line'>
-</span><span class='line'><span class="nv">**This</span> <span class="nv">text</span> <span class="nv">will</span> <span class="nv">be</span> <span class="nv">bold**</span>
-</span><span class='line'><span class="nv">__This</span> <span class="nv">will</span> <span class="nv">also</span> <span class="nv">be</span> <span class="nv">bold__</span>
+</span><span class='line'>**This text will be bold**
+</span><span class='line'>__This will also be bold__
 </span><span class='line'>
-</span><span class='line'><span class="nv">*You</span> <span class="nv">**can**</span> <span class="nv">combine</span> <span class="nv">them*</span>
-</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>*You **can** combine them*</span></code></pre></td></tr></table></div></figure>
 
 
 <h4>Unordered Lists</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='Clojure'><span class='line'><span class="nb">* </span><span class="nv">Item</span> <span class="mi">1</span>
-</span><span class='line'><span class="nb">* </span><span class="nv">Item</span> <span class="mi">2</span>
-</span><span class='line'>  <span class="nb">* </span><span class="nv">Item</span> <span class="mi">2</span><span class="nv">a</span>
-</span><span class='line'>  <span class="nb">* </span><span class="nv">Item</span> <span class="mi">2</span><span class="nv">b</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>* Item 1
+</span><span class='line'>* Item 2
+</span><span class='line'>  * Item 2a
+</span><span class='line'>  * Item 2b</span></code></pre></td></tr></table></div></figure>
 
 
 <h4>Ordered Lists</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='Clojure'><span class='line'><span class="mi">1</span><span class="k">. </span><span class="nv">Item</span> <span class="mi">1</span>
-</span><span class='line'><span class="mi">2</span><span class="k">. </span><span class="nv">Item</span> <span class="mi">2</span>
-</span><span class='line'><span class="mi">3</span><span class="k">. </span><span class="nv">Item</span> <span class="mi">3</span>
-</span><span class='line'>   <span class="nb">* </span><span class="nv">Item</span> <span class="mi">3</span><span class="nv">a</span>
-</span><span class='line'>   <span class="nb">* </span><span class="nv">Item</span> <span class="mi">3</span><span class="nv">b</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>1. Item 1
+</span><span class='line'>2. Item 2
+</span><span class='line'>3. Item 3
+</span><span class='line'>   * Item 3a
+</span><span class='line'>   * Item 3b
 </span></code></pre></td></tr></table></div></figure>
 
 
 <h4>Images</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='Clojure'><span class='line'><span class="nv">!</span><span class="p">[</span><span class="nv">GitHub</span> <span class="nv">Logo</span><span class="p">](</span><span class="nf">/images/logo.png</span><span class="p">)</span>
-</span><span class='line'><span class="nv">Format</span><span class="err">:</span> <span class="nv">!</span><span class="p">[</span><span class="nv">Alt</span> <span class="nv">Text</span><span class="p">](</span><span class="nf">url</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>![GitHub Logo](/images/logo.png)
+</span><span class='line'>Format: ![Alt Text](url)</span></code></pre></td></tr></table></div></figure>
 
 
 <h4>Links</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='Clojure'><span class='line'><span class="nv">http</span><span class="ss">://github.com</span> <span class="nb">- </span><span class="nv">automatic!</span>
-</span><span class='line'><span class="p">[</span><span class="nv">GitHub</span><span class="p">](</span><span class="nf">http</span><span class="ss">://github.com</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://github.com - automatic!
+</span><span class='line'>[GitHub](http://github.com)</span></code></pre></td></tr></table></div></figure>
 
 
 <h4>Inline code</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='Clojure'><span class='line'><span class="nv">I</span> <span class="nv">think</span> <span class="nv">you</span> <span class="nv">should</span> <span class="nv">use</span> <span class="nv">an</span>
-</span><span class='line'><span class="o">`</span><span class="nv">&lt;addr&gt;</span><span class="o">`</span> <span class="nv">element</span> <span class="nv">here</span> <span class="nv">instead.</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>I think you should use an
+</span><span class='line'>`&lt;addr&gt;` element here instead.</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>
