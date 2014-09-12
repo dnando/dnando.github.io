@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-12T13:04:41+02:00</updated>
+  <updated>2014-09-12T13:07:54+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -80,35 +80,37 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>1. Item 1
 </span><span class='line'>2. Item 2
 </span><span class='line'>3. Item 3
 </span><span class='line'>   * Item 3a
 </span><span class='line'>   * Item 3b
-</span><span class='line'> ```
-</span><span class='line'>#### Images</span></code></pre></td></tr></table></div></figure>
-
-
-<p><img src="http://dnando.github.io/images/logo.png" alt="GitHub Logo" />
-Format: <img src="url" alt="Alt Text" /></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#### Links</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="http://github.com">http://github.com</a> - automatic!
-<a href="http://github.com">GitHub</a></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#### Inline code
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>I think you should use an
-<code>&lt;addr&gt;</code> element here instead.
-&#8220;`</p>
+<h4>Images</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>![GitHub Logo](/images/logo.png)
+</span><span class='line'>Format: ![Alt Text](url)</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Links</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://github.com - automatic!
+</span><span class='line'>[GitHub](http://github.com)</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Inline code</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>I think you should use an
+</span><span class='line'>`&lt;addr&gt;` element here instead.</span></code></pre></td></tr></table></div></figure>
+
 ]]></content>
   </entry>
   
