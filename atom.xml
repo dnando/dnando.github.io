@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-12T13:15:12+02:00</updated>
+  <updated>2014-09-12T14:49:36+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -110,6 +110,26 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>I think you should use an
 </span><span class='line'>`&lt;addr&gt;` element here instead.</span></code></pre></td></tr></table></div></figure>
 
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Not Knowing]]></title>
+    <link href="http://dnando.github.io/blog/2014/09/12/not-knowing/"/>
+    <updated>2014-09-12T00:33:09+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/09/12/not-knowing</id>
+    <content type="html"><![CDATA[<p>I was watching a <a href="http://youtu.be/Bgaw9qe7DEE?t=48m7s">video of Richard Feynman</a> some time back that inspired me in a very specific way. In it, he talks about his attitude toward not knowing things. Here&rsquo;s a quote from it:</p>
+
+<p>&ldquo;You see, one thing is, I can live with doubt, and uncertainty, and not knowing. I think it&rsquo;s much more interesting to live not knowing than to have answers which might be wrong. I have approximate answers and possible beliefs and different degrees of certainty about different things, but I&rsquo;m not absolutely sure about anything, and there are many things I don&rsquo;t know anything about &hellip; But I don&rsquo;t have to know an answer. I&rsquo;m not frightened by not knowing things.&rdquo;</p>
+
+<p>As a programmer, I&rsquo;m constantly confronted by a cascading, bubbling vortex of all kinds of things I don&rsquo;t know. I don&rsquo;t remember a syntax, my &ldquo;Google Foo&rdquo; is failing me and I can&rsquo;t find an answer, I&rsquo;m not sure of the best way to architect a given process, I&rsquo;m not really clear how a particular business process I&rsquo;m trying to model actually works in the real world, I&rsquo;m only familiar with certain aspects of a language or framework, and the rest lurks in the shadows of what I don&rsquo;t know. In the words of one of my favorite movie scenes &ldquo;I&rsquo;m in the dark here. You understand. I&rsquo;m in the dark.&rdquo;</p>
+
+<iframe width="1280" height="720" src="//www.youtube.com/embed/WZ6p4t3StSc?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Being in the dark all the time, confronting that ever changing vortex of things I don&rsquo;t know, can be an ongoing source of stress that tends to become chronic. What impressed me about Feynman is that he seemed both enthusiastic, and very clear-headed, about what he didn&rsquo;t know. He seems to genuinely enjoy not knowing things, to accept not knowing things.</p>
+
+<p>To me, that&rsquo;s a wonderful perspective to cultivate, both as a human being, but particularly as a programmer.</p>
 ]]></content>
   </entry>
   
