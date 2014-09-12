@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Cheat-sheet | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/cheat-sheet/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-12T13:07:54+02:00</updated>
+  <updated>2014-09-12T13:13:19+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -31,7 +31,7 @@ rake deploy
 
 <h4>Headers</h4>
 
-<pre><code># This is an &lt;h1&gt; tag
+<pre><code class="Clojure"># This is an &lt;h1&gt; tag
 ## This is an &lt;h2&gt; tag
 ###### This is an &lt;h6&gt; tag
 </code></pre>
