@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-12T09:27:04+02:00</updated>
+  <updated>2014-09-12T13:00:59+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,110 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
+    <link href="http://dnando.github.io/blog/2014/09/12/octopress-cheat-sheet/"/>
+    <updated>2014-09-12T12:45:32+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/09/12/octopress-cheat-sheet</id>
+    <content type="html"><![CDATA[<p>Here&rsquo;s my quick and dirty cheat sheet for using the Octopress blogging framework.</p>
+
+<h3>Command Line</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["Post title here"]
+</span><span class='line'>rake generate
+</span><span class='line'>rake deploy
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Markdown Syntax</h3>
+
+<h4>Headers</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># This is an &lt;h1&gt; tag
+</span><span class='line'>## This is an &lt;h2&gt; tag
+</span><span class='line'>###### This is an &lt;h6&gt; tag</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Emphasis</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*This text will be italic*
+</span><span class='line'>_This will also be italic_
+</span><span class='line'>
+</span><span class='line'>**This text will be bold**
+</span><span class='line'>__This will also be bold__
+</span><span class='line'>
+</span><span class='line'>*You **can** combine them*</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Unordered Lists</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>* Item 1
+</span><span class='line'>* Item 2
+</span><span class='line'>  * Item 2a
+</span><span class='line'>  * Item 2b
+</span><span class='line'>  ```
+</span><span class='line'>#### Ordered Lists</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>Item 1</li>
+<li>Item 2</li>
+<li>Item 3
+
+<ul>
+<li>Item 3a</li>
+<li>Item 3b
+&#8220;`
+
+<h4>Images</h4></li>
+</ul>
+</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>![GitHub Logo](/images/logo.png)
+</span><span class='line'>Format: ![Alt Text](url)</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Links</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://github.com - automatic!
+</span><span class='line'>[GitHub](http://github.com)
+</span><span class='line'>
+</span><span class='line'>#### Inline code</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I think you should use an
+<code>&lt;addr&gt;</code> element here instead.
+&#8220;`</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Redefining How I Learn New Technologies]]></title>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Cheat-sheet | Nando @ Aria Media]]></title>
+  <link href="http://dnando.github.io/blog/categories/cheat-sheet/atom.xml" rel="self"/>
+  <link href="http://dnando.github.io/"/>
+  <updated>2014-09-12T13:00:59+02:00</updated>
+  <id>http://dnando.github.io/</id>
+  <author>
+    <name><![CDATA[Nando @ Aria Media]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
+    <link href="http://dnando.github.io/blog/2014/09/12/octopress-cheat-sheet/"/>
+    <updated>2014-09-12T12:45:32+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/09/12/octopress-cheat-sheet</id>
+    <content type="html"><![CDATA[<p>Here&rsquo;s my quick and dirty cheat sheet for using the Octopress blogging framework.</p>
+
+<h3>Command Line</h3>
+
+<pre><code>rake new_post["Post title here"]
+rake generate
+rake deploy
+</code></pre>
+
+<h3>Markdown Syntax</h3>
+
+<h4>Headers</h4>
+
+<pre><code># This is an &lt;h1&gt; tag
+## This is an &lt;h2&gt; tag
+###### This is an &lt;h6&gt; tag
+</code></pre>
+
+<h4>Emphasis</h4>
+
+<pre><code>*This text will be italic*
+_This will also be italic_
+
+**This text will be bold**
+__This will also be bold__
+
+*You **can** combine them*
+</code></pre>
+
+<h4>Unordered Lists</h4>
+
+<pre><code>* Item 1
+* Item 2
+  * Item 2a
+  * Item 2b
+</code></pre>
+
+<h4>Ordered Lists</h4>
+
+<pre><code>1. Item 1
+2. Item 2
+3. Item 3
+   * Item 3a
+   * Item 3b
+</code></pre>
+
+<h4>Images</h4>
+
+<pre><code>![GitHub Logo](/images/logo.png)
+Format: ![Alt Text](url)
+</code></pre>
+
+<h4>Links</h4>
+
+<pre><code>http://github.com - automatic!
+[GitHub](http://github.com)
+
+#### Inline code
+</code></pre>
+
+<p>I think you should use an
+<code>&lt;addr&gt;</code> element here instead.
+&#8220;`</p>
+]]></content>
+  </entry>
+  
+</feed>
