@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Javascript | Nando @ Aria Media]]></title>
+  <link href="http://dnando.github.io/blog/categories/javascript/atom.xml" rel="self"/>
+  <link href="http://dnando.github.io/"/>
+  <updated>2014-09-16T18:12:12+02:00</updated>
+  <id>http://dnando.github.io/</id>
+  <author>
+    <name><![CDATA[Nando @ Aria Media]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Disabling Browser Back Button]]></title>
+    <link href="http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button/"/>
+    <updated>2014-09-16T17:53:31+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button</id>
+    <content type="html"><![CDATA[<p>I&rsquo;m working on a particular process in a web application where the user could unintentionally create duplicate content using the browser back button. Here&rsquo;s a handy way I ran across to disable the back button, or indeed handle it in any way needed.</p>
+
+<pre><code class="Javascript">
+window.onload = function () {
+    if (typeof history.pushState === "function") {
+        history.pushState("jibberish", null, null);
+        window.onpopstate = function () {
+            history.pushState('newjibberish', null, null);
+            // Handle the back (or forward) buttons here
+            // Will NOT handle refresh, use onbeforeunload for this.
+            alert('Back button disabled. Please use navigation links to go back to Invoiceable Items.');
+        };
+    }
+    else {
+        var ignoreHashChange = true;
+        window.onhashchange = function () {
+            if (!ignoreHashChange) {
+                ignoreHashChange = true;
+                window.location.hash = Math.random();
+                // Detect and redirect change here
+                // Works in older FF and IE9
+                // * it does mess with your hash symbol (anchor?) pound sign
+                // delimiter on the end of the URL
+                alert('Back button disabled. Please use navigation links to go back to Invoiceable Items.');
+            }
+            else {
+                ignoreHashChange = false;   
+            }
+        };
+    }
+}
+</code></pre>
+
+<p>Apparently, this works with older browsers that do not support HTML5.</p>
+
+<p>Source: <a href="http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser">http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser</a></p>
+]]></content>
+  </entry>
+  
+</feed>
