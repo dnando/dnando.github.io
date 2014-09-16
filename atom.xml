@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-16T18:12:12+02:00</updated>
+  <updated>2014-09-16T18:14:33+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -55,7 +55,7 @@
 </span><span class='line'>            <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span><span class="p">(</span><span class="s1">&#39;newjibberish&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
 </span><span class='line'>            <span class="c1">// Handle the back (or forward) buttons here</span>
 </span><span class='line'>            <span class="c1">// Will NOT handle refresh, use onbeforeunload for this.</span>
-</span><span class='line'>            <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links to go back to Invoiceable Items.&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links instead.&#39;</span><span class="p">);</span>
 </span><span class='line'>        <span class="p">};</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'>    <span class="k">else</span> <span class="p">{</span>
@@ -68,7 +68,7 @@
 </span><span class='line'>                <span class="c1">// Works in older FF and IE9</span>
 </span><span class='line'>                <span class="c1">// * it does mess with your hash symbol (anchor?) pound sign</span>
 </span><span class='line'>                <span class="c1">// delimiter on the end of the URL</span>
-</span><span class='line'>                <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links to go back to Invoiceable Items.&#39;</span><span class="p">);</span>
+</span><span class='line'>                <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links instead.&#39;</span><span class="p">);</span>
 </span><span class='line'>            <span class="p">}</span>
 </span><span class='line'>            <span class="k">else</span> <span class="p">{</span>
 </span><span class='line'>                <span class="nx">ignoreHashChange</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Javascript | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-16T18:12:12+02:00</updated>
+  <updated>2014-09-16T18:14:33+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -28,7 +28,7 @@ window.onload = function () {
             history.pushState('newjibberish', null, null);
             // Handle the back (or forward) buttons here
             // Will NOT handle refresh, use onbeforeunload for this.
-            alert('Back button disabled. Please use navigation links to go back to Invoiceable Items.');
+            alert('Back button disabled. Please use navigation links instead.');
         };
     }
     else {
@@ -41,7 +41,7 @@ window.onload = function () {
                 // Works in older FF and IE9
                 // * it does mess with your hash symbol (anchor?) pound sign
                 // delimiter on the end of the URL
-                alert('Back button disabled. Please use navigation links to go back to Invoiceable Items.');
+                alert('Back button disabled. Please use navigation links instead.');
             }
             else {
                 ignoreHashChange = false;   
