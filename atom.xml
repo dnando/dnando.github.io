@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-09-17T12:14:12+02:00</updated>
+  <updated>2014-09-17T12:23:38+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Documentation for CFScript]]></title>
+    <link href="http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/"/>
+    <updated>2014-09-17T12:18:16+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript</id>
+    <content type="html"><![CDATA[<p>Adam Cameron posted an excellent resource yesterday that has been lacking until now, <a href="http://blog.adamcameron.me/2014/09/documentation-for-cfscript.html">Documentation for CFScript</a>. A few minor areas could be enhanced, but it is, in all, quite comprehensive. Thanks Adam.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Disabling Browser Back Button]]></title>
