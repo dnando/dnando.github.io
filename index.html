@@ -134,9 +134,11 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>However, I was somewhat disappointed to learn that Swiss pay slips use a non-standard algorithm to calculculate check digits. And I was left staring at this explanation of the algorithm, the only one that seems to be provided by the banking sector, with a sinking feeling in my stomach:</p>
+<p>I was hoping I could quickly adapt the above for my use case. However, I was disappointed to learn that Swiss pay slips use a non-standard algorithm to calculculate check digits. And genuinely disheartened when I was left staring at this explanation of the algorithm, the only one that seems to be provided by the banking sector.</p>
 
 <p><img src="/images/CheckDigit.gif" alt="Check digit computation module 10, recursive" /></p>
+
+<p>If you study it for a few minutes, you&rsquo;ll see how the check digit is calculated, using the chart provided. But it doesn&rsquo;t give much of a clue what algorithm should be used to generate the check digit, except in the title, which seems to suggest it might use mod 10, recursively, if you assume that it has been translated from German incorrectly, module instead of modulo or modulus.</p>
 
 <p>After a few sessions of Googling, I found an <a href="http://delphi.cjcsoft.net/viewthread.php?tid=48934">example someone wrote in Delphi</a> that seemed to demonstate it could be tackled rather simply, with a single array representing the entire chart. Unfortunately I couldn&rsquo;t grok some of the nuances of the syntax.</p>
 
