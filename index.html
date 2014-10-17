@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I&rsquo;m working on a business application that generates invoices and pay slips for a company in Switzerland. Instead of checks, the Swiss banking &hellip;">
+  <meta name="description" content="A few days ago, Adobe released updates for CF 9, 10 and 11. I&rsquo;ve been following comments raised about them since, and I&rsquo;m disturbed to &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,76 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/17/is-this-acceptable/">Is This Acceptable?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-10-17T14:09:18+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:09 pm</span></time>
+        
+           | <a href="/blog/2014/10/17/is-this-acceptable/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2014/10/17/is-this-acceptable/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A few days ago, Adobe released <a href="http://blogs.coldfusion.com/post.cfm/updates-for-coldfusion-11-coldfusion-10-and-coldfusion-9-released">updates</a> for CF 9, 10 and 11. I&rsquo;ve been following comments raised about them since, and I&rsquo;m disturbed to see some developers struggling to get their servers patched, especially when applying the update has taken the server down. I don&rsquo;t know if these cases are isolated or might be more widespread, but I find this unacceptable.</p>
+
+<p>I run several instances of ACF on CentOS. I&rsquo;m subscribed to the CentOS-announce Digest mailing list, as I&rsquo;m sure most CentOS server admins are. For many years now, whenever an update is released, perhaps once or twice a week, I SSH directly onto the production servers, run yum update, and generally within less than a minute, the update completes, I exit out of SSH, and I&rsquo;m done. Never once has the process failed. Never once have I seen an incoming email on the CentOS mailing list that someone experienced a server crash, or any other issue for that matter, because of an update.</p>
+
+<p>This is how ColdFusion updates <strong>should</strong> function, flawlessly.</p>
+
+<p>In stark contrast, CF developers have become wary of applying updates. There is a risk that their server will compromised because of the security vulnerability the update is meant to patch, and there seems to be an equal if not greater risk that their server will be compromised, in one way or another, in the update process. CF 10 introduced automated updates, but as we see, the automated update process remains error prone.</p>
+
+<p>It should not be like this. Rather than focusing on new features, the CF dev team needs to focus on getting the update process as flawless as it is on CentOS. Developers have families to support. Our clients expect us to keep their servers up and running 24/7. Our clients depend on the applications we build to run their businesses. As developers, we <em>cannot</em> afford to experiment on our clients. And yet, when Adobe releases a flawed update that takes servers down, effectively experimenting on us and our clients, <em>oh, look, they are trapped between a security vulerability and a flawed update</em>, the implicit statement is &ldquo;We don&rsquo;t care if you keep your clients. It does not matter to us at all.&rdquo; Really?</p>
+
+<p>What is even more disturbing is the way the Adobe dev team now uses us as their QA department, as if ColdFusion server was loosely organized open source project among wannabe hackers. It is not disturbing because the CF devs are actively reaching out trying to solve problems that are occurring, asking for logs, error message screenshots, suggesting the possible need to copy and paste jar files from here to there if some functionality is broken, instructing us to manually install the updates one at a time if the automated updater doesn&rsquo;t work, etc. It is because the update process needs to be flawless, as near to it as possible, so that we can rely on it.</p>
+
+<p>The worst, however, is <a href="http://blogs.coldfusion.com/post.cfm/updates-for-coldfusion-11-coldfusion-10-and-coldfusion-9-released#comment-2A6D270F-CEF1-319F-EDCFF7262E950FC0">this</a>, linked for reference but replicated below, an Adobe engineer asking a customer to effectively crash his server &ldquo;in off peak hours&rdquo; so that he can get at the log files that might reveal what the problem is.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Hi Mark,
+</span><span class='line'>
+</span><span class='line'>Of all the things connector logs with debug_level=debug are the most important one's. Till now with all the information you have shared I can tell that there is some problem with shared memory access between worker threads. But to exactly pin point the problem I will be needing the connector logs. I understand it will be difficult for you to do something on production server but it is a must for this problem to be resolved.
+</span><span class='line'>
+</span><span class='line'>If possible in off-peak hours, apply the update14 and reconfigure the connector. Once the connector is installed go to connector directory c:\coldfusion10\config\wsconfig\magicnumber\ and open isapi_redirect.properties in notepad.
+</span><span class='line'>Edit the line "log_level= info" and change it to "log_level= debug" and save the changes. Restart IIS, hit any cfm page and wait for app pool to crash. Once it is crashed take a backup of isapi_redirect.log(created in connector directory) in some other directory like c:\connector_logs\ directory. After the backup you can revert back the changes.
+</span><span class='line'>Lastly you have to share this backed up logs with us.
+</span><span class='line'>
+</span><span class='line'>Thanks,
+</span><span class='line'>Milan.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When I say this is unacceptable, I mean that it is not acceptable for Adobe to use CF developers and their clients as their QA team, especially in that Milan says &ldquo;I understand it will be difficult for you to do something on production server but it is a <em>must</em> for this problem to be resolved.&rdquo; No, it is not a must to take down our servers, possibly endangering our client relationships, to fix your bugs.</p>
+
+<p>Yes, this is very complex stuff. But in today&rsquo;s world, that simply means Adobe needs to employ a vastly improved QA strategy than the one they have in place today for ColdFusion releases, especially for the update process itself.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -541,6 +611,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/10/17/is-this-acceptable/">Is This Acceptable?</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/09/23/check-digit-computation-swiss-pay-slips/">Check Digit Computation for Swiss Pay Slips</a>
       </li>
     
@@ -554,10 +628,6 @@
     
       <li class="post">
         <a href="/blog/2014/09/12/octopress-cheat-sheet/">Octopress Cheat Sheet</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/09/12/im-in-the-dark-here/">I&#8217;m in the Dark Here</a>
       </li>
     
   </ul>
