@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-10-17T15:32:06+02:00</updated>
+  <updated>2014-10-24T16:38:32+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,51 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to Rollback Yum Updates on CentOS]]></title>
+    <link href="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/"/>
+    <updated>2014-10-24T16:26:50+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos</id>
+    <content type="html"><![CDATA[<p>Step 1) Open the Yum config file:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/yum.conf</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and ensure the following line is included in the config settings</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>tsflags=repackage</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Rollback capability is now enabled for every new update installed.</p>
+
+<p>Step 2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/rpm/macros</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And ensure the following line is included:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>%_repackage_all_erasures 1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can use the rollback flag as shown in the examples below to roll back updates to any point in the past:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rpm -Uvh –rollback ’21:00′
+</span><span class='line'>rpm -Uvh –rollback ’3 hours ago’
+</span><span class='line'>rpm -Uvh –rollback ‘august 13′
+</span><span class='line'>rpm -Uvh –rollback ‘yesterday’</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Is This Acceptable?]]></title>

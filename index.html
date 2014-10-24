@@ -9,7 +9,9 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="A few days ago, Adobe released updates for CF 9, 10 and 11. I&rsquo;ve been following comments raised about them since, and I&rsquo;m disturbed to &hellip;">
+  <meta name="description" content="Step 1) Open the Yum config file: 1
+vi /etc/yum.conf and ensure the following line is included in the config settings 1
+tsflags=repackage Rollback &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +68,74 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/">How to Rollback Yum Updates on CentOS</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-10-24T16:26:50+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:26 pm</span></time>
+        
+           | <a href="/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Step 1) Open the Yum config file:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/yum.conf</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and ensure the following line is included in the config settings</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>tsflags=repackage</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Rollback capability is now enabled for every new update installed.</p>
+
+<p>Step 2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/rpm/macros</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And ensure the following line is included:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>%_repackage_all_erasures 1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can use the rollback flag as shown in the examples below to roll back updates to any point in the past:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rpm -Uvh –rollback ’21:00′
+</span><span class='line'>rpm -Uvh –rollback ’3 hours ago’
+</span><span class='line'>rpm -Uvh –rollback ‘august 13′
+</span><span class='line'>rpm -Uvh –rollback ‘yesterday’</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -592,6 +662,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/">How to Rollback Yum Updates on CentOS</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/10/17/is-this-acceptable/">Is This Acceptable?</a>
       </li>
     
@@ -605,10 +679,6 @@
     
       <li class="post">
         <a href="/blog/2014/09/16/disabling-browser-back-button/">Disabling Browser Back Button</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/09/12/octopress-cheat-sheet/">Octopress Cheat Sheet</a>
       </li>
     
   </ul>
