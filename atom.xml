@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-10-24T16:38:32+02:00</updated>
+  <updated>2014-10-24T16:40:17+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -18,7 +18,7 @@
     <link href="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/"/>
     <updated>2014-10-24T16:26:50+02:00</updated>
     <id>http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos</id>
-    <content type="html"><![CDATA[<p>Step 1) Open the Yum config file:</p>
+    <content type="html"><![CDATA[<p>1) Open the yum config file:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/yum.conf</span></code></pre></td></tr></table></div></figure>
@@ -32,7 +32,7 @@
 
 <p>Rollback capability is now enabled for every new update installed.</p>
 
-<p>Step 2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
+<p>2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/rpm/macros</span></code></pre></td></tr></table></div></figure>
