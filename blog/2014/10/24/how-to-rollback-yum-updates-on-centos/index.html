@@ -11,7 +11,7 @@
   
   <meta name="description" content="1) Open the yum config file: 1
 vi /etc/yum.conf and ensure the following line is included in the config settings 1
-tsflags=repackage Rollback &hellip;">
+tsflags=repackage 2) Open the rpm &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,7 +41,7 @@ tsflags=repackage Rollback &hellip;">
   <header role="banner"><hgroup>
   <h1><a href="/">Nando @ Aria Media</a></h1>
   
-    <h2>( learning Clojure ColdFusion Railo Javascript jQuery Angular CSS Linux Apache HTML5 & )</h2>
+    <h2>( learning Clojure ColdFusion Railo Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
   
 </hgroup>
 
@@ -102,8 +102,6 @@ tsflags=repackage Rollback &hellip;">
 </pre></td><td class='code'><pre><code class=''><span class='line'>tsflags=repackage</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Rollback capability is now enabled for every new update installed.</p>
-
 <p>2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -116,7 +114,7 @@ tsflags=repackage Rollback &hellip;">
 </pre></td><td class='code'><pre><code class=''><span class='line'>%_repackage_all_erasures 1</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now you can use the rollback flag as shown in the examples below to roll back updates to any point in the past:</p>
+<p>Now the rollback flag can be used on the rpm command as shown in the examples below to roll back updates to any point in the past:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

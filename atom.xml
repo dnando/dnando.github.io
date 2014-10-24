@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-10-24T16:43:31+02:00</updated>
+  <updated>2014-10-24T17:56:55+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -30,8 +30,6 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>tsflags=repackage</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Rollback capability is now enabled for every new update installed.</p>
-
 <p>2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -44,7 +42,7 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>%_repackage_all_erasures 1</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now you can use the rollback flag as shown in the examples below to roll back updates to any point in the past:</p>
+<p>Now the rollback flag can be used on the rpm command as shown in the examples below to roll back updates to any point in the past:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
