@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>SSH Tunnelling - ColdFusion Lockdown Technique - Nando @ Aria Media</title>
+  <title>SSH Tunneling - ColdFusion Lockdown Technique - Nando @ Aria Media</title>
   <meta name="author" content="Nando @ Aria Media">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dnando.github.io/blog/2014/11/04/ssh-tunnelling-coldfusion-lockdown-technique">
+  <link rel="canonical" href="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
@@ -69,7 +69,7 @@
   
   <header>
     
-      <h1 class="entry-title">SSH Tunnelling - ColdFusion Lockdown Technique</h1>
+      <h1 class="entry-title">SSH Tunneling - ColdFusion Lockdown Technique</h1>
     
     
       <p class="meta">
@@ -133,7 +133,7 @@
 
 <p>Put all that together, and it helps to explain why ACF and Railo servers are often not locked down.</p>
 
-<p>Here&rsquo;s where SSH tunnelling comes to the rescue. In a nutshell, it allows you to securely browse a remote server as localhost, as if the server was under your desk and your keyboard and monitor where connected to it, even if it&rsquo;s located halfway around the world. The icing on the cake is it is very simple to set up, and the same setup will work for every server you admin!</p>
+<p>Here&rsquo;s where SSH tunneling comes to the rescue. In a nutshell, it allows you to securely browse a remote server as localhost, as if the server was under your desk and your keyboard and monitor where connected to it, even if it&rsquo;s located halfway around the world. The icing on the cake is it is very simple to set up, and the same setup will work for every server you admin!</p>
 
 <p>To use SSH tunneling to gain access to admin areas of your server, the first step to restrict access to any admin area to only localhost, for example:</p>
 
@@ -168,7 +168,7 @@
 
 <p>( While you are at it, restrict port access to only those ports you need to leave exposed, for instance 80, 443 and whatever port you are using for SSH access ).</p>
 
-<p>There are detailed instructions for SSH tunnelling all over the web if you want to find out more, but the instructions below should work fine for our purposes.</p>
+<p>There are detailed instructions for SSH tunneling all over the web if you want to find out more, but the instructions below should work fine for our purposes.</p>
 
 <ol>
 <li><p>In your web browser, configure the proxy settings to point to &ldquo;localhost&rdquo;, a free port on your local machine (we&rsquo;ll use 60001), using SOCKS5. This should work with any browser. Using Firefox as an example, here&rsquo;s how to do that:</p>
@@ -185,7 +185,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x75;&#x73;&#x65;&#x72;&#x40;&#x31;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#x2e;&#x31;&#x30;&#56;&#46;&#x33;&#x39;">&#117;&#x73;&#x65;&#114;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#48;&#x33;&#x2e;&#x31;&#48;&#56;&#46;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#x74;&#111;&#58;&#x75;&#x73;&#101;&#114;&#64;&#x31;&#48;&#50;&#46;&#49;&#48;&#51;&#x2e;&#x31;&#48;&#56;&#x2e;&#x33;&#57;">&#117;&#115;&#x65;&#114;&#x40;&#49;&#48;&#50;&#x2e;&#49;&#48;&#x33;&#x2e;&#x31;&#x30;&#x38;&#46;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -224,7 +224,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/11/04/ssh-tunnelling-coldfusion-lockdown-technique/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/11/04/ssh-tunnelling-coldfusion-lockdown-technique/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/" >Tweet</a>
   
   
   
@@ -255,7 +255,7 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2014/11/04/ssh-tunnelling-coldfusion-lockdown-technique/">SSH Tunnelling - ColdFusion Lockdown Technique</a>
+        <a href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/">SSH Tunneling - ColdFusion Lockdown Technique</a>
       </li>
     
       <li class="post">
@@ -329,8 +329,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://dnando.github.io/blog/2014/11/04/ssh-tunnelling-coldfusion-lockdown-technique/';
-        var disqus_url = 'http://dnando.github.io/blog/2014/11/04/ssh-tunnelling-coldfusion-lockdown-technique/';
+        var disqus_identifier = 'http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/';
+        var disqus_url = 'http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/';
         var disqus_script = 'embed.js';
       
     (function () {
