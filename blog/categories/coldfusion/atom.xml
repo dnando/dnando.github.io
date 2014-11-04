@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-11-04T16:31:28+01:00</updated>
+  <updated>2014-11-04T16:39:44+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -71,23 +71,26 @@
 &lt;/Location&gt;
 </code></pre>
 
-<p>( While you are at it, restrict port access to only those ports you need to leave publically exposed, for instance 80, 443 and whatever you are using for SSH access ).</p>
+<p>( While you are at it, restrict port access to only those ports you need to leave exposed, for instance 80, 443 and whatever port you are using for SSH access ).</p>
 
 <p>There are detailed instructions for SSH tunnelling all over the web if you want to find out more, but the instructions below should work fine for our purposes.</p>
 
-<p>1) In your web browser, setup your proxy to point to &ldquo;localhost&rdquo;, a free port on your local machine (we&rsquo;ll use 60001), using SOCKS5. This should work with any browser. Using Firefox as an example, here&rsquo;s how to do that:</p>
+<p>1) In your web browser, configure the proxy settings to point to &ldquo;localhost&rdquo;, a free port on your local machine (we&rsquo;ll use 60001), using SOCKS5. This should work with any browser. Using Firefox as an example, here&rsquo;s how to do that:</p>
 
-<p><em>Go to Preferences
-</em>Click the Advanced icon
-<em>Click the Network tab
-</em>Click the Settings button, across from where it says &ldquo;Configure how Firefox connects to the Internet
-<em>Select Manual proxy configuration
-</em>In the SOCKS Host field put &#8220;localhost&rdquo; without the quotation marks
-<em>In the Port field put the port number you will use, 60001 in our example
-</em>Select SOCKS v5
-*Click OK</p>
+<ul>
+<li>Go to Preferences</li>
+<li>Click the Advanced icon</li>
+<li>Click the Network tab</li>
+<li>Click the Settings button, across from where it says &ldquo;Configure how Firefox connects to the Internet</li>
+<li>Select Manual proxy configuration</li>
+<li>In the SOCKS Host field put &ldquo;localhost&rdquo; without the quotation marks</li>
+<li>In the Port field put the port number you will use, 60001 in our example</li>
+<li>Select SOCKS v5</li>
+<li>Click OK</li>
+</ul>
 
-<p>2) ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#108;&#116;&#111;&#58;&#x75;&#115;&#x65;&#x72;&#64;&#49;&#48;&#50;&#46;&#49;&#x30;&#51;&#46;&#49;&#48;&#56;&#x2e;&#51;&#x39;">&#x75;&#115;&#x65;&#x72;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#48;&#x33;&#46;&#x31;&#x30;&#x38;&#x2e;&#x33;&#x39;</a></p>
+
+<p>2) ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#117;&#115;&#x65;&#x72;&#x40;&#49;&#48;&#x32;&#46;&#x31;&#48;&#51;&#46;&#x31;&#x30;&#x38;&#46;&#x33;&#x39;">&#x75;&#x73;&#101;&#114;&#64;&#x31;&#48;&#50;&#46;&#x31;&#x30;&#x33;&#x2e;&#x31;&#48;&#56;&#46;&#x33;&#57;</a></p>
 
 <p>3) You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p>
 
