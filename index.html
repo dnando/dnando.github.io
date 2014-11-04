@@ -173,7 +173,8 @@
 
 <p>There are detailed instructions for SSH tunnelling all over the web if you want to find out more, but the instructions below should work fine for our purposes.</p>
 
-<p>1) In your web browser, configure the proxy settings to point to &ldquo;localhost&rdquo;, a free port on your local machine (we&rsquo;ll use 60001), using SOCKS5. This should work with any browser. Using Firefox as an example, here&rsquo;s how to do that:</p>
+<ol>
+<li><p>In your web browser, configure the proxy settings to point to &ldquo;localhost&rdquo;, a free port on your local machine (we&rsquo;ll use 60001), using SOCKS5. This should work with any browser. Using Firefox as an example, here&rsquo;s how to do that:</p>
 
 <ul>
 <li>Go to Preferences</li>
@@ -186,11 +187,11 @@
 <li>Select SOCKS v5</li>
 <li>Click OK</li>
 </ul>
+</li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x75;&#x73;&#x65;&#x72;&#x40;&#x31;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#x2e;&#x31;&#x30;&#56;&#46;&#x33;&#x39;">&#117;&#x73;&#x65;&#114;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#48;&#x33;&#x2e;&#x31;&#48;&#56;&#46;&#x33;&#x39;</a></p></li>
+<li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
+</ol>
 
-
-<p>2) ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#x69;&#108;&#116;&#x6f;&#x3a;&#117;&#115;&#101;&#114;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#46;&#49;&#x30;&#56;&#x2e;&#x33;&#57;">&#117;&#x73;&#x65;&#114;&#x40;&#49;&#48;&#50;&#46;&#49;&#48;&#51;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#x39;</a></p>
-
-<p>3) You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p>
 
 <p>Note that the port chosen is arbitrary. It only has to be available and match in both the -D flag and SOCKS port setting. To revert the browser to normal behavior, simply choose No Proxy in the Network Settings dialog.</p>
 
