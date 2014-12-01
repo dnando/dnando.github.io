@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>How to Rollback Yum Updates on CentOS - Nando @ Aria Media</title>
+  <title>Setting Up a Local Testing Server on VMWare - Nando @ Aria Media</title>
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="1) Open the yum config file: 1
-vi /etc/yum.conf and ensure the following line is included in the config settings 1
-tsflags=repackage 2) Open the rpm &hellip;">
+  <meta name="description" content="I&rsquo;ve been thinking about how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos">
+  <link rel="canonical" href="http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
@@ -71,7 +69,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
   
   <header>
     
-      <h1 class="entry-title">How to Rollback Yum Updates on CentOS</h1>
+      <h1 class="entry-title">Setting Up a Local Testing Server on VMWare</h1>
     
     
       <p class="meta">
@@ -80,7 +78,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
 
 
 
-<time class='entry-date' datetime='2014-10-24T16:26:50+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:26 pm</span></time>
+<time class='entry-date' datetime='2014-12-01T15:55:49+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2014</span></span> <span class='time'>3:55 pm</span></time>
         
            | <a href="#disqus_thread"
              data-disqus-identifier="http://dnando.github.io">Comments</a>
@@ -90,41 +88,79 @@ tsflags=repackage 2) Open the rpm &hellip;">
   </header>
 
 
-<div class="entry-content"><p>1) Open the yum config file:</p>
+<div class="entry-content"><p>I&rsquo;ve been thinking about how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of another developer I met at CFCamp this year, I&rsquo;ve decided to use VMWare to set up a CentOS server on a virtual machine here in the office.</p>
+
+<p>For ease of access, what I needed to set up was a static ip for each VM I need. It&rsquo;s not hard to do once you figure it out, but getting all the pieces in place took some hours of digging, trial and error. This post, while specific to VMWare and CentOS 7, is intended to help both my future self and anyone else set up networking quickly and easily.  You may need to adapt as necessary for your specific environment.</p>
+
+<p>The obvious first step was to download the ISO image from a <a href="http://www.centos.org/download/mirrors/">CentOS mirror site</a>. I grabbed the minimal install as a nearest approximation to the production environment, and created a VM from it using VMWare on an unused Mac mini we had laying around the office.</p>
+
+<p>On the minimal install, networking isn&rsquo;t enabled by default. So before I could proceed, I had to figure how to enable networking, and get it working via a static IP. Here&rsquo;s a summary of what finally worked for me.</p>
+
+<p>1) Figure out what the ethernet device is named by running the command :</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/yum.conf</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>nmcli dev status</span></code></pre></td></tr></table></div></figure>
 
 
-<p>and ensure the following line is included in the config settings</p>
+<p><img src="/images/nmcli.gif" alt="nmcli dev status" /></p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>tsflags=repackage</span></code></pre></td></tr></table></div></figure>
+<p>As you can see, mine was named eno16777736</p>
 
-
-<p>2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
+<p>2) cd to the directory /etc/sysconfig/network-scripts and run ls to display its files</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/rpm/macros</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /etc/sysconfig/network-scripts
+</span><span class='line'>ls</span></code></pre></td></tr></table></div></figure>
 
 
-<p>And ensure the following line is included:</p>
+<p><img src="/images/networkScriptsLs.gif" alt="network-scripts ls" /></p>
+
+<p>3) Look for the configuration file for your ethernet device, mine was named ifcfg-eno16777736 and open it for editing using vm or nano</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>%_repackage_all_erasures 1</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>nano ifcfg-eno16777736</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now the rollback flag can be used on the rpm command as shown in the examples below to roll back updates to any point in the past:</p>
+<p><img src="/images/nano-ifcfg.gif" alt="network-scripts ls" /></p>
+
+<p>The above screenshot was taken after it was edited. The lines to change or add are:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rpm -Uvh –rollback ’21:00′
-</span><span class='line'>rpm -Uvh –rollback ’3 hours ago’
-</span><span class='line'>rpm -Uvh –rollback ‘august 13′
-</span><span class='line'>rpm -Uvh –rollback ‘yesterday’</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>BOOTPROTO=static
+</span><span class='line'>IPADDR=&lt;the static ip address you want to assign to this instance&gt;
+</span><span class='line'>NETMASK=255.255.255.0
+</span><span class='line'>GATEWAY=&lt;the gateway ip address of your internal network&gt;
+</span><span class='line'>NM_CONTROLLED=no
+</span><span class='line'>ONBOOT=yes</span></code></pre></td></tr></table></div></figure>
 
+
+<p>I found that adding the correct gateway ip was essential. NM_CONTROLLED specifies whether or not this device is controlled by the Network Manager. We are setting the parameters manually here, so this must be no. ONBOOT=yes specifies to connect this network device on boot.</p>
+
+<p>Save the file, exit nano, and run the following command to restart the network:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>systemctl restart network</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now CentOS 7 should be setup to network via the static local ip of your choice. But the connection isn&rsquo;t bridged outside of the VM. After some fiddling around, here&rsquo;s what worked for me. I went out to the VMWare interface, clicked on the double arrow icon to open the following menu, and clicked Network Adapter Settings&hellip;</p>
+
+<p><img src="/images/vmWareNAS1.jpg" alt="VMWare Network menu" /></p>
+
+<p>From the menu, I chose Autodetect, as shown below:</p>
+
+<p><img src="/images/vmWareNAS2.jpg" alt="VMWare Network menu" /></p>
+
+<p>Once I had these configuration changes in place, I could access the CentOS instance via SSH and SFTP from my dev machine.</p>
+
+<p>By the way, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
+
+<p>Hope this helps somebody &hellip;</p>
 </div>
 
 
@@ -140,7 +176,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
 
 
 
-<time class='entry-date' datetime='2014-10-24T16:26:50+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:26 pm</span></time>
+<time class='entry-date' datetime='2014-12-01T15:55:49+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2014</span></span> <span class='time'>3:55 pm</span></time>
       
 
 
@@ -148,7 +184,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/" >Tweet</a>
   
   
   
@@ -157,10 +193,8 @@ tsflags=repackage 2) Open the rpm &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/10/17/is-this-acceptable/" title="Previous Post: Is This Acceptable?">&laquo; Is This Acceptable?</a>
+        <a class="basic-alignment left" href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/" title="Previous Post: SSH Tunneling - ColdFusion Lockdown Technique">&laquo; SSH Tunneling - ColdFusion Lockdown Technique</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/" title="Next Post: SSH Tunneling - ColdFusion Lockdown Technique">SSH Tunneling - ColdFusion Lockdown Technique &raquo;</a>
       
     </p>
   </footer>
@@ -255,8 +289,8 @@ tsflags=repackage 2) Open the rpm &hellip;">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/';
-        var disqus_url = 'http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/';
+        var disqus_identifier = 'http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/';
+        var disqus_url = 'http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/';
         var disqus_script = 'embed.js';
       
     (function () {

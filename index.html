@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="The ColdFusion and Railo Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important &hellip;">
+  <meta name="description" content="I&rsquo;ve been thinking about how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,110 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/">Setting Up a Local Testing Server on VMWare</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-12-01T15:55:49+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2014</span></span> <span class='time'>3:55 pm</span></time>
+        
+           | <a href="/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&rsquo;ve been thinking about how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of another developer I met at CFCamp this year, I&rsquo;ve decided to use VMWare to set up a CentOS server on a virtual machine here in the office.</p>
+
+<p>For ease of access, what I needed to set up was a static ip for each VM I need. It&rsquo;s not hard to do once you figure it out, but getting all the pieces in place took some hours of digging, trial and error. This post, while specific to VMWare and CentOS 7, is intended to help both my future self and anyone else set up networking quickly and easily.  You may need to adapt as necessary for your specific environment.</p>
+
+<p>The obvious first step was to download the ISO image from a <a href="http://www.centos.org/download/mirrors/">CentOS mirror site</a>. I grabbed the minimal install as a nearest approximation to the production environment, and created a VM from it using VMWare on an unused Mac mini we had laying around the office.</p>
+
+<p>On the minimal install, networking isn&rsquo;t enabled by default. So before I could proceed, I had to figure how to enable networking, and get it working via a static IP. Here&rsquo;s a summary of what finally worked for me.</p>
+
+<p>1) Figure out what the ethernet device is named by running the command :</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>nmcli dev status</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/nmcli.gif" alt="nmcli dev status" /></p>
+
+<p>As you can see, mine was named eno16777736</p>
+
+<p>2) cd to the directory /etc/sysconfig/network-scripts and run ls to display its files</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /etc/sysconfig/network-scripts
+</span><span class='line'>ls</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/networkScriptsLs.gif" alt="network-scripts ls" /></p>
+
+<p>3) Look for the configuration file for your ethernet device, mine was named ifcfg-eno16777736 and open it for editing using vm or nano</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>nano ifcfg-eno16777736</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/nano-ifcfg.gif" alt="network-scripts ls" /></p>
+
+<p>The above screenshot was taken after it was edited. The lines to change or add are:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>BOOTPROTO=static
+</span><span class='line'>IPADDR=&lt;the static ip address you want to assign to this instance&gt;
+</span><span class='line'>NETMASK=255.255.255.0
+</span><span class='line'>GATEWAY=&lt;the gateway ip address of your internal network&gt;
+</span><span class='line'>NM_CONTROLLED=no
+</span><span class='line'>ONBOOT=yes</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I found that adding the correct gateway ip was essential. NM_CONTROLLED specifies whether or not this device is controlled by the Network Manager. We are setting the parameters manually here, so this must be no. ONBOOT=yes specifies to connect this network device on boot.</p>
+
+<p>Save the file, exit nano, and run the following command to restart the network:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>systemctl restart network</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now CentOS 7 should be setup to network via the static local ip of your choice. But the connection isn&rsquo;t bridged outside of the VM. After some fiddling around, here&rsquo;s what worked for me. I went out to the VMWare interface, clicked on the double arrow icon to open the following menu, and clicked Network Adapter Settings&hellip;</p>
+
+<p><img src="/images/vmWareNAS1.jpg" alt="VMWare Network menu" /></p>
+
+<p>From the menu, I chose Autodetect, as shown below:</p>
+
+<p><img src="/images/vmWareNAS2.jpg" alt="VMWare Network menu" /></p>
+
+<p>Once I had these configuration changes in place, I could access the CentOS instance via SSH and SFTP from my dev machine.</p>
+
+<p>By the way, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
+
+<p>Hope this helps somebody &hellip;</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -188,7 +292,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#x74;&#111;&#58;&#x75;&#x73;&#101;&#114;&#64;&#x31;&#48;&#50;&#46;&#49;&#48;&#51;&#x2e;&#x31;&#48;&#56;&#x2e;&#x33;&#57;">&#117;&#115;&#x65;&#114;&#x40;&#49;&#48;&#50;&#x2e;&#49;&#48;&#x33;&#x2e;&#x31;&#x30;&#x38;&#46;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#x75;&#115;&#x65;&#x72;&#x40;&#x31;&#48;&#x32;&#46;&#x31;&#x30;&#x33;&#x2e;&#x31;&#48;&#x38;&#46;&#x33;&#57;">&#x75;&#115;&#x65;&#114;&#x40;&#x31;&#48;&#50;&#46;&#49;&#48;&#x33;&#x2e;&#49;&#x30;&#56;&#46;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -796,6 +900,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/">Setting Up a Local Testing Server on VMWare</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/">SSH Tunneling - ColdFusion Lockdown Technique</a>
       </li>
     
@@ -809,10 +917,6 @@
     
       <li class="post">
         <a href="/blog/2014/09/23/check-digit-computation-swiss-pay-slips/">Check Digit Computation for Swiss Pay Slips</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/09/17/documentation-for-cfscript/">Documentation for CFScript</a>
       </li>
     
   </ul>
