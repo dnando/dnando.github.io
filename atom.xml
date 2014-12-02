@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-02T22:23:35+01:00</updated>
+  <updated>2014-12-02T22:48:09+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -20,9 +20,9 @@
     <id>http://dnando.github.io/blog/2014/12/02/setting-up-centos-7-firewalld</id>
     <content type="html"><![CDATA[<p>New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I&rsquo;m finding I prefer it over iptables.</p>
 
-<p>The first thing to understand about firewalld is that it is more sophisticated than simply opening or closing ports. It comes with a predefined set of zones, namely block, dmz, drop, external, home, internal, public, trusted, and work. Each of those zones can be associated with a network device or one or more ip addresses. Zones are based on the level of trust an admin has decided to place on the devices and traffic within a network.</p>
+<p>The first thing to understand about firewalld is that it is has multiple layers. It comes with a predefined set of zones, namely block, dmz, drop, external, home, internal, public, trusted, and work. Each of those zones can be associated with a network device or one or more ip addresses. Essentially, zones define and demarcate the level of trust an admin has decided to place on the devices and traffic within a network.</p>
 
-<p>firewalld also pre-defines a set of services that can be added or removed from a zone. Effectively, when a service is added to a zone, it opens a port via an http protocol. Services are defined with XML. Here&rsquo;s what the http service looks like:</p>
+<p>firewalld also pre-defines a set of services that can be added or removed from a zone. Effectively, when a service is added to a zone, it opens a port and sets any other necessary parameters. Services are defined with XML. Here&rsquo;s what the http service looks like:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -38,7 +38,7 @@
 </span><span class='line'>&lt;/service&gt;</span></code></pre></td></tr></table></div></figure>
 
 
-<p>So to open port 80 to server http requests, as an example, first a zone must be associated with the network device that will handle the traffic, and then either the service added to the zone, or the port can be opened directly on that zone. As an admin, you can define your own custom services, or customize existing services.</p>
+<p>So to open port 80 via the tcp protocol to server http requests, as an example, first a zone must be associated with the network device that will handle the traffic, and then the http service added to the zone. As an admin, you can define your own custom services, or customize existing services. Other techniques allow you to open a port directly on a zone, or define more complex rules for access.</p>
 
 <p>To configure the firewall and check its status, a command line client is provided, firewall-cmd. It can be used to make both permanent and temporary config changes. The configuration for firewalld is stored in XML files in /usr/lib/firewalld/ ( the default settings, not to be modified! ) and /etc/firewalld/ ( for user configured settings, which have preference over those in the default location ). These files can be edited, backed up, or used as templates for other server installations.</p>
 
@@ -447,7 +447,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#x74;&#111;&#58;&#x75;&#115;&#x65;&#114;&#64;&#49;&#48;&#x32;&#x2e;&#49;&#x30;&#x33;&#x2e;&#x31;&#48;&#56;&#x2e;&#51;&#x39;">&#x75;&#115;&#101;&#x72;&#x40;&#49;&#x30;&#x32;&#46;&#x31;&#x30;&#51;&#46;&#49;&#x30;&#56;&#46;&#51;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#58;&#117;&#x73;&#x65;&#x72;&#x40;&#49;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#46;&#49;&#x30;&#x38;&#x2e;&#51;&#x39;">&#117;&#x73;&#101;&#114;&#x40;&#49;&#x30;&#x32;&#46;&#x31;&#x30;&#51;&#x2e;&#49;&#x30;&#56;&#x2e;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
