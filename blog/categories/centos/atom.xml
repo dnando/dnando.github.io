@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Centos | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/centos/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-02T22:48:09+01:00</updated>
+  <updated>2014-12-02T22:50:44+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Setting Up CentOS 7 Firewalld]]></title>
-    <link href="http://dnando.github.io/blog/2014/12/02/setting-up-centos-7-firewalld/"/>
+    <title type="html"><![CDATA[Exploring CentOS 7 Firewalld]]></title>
+    <link href="http://dnando.github.io/blog/2014/12/02/exploring-centos-7-firewalld/"/>
     <updated>2014-12-02T10:41:04+01:00</updated>
-    <id>http://dnando.github.io/blog/2014/12/02/setting-up-centos-7-firewalld</id>
+    <id>http://dnando.github.io/blog/2014/12/02/exploring-centos-7-firewalld</id>
     <content type="html"><![CDATA[<p>New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I&rsquo;m finding I prefer it over iptables.</p>
 
 <p>The first thing to understand about firewalld is that it is has multiple layers. It comes with a predefined set of zones, namely block, dmz, drop, external, home, internal, public, trusted, and work. Each of those zones can be associated with a network device or one or more ip addresses. Essentially, zones define and demarcate the level of trust an admin has decided to place on the devices and traffic within a network.</p>
