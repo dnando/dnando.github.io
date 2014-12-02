@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-02T18:34:05+01:00</updated>
+  <updated>2014-12-02T22:23:35+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -90,7 +90,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#105;&#x6c;&#116;&#x6f;&#x3a;&#117;&#115;&#101;&#114;&#x40;&#x31;&#x30;&#x32;&#46;&#x31;&#x30;&#51;&#46;&#49;&#x30;&#x38;&#46;&#x33;&#57;">&#117;&#115;&#x65;&#x72;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#48;&#51;&#46;&#49;&#x30;&#x38;&#x2e;&#51;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#58;&#117;&#x73;&#x65;&#114;&#x40;&#49;&#48;&#50;&#x2e;&#49;&#48;&#51;&#x2e;&#x31;&#48;&#56;&#x2e;&#51;&#x39;">&#117;&#x73;&#x65;&#x72;&#64;&#49;&#48;&#x32;&#46;&#49;&#48;&#51;&#46;&#x31;&#x30;&#56;&#x2e;&#x33;&#57;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 

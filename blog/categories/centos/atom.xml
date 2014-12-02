@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Centos | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/centos/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-02T18:34:05+01:00</updated>
+  <updated>2014-12-02T22:23:35+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -18,9 +18,7 @@
     <link href="http://dnando.github.io/blog/2014/12/02/setting-up-centos-7-firewalld/"/>
     <updated>2014-12-02T10:41:04+01:00</updated>
     <id>http://dnando.github.io/blog/2014/12/02/setting-up-centos-7-firewalld</id>
-    <content type="html"><![CDATA[<p>One of the immediate advantages I&rsquo;m finding to having a local testing server is that it allows me to learn new Linux admin techniques without any pressure. If I make a mistake and say, lock myself out of the server while experimenting with a new technique to secure ssh access from my dev machine, direct terminal access to the VM is right next to me.</p>
-
-<p>New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I&rsquo;m finding I prefer it over iptables.</p>
+    <content type="html"><![CDATA[<p>New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I&rsquo;m finding I prefer it over iptables.</p>
 
 <p>The first thing to understand about firewalld is that it is more sophisticated than simply opening or closing ports. It comes with a predefined set of zones, namely block, dmz, drop, external, home, internal, public, trusted, and work. Each of those zones can be associated with a network device or one or more ip addresses. Zones are based on the level of trust an admin has decided to place on the devices and traffic within a network.</p>
 
@@ -200,10 +198,10 @@ firewall-cmd --reload
 
 <p>PS - for some reason, perhaps it is a bug, lo was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. I&rsquo;ll look into filing a bug report later this evening &hellip;</p>
 
-<p>References:
-<a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a>
-<a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a>
-<a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></p>
+<p>References:<br>
+1 <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a><br>
+2 <a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a><br>
+3 <a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></p>
 ]]></content>
   </entry>
   

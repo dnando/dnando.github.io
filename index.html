@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="One of the immediate advantages I&rsquo;m finding to having a local testing server is that it allows me to learn new Linux admin techniques without &hellip;">
+  <meta name="description" content="New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I& &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -91,9 +91,7 @@
   </header>
 
 
-  <div class="entry-content"><p>One of the immediate advantages I&rsquo;m finding to having a local testing server is that it allows me to learn new Linux admin techniques without any pressure. If I make a mistake and say, lock myself out of the server while experimenting with a new technique to secure ssh access from my dev machine, direct terminal access to the VM is right next to me.</p>
-
-<p>New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I&rsquo;m finding I prefer it over iptables.</p>
+  <div class="entry-content"><p>New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I&rsquo;m finding I prefer it over iptables.</p>
 
 <p>The first thing to understand about firewalld is that it is more sophisticated than simply opening or closing ports. It comes with a predefined set of zones, namely block, dmz, drop, external, home, internal, public, trusted, and work. Each of those zones can be associated with a network device or one or more ip addresses. Zones are based on the level of trust an admin has decided to place on the devices and traffic within a network.</p>
 
@@ -322,10 +320,10 @@
 
 <p>PS - for some reason, perhaps it is a bug, lo was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. I&rsquo;ll look into filing a bug report later this evening &hellip;</p>
 
-<p>References:
-<a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a>
-<a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a>
-<a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></p>
+<p>References:<br>
+1 <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a><br>
+2 <a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a><br>
+3 <a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></p>
 </div>
   
   
@@ -568,7 +566,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#108;&#x74;&#111;&#x3a;&#x75;&#115;&#101;&#x72;&#64;&#x31;&#x30;&#x32;&#x2e;&#x31;&#48;&#51;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#x39;">&#x75;&#115;&#x65;&#114;&#x40;&#x31;&#x30;&#x32;&#x2e;&#49;&#x30;&#51;&#x2e;&#x31;&#48;&#x38;&#x2e;&#x33;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#x74;&#111;&#58;&#x75;&#115;&#x65;&#114;&#64;&#49;&#48;&#x32;&#x2e;&#49;&#x30;&#x33;&#x2e;&#x31;&#48;&#56;&#x2e;&#51;&#x39;">&#x75;&#115;&#101;&#x72;&#x40;&#49;&#x30;&#x32;&#46;&#x31;&#x30;&#51;&#46;&#49;&#x30;&#56;&#46;&#51;&#57;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
