@@ -101,12 +101,15 @@
 
 <p>Open server.xml for editing, scroll down to the bottom of the file where you should find the following line commented out:</p>
 
-<!-- <Context path="/" docBase="<cf_home>\wwwroot&#8221; WorkDir=&#8221;<cf_home>\runtime\conf\Catalina\localhost\tmp&#8221; ></Context>  &#8211;>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!-- &lt;Context path="/" docBase="&lt;cf_home&gt;\wwwroot" WorkDir="&lt;cf_home&gt;\runtime\conf\Catalina\localhost\tmp" &gt;&lt;/Context&gt;  --&gt;</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Assuming the installation directory is /opt/cf11, so that I can give a concrete example, uncomment that line and adapt it to the following model, which is working on my CF11 installation:</p>
 
-<p><Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"></Context></p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"&gt;&lt;/Context&gt;</span></code></pre></td></tr></table></div></figure>
+
 
 <p>The docBase is the new webroot location, which must already exist, but can be of your choice. WorkDir points to an existing location in the installation directories. The aliases are essential, so that CF can find the CFIDE and WEB-INF directories. Adjust the slant of the slashes depending on your operating system, Windows or Linux. Use absolute paths for these settings, so on a Windows server, they would likely begin with a drive letter.</p>
 
@@ -629,7 +632,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#x3a;&#x75;&#x73;&#x65;&#x72;&#x40;&#49;&#x30;&#50;&#x2e;&#x31;&#x30;&#x33;&#x2e;&#49;&#x30;&#x38;&#46;&#x33;&#x39;">&#117;&#115;&#101;&#x72;&#x40;&#x31;&#48;&#x32;&#46;&#49;&#48;&#51;&#x2e;&#x31;&#x30;&#56;&#46;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#58;&#117;&#115;&#x65;&#114;&#x40;&#49;&#x30;&#x32;&#x2e;&#49;&#48;&#x33;&#46;&#49;&#48;&#x38;&#46;&#51;&#x39;">&#117;&#x73;&#x65;&#114;&#64;&#49;&#x30;&#50;&#x2e;&#x31;&#48;&#x33;&#x2e;&#49;&#48;&#x38;&#x2e;&#51;&#57;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 

@@ -98,12 +98,15 @@
 
 <p>Open server.xml for editing, scroll down to the bottom of the file where you should find the following line commented out:</p>
 
-<!-- <Context path="/" docBase="<cf_home>\wwwroot&#8221; WorkDir=&#8221;<cf_home>\runtime\conf\Catalina\localhost\tmp&#8221; ></Context>  &#8211;>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!-- &lt;Context path="/" docBase="&lt;cf_home&gt;\wwwroot" WorkDir="&lt;cf_home&gt;\runtime\conf\Catalina\localhost\tmp" &gt;&lt;/Context&gt;  --&gt;</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Assuming the installation directory is /opt/cf11, so that I can give a concrete example, uncomment that line and adapt it to the following model, which is working on my CF11 installation:</p>
 
-<p><Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"></Context></p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"&gt;&lt;/Context&gt;</span></code></pre></td></tr></table></div></figure>
+
 
 <p>The docBase is the new webroot location, which must already exist, but can be of your choice. WorkDir points to an existing location in the installation directories. The aliases are essential, so that CF can find the CFIDE and WEB-INF directories. Adjust the slant of the slashes depending on your operating system, Windows or Linux. Use absolute paths for these settings, so on a Windows server, they would likely begin with a drive letter.</p>
 
