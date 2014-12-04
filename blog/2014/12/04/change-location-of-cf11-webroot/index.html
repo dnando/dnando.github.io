@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Documentation for CFScript - Nando @ Aria Media</title>
+  <title>Change Location of CF11 Webroot - Nando @ Aria Media</title>
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="Adam Cameron posted an excellent resource yesterday that has been lacking until now, Documentation for CFScript. A few minor areas could be enhanced &hellip;">
+  <meta name="description" content="I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript">
+  <link rel="canonical" href="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
@@ -69,7 +69,7 @@
   
   <header>
     
-      <h1 class="entry-title">Documentation for CFScript</h1>
+      <h1 class="entry-title">Change Location of CF11 Webroot</h1>
     
     
       <p class="meta">
@@ -78,7 +78,7 @@
 
 
 
-<time class='entry-date' datetime='2014-09-17T12:18:16+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>12:18 pm</span></time>
+<time class='entry-date' datetime='2014-12-04T18:12:08+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:12 pm</span></time>
         
            | <a href="#disqus_thread"
              data-disqus-identifier="http://dnando.github.io">Comments</a>
@@ -88,7 +88,34 @@
   </header>
 
 
-<div class="entry-content"><p>Adam Cameron posted an excellent resource yesterday that has been lacking until now, <a href="http://blog.adamcameron.me/2014/09/documentation-for-cfscript.html">Documentation for CFScript</a>. <del>A few minor areas could be enhanced, but it is, in all, quite comprehensive.</del> Update: He&rsquo;s moved the <a href="https://github.com/daccfml/cfscript/blob/master/cfscript.md">CFScript documentation</a> to GitHub, so we can all have a go at improving it. That said, it is still quite comprensive and very helpful indeed. Thanks Adam.</p>
+<div class="entry-content"><p>I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any files that need to be processed by CF, essentially .cfm files, and serve any other assets directly, images, css and js files, etc, I want to relocate the CF11 webroot to a directory outside of the cf installation directories. A little googling led me to a <a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">old blog post</a> that outlined the process in sufficient detail that I got it working on the first shot. Thanks Ryan! This post is both to refresh the collective knowledge cache and affirm that the technique works on CF11 as well as CF10.</p>
+
+<p>The first step is to locate the server.xml file, which you will find at</p>
+
+<p><cfInstallationDirectory>/cfusion/runtime/conf/server.xml</p>
+
+<p>Make a backup of it. If something goes wrong, you can use the backup to restore CF to a working state again. Note that CF needs to be able to locate the CFIDE and WEB-INF directories to function properly, and these are both located with in the default webroot location. So make a backup of server.xml before proceeding.</p>
+
+<p>Open server.xml for editing, scroll down to the bottom of the file where you should find the following line commented out:</p>
+
+<!-- <Context path="/" docBase="<cf_home>\wwwroot&#8221; WorkDir=&#8221;<cf_home>\runtime\conf\Catalina\localhost\tmp&#8221; ></Context>  &#8211;>
+
+
+<p>Assuming the installation directory is /opt/cf11, so that I can give a concrete example, uncomment that line and adapt it to the following model, which is working on my CF11 installation:</p>
+
+<p><Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"></Context></p>
+
+<p>The docBase is the new webroot location, which must already exist, but can be of your choice. WorkDir points to an existing location in the installation directories. The aliases are essential, so that CF can find the CFIDE and WEB-INF directories. Adjust the slant of the slashes depending on your operating system, Windows or Linux. Use absolute paths for these settings, so on a Windows server, they would likely begin with a drive letter.</p>
+
+<p>After you&rsquo;ve edited and saved server.xml, restart ColdFusion, place some cf code in the docBase directory, and browse to it via localhost:8500/ to make sure it works. Also check if you can still access the CF admin panel at localhost:8500/CFIDE/administrator/, which CF should find via the <em>aliases=</em> declaration. If both those tests succeed, you should be good to go!</p>
+
+<p>References:</p>
+
+<ol>
+<li><a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html</a></li>
+<li><a href="http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10">http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10</a></li>
+</ol>
+
 </div>
 
 
@@ -104,12 +131,12 @@
 
 
 
-<time class='entry-date' datetime='2014-09-17T12:18:16+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>12:18 pm</span></time>
+<time class='entry-date' datetime='2014-12-04T18:12:08+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:12 pm</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cheatsheet/'>cheatsheet</a>, <a class='category' href='/blog/categories/coldfusion/'>coldfusion</a>
+    <a class='category' href='/blog/categories/coldfusion/'>coldfusion</a>
   
 </span>
 
@@ -118,7 +145,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/" >Tweet</a>
   
   
   
@@ -127,10 +154,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/09/16/disabling-browser-back-button/" title="Previous Post: Disabling Browser Back Button">&laquo; Disabling Browser Back Button</a>
+        <a class="basic-alignment left" href="/blog/2014/12/02/exploring-centos-7-firewalld/" title="Previous Post: Exploring CentOS 7 firewalld">&laquo; Exploring CentOS 7 firewalld</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/09/23/check-digit-computation-swiss-pay-slips/" title="Next Post: Check Digit Computation for Swiss Pay Slips">Check Digit Computation for Swiss Pay Slips &raquo;</a>
       
     </p>
   </footer>
@@ -225,8 +250,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/';
-        var disqus_url = 'http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/';
+        var disqus_identifier = 'http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/';
+        var disqus_url = 'http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/';
         var disqus_script = 'embed.js';
       
     (function () {

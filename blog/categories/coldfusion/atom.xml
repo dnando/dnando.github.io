@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-02T22:50:44+01:00</updated>
+  <updated>2014-12-04T22:23:44+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,42 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Change Location of CF11 Webroot]]></title>
+    <link href="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/"/>
+    <updated>2014-12-04T18:12:08+01:00</updated>
+    <id>http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot</id>
+    <content type="html"><![CDATA[<p>I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any files that need to be processed by CF, essentially .cfm files, and serve any other assets directly, images, css and js files, etc, I want to relocate the CF11 webroot to a directory outside of the cf installation directories. A little googling led me to a <a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">old blog post</a> that outlined the process in sufficient detail that I got it working on the first shot. Thanks Ryan! This post is both to refresh the collective knowledge cache and affirm that the technique works on CF11 as well as CF10.</p>
+
+<p>The first step is to locate the server.xml file, which you will find at</p>
+
+<p><cfInstallationDirectory>/cfusion/runtime/conf/server.xml</p>
+
+<p>Make a backup of it. If something goes wrong, you can use the backup to restore CF to a working state again. Note that CF needs to be able to locate the CFIDE and WEB-INF directories to function properly, and these are both located with in the default webroot location. So make a backup of server.xml before proceeding.</p>
+
+<p>Open server.xml for editing, scroll down to the bottom of the file where you should find the following line commented out:</p>
+
+<!-- <Context path="/" docBase="<cf_home>\wwwroot&#8221; WorkDir=&#8221;<cf_home>\runtime\conf\Catalina\localhost\tmp&#8221; ></Context>  &#8211;>
+
+
+<p>Assuming the installation directory is /opt/cf11, so that I can give a concrete example, uncomment that line and adapt it to the following model, which is working on my CF11 installation:</p>
+
+<p><Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"></Context></p>
+
+<p>The docBase is the new webroot location, which must already exist, but can be of your choice. WorkDir points to an existing location in the installation directories. The aliases are essential, so that CF can find the CFIDE and WEB-INF directories. Adjust the slant of the slashes depending on your operating system, Windows or Linux. Use absolute paths for these settings, so on a Windows server, they would likely begin with a drive letter.</p>
+
+<p>After you&rsquo;ve edited and saved server.xml, restart ColdFusion, place some cf code in the docBase directory, and browse to it via localhost:8500/ to make sure it works. Also check if you can still access the CF admin panel at localhost:8500/CFIDE/administrator/, which CF should find via the <em>aliases=</em> declaration. If both those tests succeed, you should be good to go!</p>
+
+<p>References:</p>
+
+<ol>
+<li><a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html</a></li>
+<li><a href="http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10">http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10</a></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[SSH Tunneling - ColdFusion Lockdown Technique]]></title>
@@ -90,7 +126,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x75;&#115;&#x65;&#114;&#x40;&#49;&#48;&#x32;&#x2e;&#x31;&#48;&#x33;&#46;&#49;&#48;&#56;&#x2e;&#x33;&#57;">&#117;&#x73;&#101;&#x72;&#64;&#49;&#48;&#x32;&#x2e;&#x31;&#48;&#x33;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#117;&#x73;&#101;&#114;&#64;&#49;&#48;&#50;&#46;&#49;&#x30;&#x33;&#46;&#49;&#48;&#56;&#46;&#x33;&#x39;">&#117;&#x73;&#101;&#114;&#x40;&#x31;&#x30;&#50;&#x2e;&#x31;&#48;&#51;&#x2e;&#x31;&#48;&#x38;&#46;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 

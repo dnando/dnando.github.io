@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I&rsquo;ve been thinking about how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice &hellip;">
+  <meta name="description" content="I&rsquo;ve been wondering how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -88,11 +88,11 @@
   </header>
 
 
-<div class="entry-content"><p>I&rsquo;ve been thinking about how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of another developer I met at CFCamp this year, I&rsquo;ve decided to use VMWare to set up a CentOS server on a virtual machine here in the office.</p>
+<div class="entry-content"><p>I&rsquo;ve been wondering how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of Nolan Erck, whom I met at CFCamp this year, I&rsquo;ve decided to use VMWare to set up a CentOS server on a virtual machine here in the office. This approach allows me to have multiple test environments, and I can easily move them to another machine if needed simply by copying the disk image.</p>
 
-<p>For ease of access, what I needed to set up was a static ip for each VM I need. It&rsquo;s not hard to do once you figure it out, but getting all the pieces in place took some hours of digging, trial and error. This post, while specific to VMWare and CentOS 7, is intended to help both my future self and anyone else set up networking quickly and easily.  You may need to adapt as necessary for your specific environment.</p>
+<p>For ease of access, each VM needs a static ip on the local network. It&rsquo;s not hard to do once you figure it out, but getting all the pieces in place took some hours of digging, trial and error. This post, while specific to VMWare and CentOS 7, is intended to help both my future self and anyone else set up networking quickly and easily in such a scenario.  Adapt as necessary for your specific environment.</p>
 
-<p>The obvious first step was to download the ISO image from a <a href="http://www.centos.org/download/mirrors/">CentOS mirror site</a>. I grabbed the minimal install as a nearest approximation to the production environment, and created a VM from it using VMWare on an unused Mac mini we had laying around the office.</p>
+<p>The obvious first step was to download the ISO image from a <a href="http://www.centos.org/download/mirrors/">CentOS mirror site</a>. I grabbed the minimal install as a nearest approximation to a production environment, and created a VM from it using VMWare on an unused Mac mini we had laying around the office.</p>
 
 <p>On the minimal install, networking isn&rsquo;t enabled by default. So before I could proceed, I had to figure how to enable networking, and get it working via a static IP. Here&rsquo;s a summary of what finally worked for me.</p>
 
@@ -104,7 +104,7 @@
 
 <p><img src="/images/nmcli.gif" alt="nmcli dev status" /></p>
 
-<p>As you can see, mine was named eno16777736</p>
+<p>As you can see, mine was named eno16777736, which is not the RedHat default you may find in many examples online.</p>
 
 <p>2) cd to the directory /etc/sysconfig/network-scripts and run ls to display its files</p>
 
@@ -158,7 +158,7 @@
 
 <p>Once I had these configuration changes in place, I could access the CentOS instance via SSH and SFTP from my dev machine.</p>
 
-<p>By the way, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
+<p>By the way, from my reading, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
 
 <p>Hope this helps somebody &hellip;</p>
 
@@ -170,7 +170,7 @@
 </span><span class='line'>systemctl stop firewalld</span></code></pre></td></tr></table></div></figure>
 
 
-<p>or better, figure out how to configure it properly to allow access via a browser.</p>
+<p>or better, figure out how to configure it properly to allow access via a browser, which I cover in the next article, <a href="http://dnando.github.io/blog/2014/12/02/exploring-centos-7-firewalld/">Exploring CentOS 7 firewalld</a></p>
 </div>
 
 
@@ -233,6 +233,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/12/04/change-location-of-cf11-webroot/">Change Location of CF11 Webroot</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/12/02/exploring-centos-7-firewalld/">Exploring CentOS 7 Firewalld</a>
       </li>
     
@@ -246,10 +250,6 @@
     
       <li class="post">
         <a href="/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/">How to Rollback Yum Updates on CentOS</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/10/17/is-this-acceptable/">Is This Acceptable?</a>
       </li>
     
   </ul>

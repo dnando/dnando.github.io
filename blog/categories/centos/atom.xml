@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Centos | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/centos/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-02T22:50:44+01:00</updated>
+  <updated>2014-12-04T22:23:44+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -190,18 +190,22 @@ root@192.168.1.16's password:
 firewall-cmd --reload
 </code></pre>
 
-<p>Adding the lo interface to the trusted zone with no services had no affect at all on tunnelled access to localhost. So it looks like the firewall doesn&rsquo;t interfere there. So to clean up, I will remove the lo interface from the trusted zone and call it a day.</p>
+<p>Adding the &ldquo;lo&rdquo; interface to the trusted zone with no services had no affect at all on tunnelled access to localhost. So it looks like the firewall doesn&rsquo;t interfere there. So to clean up, I will remove the &ldquo;lo&rdquo; interface from the trusted zone and call it a day.</p>
 
 <pre><code>firewall-cmd --zone=trusted --remove-interface=lo --permanent
 firewall-cmd --reload
 </code></pre>
 
-<p>PS - for some reason, perhaps it is a bug, lo was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. I&rsquo;ll look into filing a bug report later this evening &hellip;</p>
+<p>PS - For some reason, &ldquo;lo&rdquo; was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. Perhaps this is the intended behavior, to prevent lockout during a current session, but I&rsquo;ll look into filing a bug report later this evening &hellip; which I have now filed <a href="https://bugs.centos.org/view.php?id=7957">here</a>.</p>
 
-<p>References:<br>
-1 <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a><br>
-2 <a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a><br>
-3 <a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></p>
+<p>References:</p>
+
+<ol>
+<li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a></li>
+<li><a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a></li>
+<li><a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></li>
+</ol>
+
 ]]></content>
   </entry>
   
@@ -210,11 +214,11 @@ firewall-cmd --reload
     <link href="http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/"/>
     <updated>2014-12-01T15:55:49+01:00</updated>
     <id>http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware</id>
-    <content type="html"><![CDATA[<p>I&rsquo;ve been thinking about how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of another developer I met at CFCamp this year, I&rsquo;ve decided to use VMWare to set up a CentOS server on a virtual machine here in the office.</p>
+    <content type="html"><![CDATA[<p>I&rsquo;ve been wondering how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of Nolan Erck, whom I met at CFCamp this year, I&rsquo;ve decided to use VMWare to set up a CentOS server on a virtual machine here in the office. This approach allows me to have multiple test environments, and I can easily move them to another machine if needed simply by copying the disk image.</p>
 
-<p>For ease of access, what I needed to set up was a static ip for each VM I need. It&rsquo;s not hard to do once you figure it out, but getting all the pieces in place took some hours of digging, trial and error. This post, while specific to VMWare and CentOS 7, is intended to help both my future self and anyone else set up networking quickly and easily.  You may need to adapt as necessary for your specific environment.</p>
+<p>For ease of access, each VM needs a static ip on the local network. It&rsquo;s not hard to do once you figure it out, but getting all the pieces in place took some hours of digging, trial and error. This post, while specific to VMWare and CentOS 7, is intended to help both my future self and anyone else set up networking quickly and easily in such a scenario.  Adapt as necessary for your specific environment.</p>
 
-<p>The obvious first step was to download the ISO image from a <a href="http://www.centos.org/download/mirrors/">CentOS mirror site</a>. I grabbed the minimal install as a nearest approximation to the production environment, and created a VM from it using VMWare on an unused Mac mini we had laying around the office.</p>
+<p>The obvious first step was to download the ISO image from a <a href="http://www.centos.org/download/mirrors/">CentOS mirror site</a>. I grabbed the minimal install as a nearest approximation to a production environment, and created a VM from it using VMWare on an unused Mac mini we had laying around the office.</p>
 
 <p>On the minimal install, networking isn&rsquo;t enabled by default. So before I could proceed, I had to figure how to enable networking, and get it working via a static IP. Here&rsquo;s a summary of what finally worked for me.</p>
 
@@ -225,7 +229,7 @@ firewall-cmd --reload
 
 <p><img src="/images/nmcli.gif" alt="nmcli dev status" /></p>
 
-<p>As you can see, mine was named eno16777736</p>
+<p>As you can see, mine was named eno16777736, which is not the RedHat default you may find in many examples online.</p>
 
 <p>2) cd to the directory /etc/sysconfig/network-scripts and run ls to display its files</p>
 
@@ -268,7 +272,7 @@ I found that adding the correct gateway ip was essential. NM_CONTROLLED specifie
 
 <p>Once I had these configuration changes in place, I could access the CentOS instance via SSH and SFTP from my dev machine.</p>
 
-<p>By the way, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
+<p>By the way, from my reading, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
 
 <p>Hope this helps somebody &hellip;</p>
 
@@ -278,7 +282,42 @@ I found that adding the correct gateway ip was essential. NM_CONTROLLED specifie
 systemctl stop firewalld
 </code></pre>
 
-<p>or better, figure out how to configure it properly to allow access via a browser.</p>
+<p>or better, figure out how to configure it properly to allow access via a browser, which I cover in the next article, <a href="http://dnando.github.io/blog/2014/12/02/exploring-centos-7-firewalld/">Exploring CentOS 7 firewalld</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to Rollback Yum Updates on CentOS]]></title>
+    <link href="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/"/>
+    <updated>2014-10-24T16:26:50+02:00</updated>
+    <id>http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos</id>
+    <content type="html"><![CDATA[<p>1) Open the yum config file:</p>
+
+<pre><code>vi /etc/yum.conf
+</code></pre>
+
+<p>and ensure the following line is included in the config settings</p>
+
+<pre><code>tsflags=repackage
+</code></pre>
+
+<p>2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
+
+<pre><code>vi /etc/rpm/macros
+</code></pre>
+
+<p>And ensure the following line is included:</p>
+
+<pre><code>%_repackage_all_erasures 1
+</code></pre>
+
+<p>Now the rollback flag can be used on the rpm command as shown in the examples below to roll back updates to any point in the past:</p>
+
+<pre><code>rpm -Uvh –rollback ’21:00′
+rpm -Uvh –rollback ’3 hours ago’
+rpm -Uvh –rollback ‘august 13′
+rpm -Uvh –rollback ‘yesterday’
+</code></pre>
 ]]></content>
   </entry>
   

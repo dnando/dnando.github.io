@@ -307,7 +307,7 @@
 </span><span class='line'>firewall-cmd --reload</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Adding the lo interface to the trusted zone with no services had no affect at all on tunnelled access to localhost. So it looks like the firewall doesn&rsquo;t interfere there. So to clean up, I will remove the lo interface from the trusted zone and call it a day.</p>
+<p>Adding the &ldquo;lo&rdquo; interface to the trusted zone with no services had no affect at all on tunnelled access to localhost. So it looks like the firewall doesn&rsquo;t interfere there. So to clean up, I will remove the &ldquo;lo&rdquo; interface from the trusted zone and call it a day.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -315,12 +315,16 @@
 </span><span class='line'>firewall-cmd --reload</span></code></pre></td></tr></table></div></figure>
 
 
-<p>PS - for some reason, perhaps it is a bug, lo was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. I&rsquo;ll look into filing a bug report later this evening &hellip;</p>
+<p>PS - For some reason, &ldquo;lo&rdquo; was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. Perhaps this is the intended behavior, to prevent lockout during a current session, but I&rsquo;ll look into filing a bug report later this evening &hellip; which I have now filed <a href="https://bugs.centos.org/view.php?id=7957">here</a>.</p>
 
-<p>References:<br>
-1 <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a><br>
-2 <a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a><br>
-3 <a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></p>
+<p>References:</p>
+
+<ol>
+<li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a></li>
+<li><a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a></li>
+<li><a href="http://fedoraproject.org/wiki/FirewallD">http://fedoraproject.org/wiki/FirewallD</a></li>
+</ol>
+
 </div>
 
 
@@ -362,6 +366,8 @@
         <a class="basic-alignment left" href="/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/" title="Previous Post: Setting up a local testing server on VMWare">&laquo; Setting up a local testing server on VMWare</a>
       
       
+        <a class="basic-alignment right" href="/blog/2014/12/04/change-location-of-cf11-webroot/" title="Next Post: Change Location of CF11 Webroot">Change Location of CF11 Webroot &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -381,6 +387,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/12/04/change-location-of-cf11-webroot/">Change Location of CF11 Webroot</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/12/02/exploring-centos-7-firewalld/">Exploring CentOS 7 Firewalld</a>
       </li>
     
@@ -394,10 +404,6 @@
     
       <li class="post">
         <a href="/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/">How to Rollback Yum Updates on CentOS</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/10/17/is-this-acceptable/">Is This Acceptable?</a>
       </li>
     
   </ul>
