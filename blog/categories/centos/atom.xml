@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Centos | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/centos/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-04T22:23:44+01:00</updated>
+  <updated>2014-12-04T22:56:03+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -196,7 +196,7 @@ firewall-cmd --reload
 firewall-cmd --reload
 </code></pre>
 
-<p>PS - For some reason, &ldquo;lo&rdquo; was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. Perhaps this is the intended behavior, to prevent lockout during a current session, but I&rsquo;ll look into filing a bug report later this evening &hellip; which I have now filed <a href="https://bugs.centos.org/view.php?id=7957">here</a>.</p>
+<p>PS - For some reason, &ldquo;lo&rdquo; was not removed from the trusted zone according to firewall-cmd &ndash;zone=trusted &ndash;list-all unless and until I rebooted the server. The strange thing was that the config file was correctly altered, but somehow, firewalld didn&rsquo;t seem to pick up the change. Perhaps this is the intended behavior, to prevent lockout during a current session, but I&rsquo;ll look into filing a bug report later this evening &hellip; ( which I have now filed <a href="https://bugs.centos.org/view.php?id=7957">here</a> ).</p>
 
 <p>References:</p>
 
@@ -274,7 +274,7 @@ I found that adding the correct gateway ip was essential. NM_CONTROLLED specifie
 
 <p>By the way, from my reading, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
 
-<p>Hope this helps somebody &hellip;</p>
+<p>Hope this helps somebody.</p>
 
 <p>PS - If you can access the instance via SSH or SFTP, but cannot from a browser, you may need to either disable and stop firewalld:</p>
 
@@ -318,6 +318,8 @@ rpm -Uvh –rollback ’3 hours ago’
 rpm -Uvh –rollback ‘august 13′
 rpm -Uvh –rollback ‘yesterday’
 </code></pre>
+
+<p>Simple.</p>
 ]]></content>
   </entry>
   

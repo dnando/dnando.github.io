@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-04T22:23:44+01:00</updated>
+  <updated>2014-12-04T22:56:03+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -14,11 +14,11 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Change Location of CF11 Webroot]]></title>
+    <title type="html"><![CDATA[Change Location of ColdFusion Webroot]]></title>
     <link href="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/"/>
     <updated>2014-12-04T18:12:08+01:00</updated>
     <id>http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot</id>
-    <content type="html"><![CDATA[<p>I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any files that need to be processed by CF, essentially .cfm files, and serve any other assets directly, images, css and js files, etc, I want to relocate the CF11 webroot to a directory outside of the cf installation directories. A little googling led me to a <a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">old blog post</a> that outlined the process in sufficient detail that I got it working on the first shot. Thanks Ryan! This post is both to refresh the collective knowledge cache and affirm that the technique works on CF11 as well as CF10.</p>
+    <content type="html"><![CDATA[<p>I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any files that need to be processed by CF, essentially .cfm files, and serve any other assets directly, images, css and js files, etc, I want to relocate the ColdFusion webroot to a directory outside of the cf installation directories. A little googling led me to a <a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">old blog post</a> that outlined the process in sufficient detail that I got it working on the first shot. Thanks Ryan! This post is both to refresh the collective knowledge cache and affirm that the technique works on CF11 as well as CF10.</p>
 
 <p>The first step is to locate the server.xml file, which you will find at</p>
 
@@ -126,7 +126,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#117;&#x73;&#101;&#114;&#64;&#49;&#48;&#50;&#46;&#49;&#x30;&#x33;&#46;&#49;&#48;&#56;&#46;&#x33;&#x39;">&#117;&#x73;&#101;&#114;&#x40;&#x31;&#x30;&#50;&#x2e;&#x31;&#48;&#51;&#x2e;&#x31;&#48;&#x38;&#46;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x75;&#115;&#101;&#x72;&#64;&#49;&#48;&#x32;&#x2e;&#x31;&#x30;&#x33;&#46;&#49;&#48;&#x38;&#46;&#x33;&#x39;">&#x75;&#x73;&#101;&#x72;&#x40;&#49;&#x30;&#x32;&#x2e;&#49;&#48;&#51;&#x2e;&#49;&#48;&#56;&#46;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -136,6 +136,8 @@
 <p>What I usually do is leave Firefox configured in this way and reserve it only for SSH tunnelling sessions. And again, once a browser is configured with these proxy settings, you can securely browse any server as localhost by SSH&#8217;ing into it with the -D port setting.</p>
 
 <p>Now say you have Fusion Reactor installed and want to ensure access is also restricted. Just leave your firewall configured to leave the ports Fusion Reactor uses closed, and access it, securely, via your SSH tunnel!</p>
+
+<p>Thanks to <a href="https://www.linkedin.com/in/davidjstockton">David Stockton</a>, who until recently worked with the fusion reactor team, for sharing this tip with me.</p>
 ]]></content>
   </entry>
   
@@ -171,7 +173,7 @@
     <link href="http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/"/>
     <updated>2014-09-17T12:18:16+02:00</updated>
     <id>http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript</id>
-    <content type="html"><![CDATA[<p>Adam Cameron posted an excellent resource yesterday that has been lacking until now, <a href="http://blog.adamcameron.me/2014/09/documentation-for-cfscript.html">Documentation for CFScript</a>. <del>A few minor areas could be enhanced, but it is, in all, quite comprehensive.</del> Update: He&rsquo;s moved the <a href="https://github.com/daccfml/cfscript/blob/master/cfscript.md">CFScript documentation</a> to GitHub, so we can all have a go at improving it. That said, it is still quite comprensive and very helpful indeed. Thanks Adam.</p>
+    <content type="html"><![CDATA[<p>Adam Cameron posted an excellent resource yesterday that has been lacking until now, <a href="http://blog.adamcameron.me/2014/09/documentation-for-cfscript.html">Documentation for CFScript</a>. <del>A few minor areas could be enhanced, but it is, in all, quite comprehensive.</del> Update: He&rsquo;s moved the <a href="https://github.com/daccfml/cfscript/blob/master/cfscript.md">CFScript documentation</a> to GitHub, so we can all have a go at improving it. That said, it is still quite comprensive and very helpful indeed. Thanks very much Adam.</p>
 ]]></content>
   </entry>
   
