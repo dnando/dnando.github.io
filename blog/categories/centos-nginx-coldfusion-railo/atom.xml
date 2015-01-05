@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Centos Nginx Coldfusion Railo | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/centos-nginx-coldfusion-railo/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-05T22:02:13+01:00</updated>
+  <updated>2015-01-05T22:21:51+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -32,7 +32,7 @@ systemctl enable nginx.service
 
 <p>It then took me a bit of time for me to grok how the configuration setup works. However, compared to Apache&rsquo;s massive conf file, the fact that I could easily see the entire main configuration in a single screen immediately put me at ease. Basically, Nginx has a main config file, located at /etc/nginx/nginx.conf on my CentOS install, which can be extended with includes. Before I started messing with it, the main conf file looked something like this:</p>
 
-<pre><code class="text /etc/nginx/nginx.conf">user  nginx;
+<pre><code class="">user  nginx;
 worker_processes  1;
 error_log  /var/log/nginx/error.log warn;
 pid        /var/run/nginx.pid;
@@ -57,7 +57,7 @@ http {
 
 <p>&hellip; and the default site conf file, which is picked up by the include at the bottom of the main conf file above, looked like this:</p>
 
-<pre><code class="text  /etc/nginx/conf.d/default.conf">server {
+<pre><code>server {
     listen       80;
     server_name  localhost;
 
