@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Centos | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/centos/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2014-12-04T22:59:16+01:00</updated>
+  <updated>2015-01-05T22:02:13+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -31,7 +31,7 @@
   &lt;port protocol="tcp" port="80"/&gt;
 &lt;/service&gt;
 </code>
-So to open port 80 via the tcp protocol to server http requests, as an example, first a zone must be associated with the network device that will handle the traffic, and then the http service added to the zone. As an admin, you can define your own custom services, or customize existing services. Other techniques allow you to open a port directly on a zone, or define more complex rules for access.</p>
+So to open port 80 via the tcp protocol to serve http requests, as an example, first a zone must be associated with the network device that will handle the traffic, and then the http service added to the zone. As an admin, you can define your own custom services, or customize existing services. Other techniques allow you to open a port directly on a zone, or define more complex rules for access.</p>
 
 <p>To configure the firewall and check its status, a command line client is provided, firewall-cmd. It can be used to make both permanent and temporary config changes. The configuration for firewalld is stored in XML files in /usr/lib/firewalld/ ( the default settings, not to be modified! ) and /etc/firewalld/ ( for user configured settings, which have preference over those in the default location ). These files can be edited, backed up, or used as templates for other server installations.</p>
 

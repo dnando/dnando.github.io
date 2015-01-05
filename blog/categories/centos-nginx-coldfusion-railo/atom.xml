@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Centos Nginx Coldfusion Railo | Nando @ Aria Media]]></title>
+  <link href="http://dnando.github.io/blog/categories/centos-nginx-coldfusion-railo/atom.xml" rel="self"/>
+  <link href="http://dnando.github.io/"/>
+  <updated>2015-01-05T22:02:13+01:00</updated>
+  <id>http://dnando.github.io/</id>
+  <author>
+    <name><![CDATA[Nando @ Aria Media]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using Nginx With ColdFusion or Railo]]></title>
+    <link href="http://dnando.github.io/blog/2015/01/05/advantages-of-nginx/"/>
+    <updated>2015-01-05T20:26:47+01:00</updated>
+    <id>http://dnando.github.io/blog/2015/01/05/advantages-of-nginx</id>
+    <content type="html"><![CDATA[<p>Over the past few weeks I&rsquo;ve installed and experimented with the Nginx webserver. At this point it seems to me there are some significant advantages to using Nginx over Apache, advantages that aren&rsquo;t often highlighted, specifically when using either ColdFusion or Railo as your application server.</p>
+
+<p>First up, it was very easy to install, start, and enable so that it always starts at boot time. These are the commands I used for CentOS 7, adapt as necessary for your operating system:</p>
+
+<pre><code>rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+yum install nginx
+systemctl start nginx.service
+systemctl enable nginx.service
+</code></pre>
+
+<p>I could then browse to the server ip and see the Nginx welcome page.</p>
+
+<p>It then took me a bit of time for me to grok how the configuration setup works. However, compared to Apache&rsquo;s massive conf file, the fact that I could easily see the entire main configuration in a single screen immediately put me at ease. Basically, Nginx has a main config file, located at /etc/nginx/nginx.conf on my CentOS install, which can be extended with includes. Before I started messing with it, the main conf file looked something like this:</p>
+
+<pre><code class="text /etc/nginx/nginx.conf">user  nginx;
+worker_processes  1;
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+</code></pre>
+
+<p>&hellip; and the default site conf file, which is picked up by the include at the bottom of the main conf file above, looked like this:</p>
+
+<pre><code class="text  /etc/nginx/conf.d/default.conf">server {
+    listen       80;
+    server_name  localhost;
+
+    #charset koi8-r;
+    #access_log  /var/log/nginx/log/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    #location ~ \.php$ {
+    #    root           html;
+    #    fastcgi_pass   127.0.0.1:9000;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
+</code></pre>
+
+<p>Note the asterik syntax in the include at the bottom of the main conf file:
+<code>include /etc/nginx/conf.d/*.conf;</code>.
+Effectively, any .conf file you drop in that directory becomes part of the configuration ( specifically of the http{} block ).</p>
+
+<p>Note also that there are semicolons at the end of every setting. If you see errors when reloading conf files using the command <code>nginx -s reload</code>, look for missing semicolons.</p>
+
+<p>In a nutshell, Nginx&rsquo;s configuration is a simple nested structure, like this:</p>
+
+<pre><code>nginx global settings
+
+events {
+
+}
+
+http {
+
+    server {
+        listen 80;   # port to listen on
+        server_name domain.com *.domain.com domain.net *.domain.net;
+        root /var/www/domain;  #absolute path to root directory of website files
+
+        location /downloads {
+            # specific settings for a file system location relative to the root
+            # which in this example would be /var/www/domain/downloads
+        }
+
+        location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+            # specific settings for files ending in suffixes .ico, .css, .js, gif, etc
+            # defined using a regex, under the root directory defined in the server block
+        }
+
+        location / {
+            # general settings for all files under/var/www/domain in this example
+            # in this example only for those files that do not match the more specific location directives above
+        }
+
+        location = / {
+            # this directive is triggered when only the domain is specified in the url
+            # in this example for the url http://example.com
+        }
+
+    }
+
+    server {
+        # configuration for another virtual server, 
+        # defined by a unique server_name or listen directive
+    }
+
+}
+</code></pre>
+
+<p>Each server block defines a virtual server, similar to a virtual host in Apache. The <code>server_name</code> directive takes a space delimited list of domains, which can include an asterisk as a wildcard character, replacing the first or last part of a name, to specify for instance any subdomain or TLD. Note that a directive like <code>server_name example.com *.example.com</code> can be also written with the shorthand expression <code>server_name .example.com</code></p>
+
+<p>Nginx selects and processes locations within a server block using the most specific match, with regexes taking precedence, followed by the longest matching prefix. So in the above example, Nginx would process a file named myImage.jpg using the second location directive, a file in the downloads directory named myInfo.pdf using the first location directive, a file named index.htm ( or index.cfm ) using the third location directive, and a request to the root of the domain, say to <a href="http://domain.com/,">http://domain.com/,</a> with the last location directive, where the addition of the &ldquo;=&rdquo; sign specifies an exact match.</p>
+
+<p>See the <a href="http://nginx.com/resources/admin-guide/web-server/">Nginx Web Server configuration guide</a> for more details.</p>
+
+<p>To use Nginx with either ColdFusion or Railo, the <code>proxy_pass</code> directive is used, as in the following example:</p>
+
+<pre><code>server {
+    listen 80;   # port to listen on
+    server_name domain.com *.domain.com domain.net *.domain.net;
+    root /var/www/domain;  #absolute path to root directory of website files
+
+    location /downloads {
+        # specific settings for a file system location relative to the root
+        # which in this example would be /var/www/domain/downloads
+    }
+
+    location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+        # specific settings for files ending in suffixes .ico, .css, .js, gif, etc
+        # defined using a regex, under the root defined in the server block
+    }
+
+    location / {
+        proxy_pass  http://127.0.0.1:8500/domain/;
+    }
+
+}
+</code></pre>
+
+<p>In the above example, Nginx passes the request to ColdFusion, running on the same server, via port 8500. It gets the response back from CF, immediately terminates the connection to CF so it is available to handle the next request, and then serves the static files using the settings in the second location directive, along with the rendered html from ColdFusion to the user that made the request. Note that this configuration assumes that you&rsquo;ve <a href="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/">changed the location of the CF webroot</a>.</p>
+
+<p>The first advantage here is that there is no connector needed between ACF or Railo and the webserver. We don&rsquo;t need to install a connector as part of the initial server setup, and we avoid any bugs or configuration problems that might crop up with these connectors. We also avoid the necessity to sometimes manually reinstall connectors when updating ACF/Railo. All that is needed is to add the proxy_pass directive and reload the configuration using <code>nginx -s reload</code>.</p>
+
+<p>The second advantage is that as long as you have a firewall in place that only allows public access via ports 80, ( plus maybe port 443, and whatever port you are using for ssh access), your ACF or Railo server is secured, simply because without a connector between the webserver and your application server, there is no direct access via port 80 or port 443 to your application server. In our example above, anyone browsing to domain.com/CFIDE/administrator/ will get a 404 error. The CFIDE directory isn&rsquo;t in the root specified. Port 8500 is closed, so ip:8500/CFIDE/administrator/ won&rsquo;t return a response. The ACF admin directory is not contained in the default site Nginx root, so ip:/CFIDE/administrator/, for instance, will simply return a 404.</p>
+
+<p>How do you gain access to the admin areas of ColdFusion or Railo on a remote server if ports 8500 or port 8888 are closed? Simple. Use <a href="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/">SSH Tunneling</a>.</p>
+
+<p>In the event that the CFIDE, WEB-INF, or railo-context directories are exposed through a particular configuration setup in a particular server block, there is a simple way to handle this using location directives that can be set globally or included in each server block necessary, for example:</p>
+
+<pre><code>location ~ /WEB-INF/  { access_log off; log_not_found off; deny all; }
+location ~ /META-INF/  { access_log off; log_not_found off; deny all; }
+</code></pre>
+
+<p>or</p>
+
+<pre><code>location ~ /WEB-INF/  { return 404; }
+location ~ /META-INF/  { return 404; }
+</code></pre>
+
+<p>or</p>
+
+<pre><code>location ~ /CFIDE/ {
+    deny all;
+    allow 127.0.0.1;
+    }
+</code></pre>
+
+<p>Very few developers spend significant time configuring servers. Hence, it often may happen that the servers we maintain for our clients are not as secure as they could be. The simplicity with which we can secure a ColdFusion server behind Nginx seems a definite advantage.</p>
+
+<p>However, the biggest advantage, to me, seems to be the ease of configuring strong SSL https security on Nginx. Because Nginx uses a reverse proxy setup, Nginx can be configured to handle the https connection with the requestor in isolation. What this implies is that SSL certificates do not need to be imported into the Java keystore. Nor do your SSL certs need to be reimported every time the JVM is updated. Of course, if you require a very secure setup, in a load balanced configuration to multiple application servers, you might need to ensure an SSL connection between Nginx and ColdFusion / Railo. But if, for instance, Nginx and ColdFusion / Railo are located on the same server, or you trust the internal network, this would not be necessary.</p>
+
+<p>Following this <a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html">excellent guide</a> by Remy van Elst, I was able to relatively easily setup SSL for a web application to an A+ level as graded by <a href="https://www.ssllabs.com/ssltest/index.html">Qualys SSL Labs</a>. Here&rsquo;s what the SSL portion of my Nginx configuration looks like:</p>
+
+<pre><code>server {
+    server_name  domain.com;
+    listen  443 ssl;
+
+    ssl_certificate     /etc/ssl/certs/domain_com.crt;
+    ssl_certificate_key /etc/ssl/certs/domain_com.key;
+
+    keepalive_timeout   70;
+    ssl_ciphers         'AES256+EECDH:AES256+EDH:!aNULL';
+
+    ssl_prefer_server_ciphers   on;
+    ssl_dhparam         /etc/ssl/certs/dhparam.pem;
+
+    ssl_session_cache shared:SSL:10m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+
+    add_header Strict-Transport-Security max-age=345600;
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+
+}
+</code></pre>
+
+<p>Note that I&rsquo;ve reduced the max-age value of the add_header Strict-Transport-Security directive to four days from what Remy has recommended, over uncertainty how this will play out when certificates are updated. I understand that this directive will force user agents to use https for the duration of the value set. Note that it will be updated into the future every time the header is sent to the browser.</p>
+
+<p>There are 3 aspects of this configuration that require a bit of extra work on your part, besides simply copying, pasting and adjusting the above example. One is that if your SSL certificate provider has also issued intermediate and root certificates, you will need to concatenate these into one file. Your domain certificate must come first, followed by the intermediate certificates, and finally the root certificate at the end. The easiest way to do this is to create a blank text file, and copy and paste the contents of the certificates into it. Save it and upload it to the chosen location on your server, along with the private key. Point to the location of the concatenated cert in the Nginx config file using the ssl_certificate directive. Point to the location of the private key using the ssl_certificate_key directive.</p>
+
+<p>On Linux, you should secure the key by running chmod 600 on the ssl directory that contains the certificate files and chmod 400 on the private key file itself.</p>
+
+<p>To generate the file referred to in the ssl_dhparam directive in the above example, it is necessary to cd to your ssl certs directory and run the following command, as explained in <a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html">Remy&rsquo;s guide</a> in the Forward Secrecy &amp; Diffie Hellman Ephemeral Parameters section:</p>
+
+<pre><code>cd /etc/ssl/certs
+openssl dhparam -out dhparam.pem 4096
+</code></pre>
+
+<p>You will be warned  that &ldquo;this will take awhile&rdquo;. Remy doesn&rsquo;t mention this, but be prepared for it to take a relatively long time, perhaps an hour or so.</p>
+
+<p>Once you have ssl configured and working, you probably want to redirect any traffic trying to access the site via insecure http to secure https. Here&rsquo;s how to configure that:</p>
+
+<pre><code>server {
+    server_name  domain.com;
+    listen  80;
+    return  301 https://$server_name$request_uri;
+}
+</code></pre>
+
+<p>I already mentioned what I think is the biggest advantage, the ease with which one can configure SSL. However, there is one other advantage I&rsquo;d like to mention that may trump that, the ability to easily configure Nginx for both load balancing and hot swapping of application servers. Here&rsquo;s how to do that using the upstream directive:</p>
+
+<pre><code>upstream    cf_servers {
+    #ip_hash;                   ## uncomment ip_hash for load balancing         
+    server          127.0.0.1:8500;
+    #server         192.168.0.20:8500;  ## add more application servers for load balancing
+    keepalive       32;         ## number of upstream connections to keep alive
+}
+
+upstream    railo_servers {
+    #ip_hash;                   ## uncomment ip_hash for load balancing         
+    server          127.0.0.1:8888;
+    #server         192.168.0.30:8888;  ## add more application servers for load balancing
+    keepalive       32;         ## number of upstream connections to keep alive
+}
+</code></pre>
+
+<p>Then instead of using the localhost IP address in your proxy_pass directive, use the upstream server name instead, like so:</p>
+
+<pre><code>location / {
+    proxy_pass  http://cf_servers/domain/;
+}
+</code></pre>
+
+<p>If you get caught in a bind and can&rsquo;t use ColdFusion for some reason, then hot swapping an application over to Railo is as simply as changing the above to this:</p>
+
+<pre><code>location / {
+    proxy_pass  http://railo_servers/domain/;
+}
+</code></pre>
+
+<p>Or if you find one of your web properties suddenly inundated with traffic, using the upstream directive, your webserver is already set up for load balancing. You&rsquo;d simply need to clone a few servers, boot them up, and add them to the upsteam directive. The ip_hash directive is a way to enable sticky sessions, to ensure a visitor is always routed to the same server.</p>
+
+<p>A few more configuration options and details should be mentioned.</p>
+
+<p>One is that it is also possible, and perhaps preferable, to configure the path to a website&rsquo;s files within Tomcat&rsquo;s server.xml file, rather than specifying it in the Nginx proxy_pass directive.</p>
+
+<pre><code>&lt;Host name="domain.com" appBase="webapps"&gt;
+    &lt;Context path="" docBase="/var/sites/domain.com" /&gt;
+    &lt;Alias&gt;www.domain.com&lt;/Alias&gt;
+&lt;/Host&gt;
+</code></pre>
+
+<p>With the path to the website&rsquo;s files configured in server.xml, the path to the website&rsquo;s files is not appended to the proxy_pass directive, so it would look like this:</p>
+
+<pre><code>server {
+    listen 80;
+    server_name .domain.com;
+    root /var/www/domain; 
+
+    location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+        # specific settings for files ending in suffixes .ico, .css, .js, gif, etc
+    }
+
+    location / {
+        proxy_pass  http://railo_servers/;
+    }
+
+}
+</code></pre>
+
+<p>For this to work, Nginx needs to pass the host name to the app server used, either Railo or ColdFusion. Your application may also require this information. Here is a suggested set of directives to accomplish this:</p>
+
+<pre><code>    proxy_http_version  1.1;
+    proxy_set_header    Connection "";
+    proxy_set_header    Host                $host;
+    proxy_set_header    X-Forwarded-Host    $host;
+    proxy_set_header    X-Forwarded-Server  $host;
+    proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;     ## CGI.REMOTE_ADDR
+    proxy_set_header    X-Forwarded-Proto   $scheme;                        ## CGI.SERVER_PORT_SECURE
+    proxy_set_header    X-Real-IP           $remote_addr;
+    expires             epoch;
+</code></pre>
+
+<p>&hellip; which could be placed in a separate conf file and included with each proxy_pass directive, like so:</p>
+
+<pre><code>location / {
+    proxy_pass  http://railo_servers/;
+    include     /var/inc/nginx-cf-proxy-settings.conf;
+}
+</code></pre>
+
+<p>If you are using Railo, adding a host configuration block to server.xml will cause Railo to create a WEB-INF directory under the docBase path specified along with an additional context. You&rsquo;d then want to block public access to that directory in some way as I&rsquo;ve explained above.</p>
+
+<p>You can also use a regex to ensure you only pass CFML templates to Railo or ColdFusion, as the following example demonstrates:</p>
+
+<pre><code>location ~ \.(cfm|cfml|cfc)$ {
+    proxy_pass  http://railo_servers/;
+    include     /var/inc/nginx-cf-proxy-settings.conf;
+}
+</code></pre>
+
+<p>You can put whatever file extensions you&rsquo;d like Railo / ACF to process in the pipe delimited list within the regex, so <code>~ \.(cfm|cfml|cfc)$</code> or <code>~ \.(cfm|cfml|htm|html)$</code> could be used, for example.</p>
+
+<p>A couple of small gotcha&rsquo;s I ran into setting the path to the website&rsquo;s files in the proxy_pass directive. One is that directories with dots in them can confuse mappings. The solution I used was to remove the dots from directory names and use hyphens instead ( my-domain-com ). I also had trouble with redirects in FW/1, since they rely on the value of cgi.script_name. The simple solution was to change the baseURL parameter of FW/1&rsquo;s config to <code>baseURL = ''</code> from the default <code>baseURL = 'useCgiScriptName'</code>. Problems such as these might be avoided by using the server.xml configuration option.</p>
+
+<p>I have 2 production servers running Nginx at the moment, one ACF and one Railo server, and so far it seems to be working very well. I&rsquo;m particularly happy with the choice because Nginx has a very small memory footprint, which leaves more memory available for the JVM, which indeed yet another advantage.</p>
+
+<p>References:</p>
+
+<ol>
+<li><a href="http://nginx.com/resources/admin-guide/web-server/">Nginx Web Server configuration guide</a></li>
+<li><a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html">Remy van Elst Strong SSL Security on Nginx</a></li>
+<li><a href="https://gist.github.com/igal-getrailo/6981111">Igal&rsquo;s Nginx config example</a></li>
+<li><a href="http://www.amazon.com/Mastering-Nginx-Dimitri-Aivaliotis/dp/1849517444">Mastering NGINX by Dimitri Aivaliotis</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>
