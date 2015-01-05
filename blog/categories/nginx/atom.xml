@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Centos Nginx Coldfusion Railo | Nando @ Aria Media]]></title>
-  <link href="http://dnando.github.io/blog/categories/centos-nginx-coldfusion-railo/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Nginx | Nando @ Aria Media]]></title>
+  <link href="http://dnando.github.io/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-05T22:21:51+01:00</updated>
+  <updated>2015-01-05T22:23:51+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
