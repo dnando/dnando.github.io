@@ -95,7 +95,7 @@
 
 <h2>Hidden Turd in ColdFusion 11</h2>
 
-<p>I&rsquo;ve recently moved a production application from CF9 to CF11. I didn&rsquo;t catch all the compatibility issues in my testing, so users have been reporting minor bugs and I&rsquo;ve been fixing them and the uploading them to the CF11 server as necessary. Yesterday, late in the afternoon, I uploaded a template with a very minor change to it and got a cannot find template error. Actually it was a cannot find component error. After repeated attempt to replace the file, and careful double checking (it was in the right place, I could find and read the file via the command line) to try and work around it, I changed another template. Now CF couldn&rsquo;t find that one either. Huh???</p>
+<p>I&rsquo;ve recently moved a production application from CF9 to CF11. I didn&rsquo;t catch all the compatibility issues in my testing, so users have been reporting minor bugs and I&rsquo;ve been fixing them and the uploading them to the CF11 server as necessary. Yesterday, late in the afternoon, I uploaded a template with a very minor change to it and got a cannot find template error. Actually it was a cannot find component error. After repeated attempts to replace the file, and careful double checking (it was in the right place, I could find and read the file via the command line) to try and work around it, I changed another template. Now CF couldn&rsquo;t find that one either. Huh???</p>
 
 <p>The bigger problem was that it broke the application - it was no longer possible to login. #$%&amp;@!!!!</p>
 
@@ -1309,7 +1309,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#117;&#115;&#101;&#114;&#64;&#x31;&#x30;&#x32;&#x2e;&#49;&#48;&#51;&#x2e;&#49;&#x30;&#x38;&#46;&#x33;&#57;">&#117;&#115;&#101;&#x72;&#x40;&#49;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#46;&#x31;&#48;&#56;&#x2e;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x75;&#x73;&#101;&#114;&#64;&#x31;&#x30;&#x32;&#x2e;&#x31;&#48;&#x33;&#46;&#x31;&#48;&#x38;&#46;&#51;&#x39;">&#x75;&#x73;&#x65;&#114;&#64;&#49;&#48;&#50;&#x2e;&#49;&#48;&#51;&#46;&#x31;&#48;&#56;&#46;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
