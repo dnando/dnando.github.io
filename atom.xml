@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-08T12:19:45+01:00</updated>
+  <updated>2015-01-08T12:23:38+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -24,9 +24,9 @@
 
 <p>I&rsquo;ve recently moved a production application from CF9 to CF11. I didn&rsquo;t catch all the compatibility issues in my testing, so users have been reporting minor bugs and I&rsquo;ve been fixing them and the uploading them to the CF11 server as necessary. Yesterday, late in the afternoon, I uploaded a template with a very minor change to it and got a cannot find template error. Actually it was a cannot find component error. After repeated attempt to replace the file, and careful double checking (it was in the right place, I could find and read the file via the command line) to try and work around it, I changed another template. Now CF couldn&rsquo;t find that one either. Huh???</p>
 
-<p>Nothing I did for the next 8 or 9 hours helped. The template was obviously in the right location. It simply didn&rsquo;t make any sense. I ran through permissions issues, hard disk failure issues, considered cloning the server, wondered how the fact that I had just installed SSL certs might have somehow caused CF to not find a template I had just changed, bizarre as that might seem, thought about updating the JVM or removing the certs from the java keystore, looked at permission issues again, checked and rechecked which user CF was running under, the group it was assigned to, considered whether the server had been hacked somehow, planned how I was going to roll back the entire application to CF9 and shift the data that had changed, thought about switching to Railo and telling my clients they simply have to bear with me while I work through some compatibility issues. I had to get the server back up by this morning. My clients run their businesses with it. I tried yelling at the server through my monitor. &ldquo;Bloody well just look, open your eyes, dammit!! It&rsquo;s right there in front of your nose!!!&rdquo; Didn&rsquo;t help.</p>
+<p>The bigger problem was that it broke the application - it was no longer possible to login. #$%&amp;@!!!!</p>
 
-<p>The bigger problem was that it broke the application - it was no longer possible to login - and as I said, that my clients depend on it to run their businesses. I needed it up again by this morning. #$%&amp;@!!!!</p>
+<p>Nothing I did for the next 6 hours helped. The template was obviously in the right location. It simply didn&rsquo;t make any sense. I ran through permissions issues, hard disk failure issues, considered cloning the server, wondered how the fact that I had just installed SSL certs might have somehow caused CF to not find a template I had just changed, bizarre as that might seem, thought about updating the JVM or removing the certs from the java keystore, looked at permission issues again, checked and rechecked which user CF was running under, the group it was assigned to, considered whether the server had been hacked somehow, planned how I was going to roll back the entire application to CF9 and shift the data that had changed, thought about switching to Railo and telling my clients they simply have to bear with me while I work through some compatibility issues. I had to get the server back up by this morning. My clients run their businesses with it. I tried yelling at the server through my monitor. &ldquo;Bloody well just look, open your eyes, dammit!! It&rsquo;s right there in front of your nose!!!&rdquo; Didn&rsquo;t help.</p>
 
 <p>In the end, I got lucky with my Google foo and found someone else who has run into this issue. Turns out the problem was an option in ColdFusion administrator. The &ldquo;Save class files&rdquo; option was checked by default on install. I didn&rsquo;t change any settings in the Caching section on install, assuming that the defaults would be &ldquo;safe&rdquo;, they would not cache anything in a way that would make the server &ldquo;un-updateable&rdquo;. I was wrong. The defaults can easily break your application, and leave you no clue at all as to why.</p>
 
@@ -1121,7 +1121,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#x69;&#x6c;&#116;&#x6f;&#58;&#117;&#x73;&#101;&#114;&#x40;&#x31;&#x30;&#x32;&#x2e;&#49;&#48;&#51;&#46;&#x31;&#48;&#x38;&#x2e;&#51;&#x39;">&#x75;&#x73;&#101;&#x72;&#x40;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#51;&#46;&#49;&#48;&#56;&#x2e;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#117;&#115;&#101;&#114;&#64;&#x31;&#x30;&#x32;&#x2e;&#49;&#48;&#51;&#x2e;&#49;&#x30;&#x38;&#46;&#x33;&#57;">&#117;&#115;&#101;&#x72;&#x40;&#49;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#46;&#x31;&#48;&#56;&#x2e;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
