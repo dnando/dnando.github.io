@@ -3,6 +3,14 @@
   
   
   <url>
+    <loc>http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/</loc>
+    
+    <lastmod>2015-01-08T17:36:40+01:00</lastmod>
+    
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11/</loc>
     
     <lastmod>2015-01-08T10:05:36+01:00</lastmod>
@@ -117,14 +125,14 @@
   
   <url>
     <loc>http://dnando.github.io/blog/archives/</loc>
-    <lastmod>2015-01-08T14:29:18+01:00</lastmod>
+    <lastmod>2015-01-08T18:17:03+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dnando.github.io/</loc>
-    <lastmod>2015-01-08T14:29:18+01:00</lastmod>
+    <lastmod>2015-01-08T18:17:03+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>

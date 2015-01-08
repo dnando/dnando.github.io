@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Change Location of ColdFusion Webroot - Nando @ Aria Media</title>
+  <title>Getting Railo I/O Functions to Work in Utf-8 - Nando @ Aria Media</title>
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any &hellip;">
+  <meta name="description" content="I ran into an issue moving an application from CF9 to Railo 4.2 with file names that use extended utf-8 characters, such as Banner_Küste.jpg for &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot">
+  <link rel="canonical" href="http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
@@ -69,7 +69,7 @@
   
   <header>
     
-      <h1 class="entry-title">Change Location of ColdFusion Webroot</h1>
+      <h1 class="entry-title">Getting Railo I/O Functions to Work in Utf-8</h1>
     
     
       <p class="meta">
@@ -78,7 +78,7 @@
 
 
 
-<time class='entry-date' datetime='2014-12-04T18:12:08+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:12 pm</span></time>
+<time class='entry-date' datetime='2015-01-08T17:36:40+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:36 pm</span></time>
         
            | <a href="#disqus_thread"
              data-disqus-identifier="http://dnando.github.io">Comments</a>
@@ -88,37 +88,21 @@
   </header>
 
 
-<div class="entry-content"><p>I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any files that need to be processed by CF, essentially .cfm files, and serve any other assets directly, images, css and js files, etc, I want to relocate the ColdFusion webroot to a directory outside of the cf installation directories. A little googling led me to a <a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">old blog post</a> that outlined the process in sufficient detail that I got it working on the first shot. Thanks Ryan! This post is both to refresh the collective knowledge cache and affirm that the technique works on CF11 as well as CF10.</p>
+<div class="entry-content"><p>I ran into an issue moving an application from CF9 to Railo 4.2 with file names that use extended utf-8 characters, such as Banner_Küste.jpg for example. The extended characters weren&rsquo;t being correctly interpreted, rendered as ��. Hence in any file operation, Railo couldn&rsquo;t find them, and the application would error out. Railo was also unable to render these images because they were not being found on the file system.</p>
 
-<p>The first step is to locate the server.xml file, which you will find at</p>
+<p>Since I&rsquo;m in Switzerland, and all my clients use extended characters, in French, German and Italian, I needed a solution. Telling them not to use extended characters in their file names wasn&rsquo;t palatable. It seemed particularly odd to me that Railo didn&rsquo;t play well here, since its primary developers are European.</p>
 
-<p><cfInstallationDirectory>/cfusion/runtime/conf/server.xml</p>
+<p>Adjusting the Charset settings panel to ensure UTF-8 was used didn&rsquo;t help, but I found a simple solution in a <a href="https://issues.jboss.org/browse/RAILO-3090">bug report that Michel Gallant filed</a> that did the trick for me.</p>
 
-<p>Make a backup of it. If something goes wrong, you can use the backup to restore CF to a working state again. Note that CF needs to be able to locate the CFIDE and WEB-INF directories to function properly, and these are both located with in the default webroot location. So make a backup of server.xml before proceeding.</p>
-
-<p>Open server.xml for editing, scroll down to the bottom of the file where you should find the following line commented out:</p>
+<p>As per Michel comment in the bug report, I added the following line to the end of the tomcat setenv.sh script, which you will find at <railo install path>/tomcat/bin/setenv.sh :</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!-- &lt;Context path="/" docBase="&lt;cf_home&gt;\wwwroot" WorkDir="&lt;cf_home&gt;\runtime\conf\Catalina\localhost\tmp" &gt;&lt;/Context&gt;  --&gt;</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>export LC_CTYPE="en_US.UTF-8"</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Assuming the installation directory is /opt/cf11, so that I can give a concrete example, uncomment that line and adapt it to the following model, which is working on my CF11 installation:</p>
+<p>and then I restarted Railo to pick up the change. I was delighted it worked. Thanks very much Michel!</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"&gt;&lt;/Context&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The docBase is the new webroot location, which must already exist, but can be of your choice. WorkDir points to an existing location in the installation directories. The aliases are essential, so that CF can find the CFIDE and WEB-INF directories. Adjust the slant of the slashes depending on your operating system, Windows or Linux. Use absolute paths for these settings, so on a Windows server, they would likely begin with a drive letter.</p>
-
-<p>After you&rsquo;ve edited and saved server.xml, restart ColdFusion, place some cf code in the docBase directory, and browse to it via localhost:8500/ to make sure it works. Also check if you can still access the CF admin panel at localhost:8500/CFIDE/administrator/, which CF should find via the <em>aliases=</em> declaration. If both those tests succeed, you should be good to go!</p>
-
-<p>References:</p>
-
-<ol>
-<li><a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html</a></li>
-<li><a href="http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10">http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10</a></li>
-</ol>
-
+<p>This server&rsquo;s OS is Linux CentOS 7, and the above should work for any other Linux install as well. I&rsquo;m not sure where this might be set on a Windows server, but it is the same file used to adjust the Tomcat/Java memory settings ( -Xms512m -Xmx1024m -XX:MaxPermSize=256m ).</p>
 </div>
 
 
@@ -134,12 +118,12 @@
 
 
 
-<time class='entry-date' datetime='2014-12-04T18:12:08+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:12 pm</span></time>
+<time class='entry-date' datetime='2015-01-08T17:36:40+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:36 pm</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/coldfusion/'>coldfusion</a>
+    <a class='category' href='/blog/categories/railo/'>railo</a>
   
 </span>
 
@@ -148,7 +132,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/" >Tweet</a>
   
   
   
@@ -157,10 +141,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/12/02/exploring-centos-7-firewalld/" title="Previous Post: Exploring CentOS 7 firewalld">&laquo; Exploring CentOS 7 firewalld</a>
+        <a class="basic-alignment left" href="/blog/2015/01/08/cannot-find-template-cf11/" title="Previous Post: Cannot Find Template CF11">&laquo; Cannot Find Template CF11</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2015/01/05/advantages-of-nginx/" title="Next Post: Using Nginx with ColdFusion or Railo">Using Nginx with ColdFusion or Railo &raquo;</a>
       
     </p>
   </footer>
@@ -255,8 +237,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/';
-        var disqus_url = 'http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/';
+        var disqus_identifier = 'http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/';
+        var disqus_url = 'http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/';
         var disqus_script = 'embed.js';
       
     (function () {

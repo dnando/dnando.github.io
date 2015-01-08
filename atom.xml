@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-08T14:29:18+01:00</updated>
+  <updated>2015-01-08T18:17:03+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,29 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Railo I/O Functions to Work in Utf-8]]></title>
+    <link href="http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/"/>
+    <updated>2015-01-08T17:36:40+01:00</updated>
+    <id>http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8</id>
+    <content type="html"><![CDATA[<p>I ran into an issue moving an application from CF9 to Railo 4.2 with file names that use extended utf-8 characters, such as Banner_Küste.jpg for example. The extended characters weren&rsquo;t being correctly interpreted, rendered as ��. Hence in any file operation, Railo couldn&rsquo;t find them, and the application would error out. Railo was also unable to render these images because they were not being found on the file system.</p>
+
+<p>Since I&rsquo;m in Switzerland, and all my clients use extended characters, in French, German and Italian, I needed a solution. Telling them not to use extended characters in their file names wasn&rsquo;t palatable. It seemed particularly odd to me that Railo didn&rsquo;t play well here, since its primary developers are European.</p>
+
+<p>Adjusting the Charset settings panel to ensure UTF-8 was used didn&rsquo;t help, but I found a simple solution in a <a href="https://issues.jboss.org/browse/RAILO-3090">bug report that Michel Gallant filed</a> that did the trick for me.</p>
+
+<p>As per Michel comment in the bug report, I added the following line to the end of the tomcat setenv.sh script, which you will find at <railo install path>/tomcat/bin/setenv.sh :</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>export LC_CTYPE="en_US.UTF-8"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and then I restarted Railo to pick up the change. I was delighted it worked. Thanks very much Michel!</p>
+
+<p>This server&rsquo;s OS is Linux CentOS 7, and the above should work for any other Linux install as well. I&rsquo;m not sure where this might be set on a Windows server, but it is the same file used to adjust the Tomcat/Java memory settings ( -Xms512m -Xmx1024m -XX:MaxPermSize=256m ).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Cannot Find Template CF11]]></title>
@@ -1121,7 +1144,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x75;&#x73;&#101;&#114;&#64;&#x31;&#x30;&#x32;&#x2e;&#x31;&#48;&#x33;&#46;&#x31;&#48;&#x38;&#46;&#51;&#x39;">&#x75;&#x73;&#x65;&#114;&#64;&#49;&#48;&#50;&#x2e;&#49;&#48;&#51;&#46;&#x31;&#48;&#56;&#46;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#117;&#115;&#101;&#x72;&#64;&#x31;&#x30;&#50;&#46;&#x31;&#x30;&#51;&#46;&#49;&#x30;&#x38;&#46;&#x33;&#x39;">&#117;&#115;&#x65;&#114;&#x40;&#x31;&#48;&#50;&#x2e;&#x31;&#48;&#x33;&#x2e;&#49;&#x30;&#56;&#46;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
