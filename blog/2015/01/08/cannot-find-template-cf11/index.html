@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>How to Rollback Yum Updates on CentOS - Nando @ Aria Media</title>
+  <title>Cannot Find Template CF11 - Nando @ Aria Media</title>
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="1) Open the yum config file: 1
-vi /etc/yum.conf and ensure the following line is included in the config settings 1
-tsflags=repackage 2) Open the rpm &hellip;">
+  <meta name="description" content="Charlie Arehart has a now famous series of talks he presents titled &ldquo;Hidden Gems in ColdFusion xx&rdquo;. I&rsquo;m not sure what the opposite &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos">
+  <link rel="canonical" href="http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
@@ -71,7 +69,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
   
   <header>
     
-      <h1 class="entry-title">How to Rollback Yum Updates on CentOS</h1>
+      <h1 class="entry-title">Cannot Find Template CF11</h1>
     
     
       <p class="meta">
@@ -80,7 +78,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
 
 
 
-<time class='entry-date' datetime='2014-10-24T16:26:50+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:26 pm</span></time>
+<time class='entry-date' datetime='2015-01-08T10:05:36+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:05 am</span></time>
         
            | <a href="#disqus_thread"
              data-disqus-identifier="http://dnando.github.io">Comments</a>
@@ -90,43 +88,29 @@ tsflags=repackage 2) Open the rpm &hellip;">
   </header>
 
 
-<div class="entry-content"><p>1) Open the yum config file:</p>
+<div class="entry-content"><p>Charlie Arehart has a now famous series of talks he presents titled &ldquo;Hidden Gems in ColdFusion xx&rdquo;. I&rsquo;m not sure what the opposite of a &ldquo;gem&rdquo; is. For now, a turd will do. If someone has a better suggestion, let me know.</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/yum.conf</span></code></pre></td></tr></table></div></figure>
+<h2>Hidden Turd in ColdFusion 11</h2>
 
+<p>I&rsquo;ve recently moved a production application from CF9 to CF11. I didn&rsquo;t catch all the compatibility issues in my testing, so users have been reporting minor bugs and I&rsquo;ve been fixing them and the uploading them to the CF11 server as necessary. Yesterday, late in the afternoon, I uploaded a template with a very minor change to it and got a cannot find template error. Huh?</p>
 
-<p>and ensure the following line is included in the config settings</p>
+<p>Nothing I did for the next 8 or 9 hours helped. The template was obviously in the right location. It simply didn&rsquo;t make any sense. I ran through permissions issues, hard disk failure issues, considered cloning the server, wondered how the fact that I had just installed SSL certs might have somehow caused CF to not find a template I had just changed, bizarre as that might seem, thought about updating the JVM or removing the certs from the java keystore, looked at permission issues again, checked and rechecked which user CF was running under, considered whether the server had been hacked somehow, planned how I was going to roll back the entire application to CF9 and shift the data that had changed, thought about switching to Railo and telling my clients they simply have to bear with me while I work through some compatibility issues. I had to get the server back up by this morning. My clients run their businesses with it. I tried yelling at the server through my monitor. &ldquo;Bloody well just look, open your eyes, dammit!! It&rsquo;s right there in front of your nose!!!&rdquo; Didn&rsquo;t help.</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>tsflags=repackage</span></code></pre></td></tr></table></div></figure>
+<p>The bigger problem was that it broke the application - it was no longer possible to login - and that my clients depend on it to run their businesses. I needed it up again by this morning. #$%&amp;@!!!!</p>
 
+<p>In the end, I got lucky with my Google foo and found someone else who has run into this issue. Turns out the problem was a checked option in ColdFusion administrator. The &ldquo;Save class files&rdquo; option was checked by default on install. I didn&rsquo;t change any settings in the Caching section, assuming, as usual, that the defaults would be not to cache in a way that would make the server &ldquo;un-updateable&rdquo;. I needed to uncheck it, restart CF, and then the app worked again.</p>
 
-<p>2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
+<p>The text next to the checkbox says this:</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/rpm/macros</span></code></pre></td></tr></table></div></figure>
+<p><em>When you select this option, the class files generated by ColdFusion are saved to disk for reuse after the server restarts. Adobe recommends this for production systems. During development, Adobe recommends that you do not select this option.</em></p>
 
+<p>It should say:</p>
 
-<p>And ensure the following line is included:</p>
+<p><em>When you select this option, any changes you make to your files may break your application. The error messages you will get will give you no clue at all what the underlying cause is - this checkbox enabling the poorly designed functionality behind it.</em></p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>%_repackage_all_erasures 1</span></code></pre></td></tr></table></div></figure>
+<p>I expect options for production systems to make CF more performant, stable or secure. Options that potentially take production applications down with no warning, rhyme or reason are neither expected nor welcome. Given that I now am fully aware of the consequences of checking this box, I would recommend leaving it always unchecked. Otherwise, every time I need to make a minor change to a production server I have to remember to uncheck it, reboot the server, make my change, check it again, and perhaps reboot the server again. How does that improve the experience of my users? And if I somehow forget this arcane procedure, whatever it actually is, and take the app down again with a minor change, it&rsquo;s even worse!</p>
 
-
-<p>Now the rollback flag can be used on the rpm command as shown in the examples below to roll back updates to any point in the past:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rpm -Uvh –rollback ’21:00′
-</span><span class='line'>rpm -Uvh –rollback ’3 hours ago’
-</span><span class='line'>rpm -Uvh –rollback ‘august 13′
-</span><span class='line'>rpm -Uvh –rollback ‘yesterday’</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Simple.</p>
+<p>Someone will invariably blame me. I should have known this - and remembered it. Well, maybe this blog post will help both me and perhaps others in this regard. That said, I think the fact that this option causes CF to break production applications is a <a href="https://bugbase.adobe.com/index.cfm?event=bug&amp;id=3917793">bug.</a> Feel free to vote for it if you agree.</p>
 </div>
 
 
@@ -142,12 +126,12 @@ tsflags=repackage 2) Open the rpm &hellip;">
 
 
 
-<time class='entry-date' datetime='2014-10-24T16:26:50+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:26 pm</span></time>
+<time class='entry-date' datetime='2015-01-08T10:05:36+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:05 am</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/centos/'>centos</a>
+    <a class='category' href='/blog/categories/coldfusion/'>coldfusion</a>
   
 </span>
 
@@ -156,7 +140,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11/" >Tweet</a>
   
   
   
@@ -165,10 +149,8 @@ tsflags=repackage 2) Open the rpm &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/10/17/is-this-acceptable/" title="Previous Post: Is This Acceptable?">&laquo; Is This Acceptable?</a>
+        <a class="basic-alignment left" href="/blog/2015/01/05/advantages-of-nginx/" title="Previous Post: Using Nginx with ColdFusion or Railo">&laquo; Using Nginx with ColdFusion or Railo</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/" title="Next Post: SSH Tunneling - ColdFusion Lockdown Technique">SSH Tunneling - ColdFusion Lockdown Technique &raquo;</a>
       
     </p>
   </footer>
@@ -263,8 +245,8 @@ tsflags=repackage 2) Open the rpm &hellip;">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/';
-        var disqus_url = 'http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/';
+        var disqus_identifier = 'http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11/';
+        var disqus_url = 'http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11/';
         var disqus_script = 'embed.js';
       
     (function () {
