@@ -3,6 +3,14 @@
   
   
   <url>
+    <loc>http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/</loc>
+    
+    <lastmod>2015-01-09T11:50:19+01:00</lastmod>
+    
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/</loc>
     
     <lastmod>2015-01-08T17:36:40+01:00</lastmod>
@@ -125,14 +133,14 @@
   
   <url>
     <loc>http://dnando.github.io/blog/archives/</loc>
-    <lastmod>2015-01-08T18:19:48+01:00</lastmod>
+    <lastmod>2015-01-09T18:28:40+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dnando.github.io/</loc>
-    <lastmod>2015-01-08T18:19:48+01:00</lastmod>
+    <lastmod>2015-01-09T18:28:40+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>

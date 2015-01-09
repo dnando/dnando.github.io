@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Nginx | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-08T18:19:48+01:00</updated>
+  <updated>2015-01-09T18:28:40+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,155 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Testing Nginx Config Directives]]></title>
+    <link href="http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/"/>
+    <updated>2015-01-09T11:50:19+01:00</updated>
+    <id>http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives</id>
+    <content type="html"><![CDATA[<p>After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
+
+<p>Here&rsquo;s the configuration I wanted to test:</p>
+
+<pre><code>upstream    cf_servers {
+    server          127.0.0.1:8500;
+    keepalive       32; ## number of upstream connections to keep alive
+}
+
+server {
+    server_name     domain.com;
+    listen          80;
+    root            /var/sites/domain-com;
+
+    location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+        add_header Pragma public;
+        add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+        gzip  on;
+        gzip_http_version 1.0;
+        gzip_vary on;
+        gzip_comp_level 6;
+        gzip_proxied any;
+        gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+        gzip_buffers 16 8k;
+        # Disable gzip for certain browsers.
+        gzip_disable ~@~\MSIE [1-6].(?!.*SV1)~@~];
+        expires modified +90d;
+    }
+
+    location / {
+        proxy_pass  http://cf_servers/domain.com/;
+        proxy_redirect '' /;
+        proxy_http_version  1.1;
+        proxy_set_header    Connection "";
+        proxy_set_header    Host                $host;
+        proxy_set_header    X-Forwarded-Host    $host;
+        proxy_set_header    X-Forwarded-Server  $host;
+        proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;     ## CGI.REMOTE_ADDR
+        proxy_set_header    X-Forwarded-Proto   $scheme;                        ## CGI.SERVER_PORT_SECURE
+        proxy_set_header    X-Real-IP           $remote_addr;
+        expires             epoch;
+    }
+}
+</code></pre>
+
+<p>First off, I had a doubt regarding how Nginx was selecting which location directive to use for each file requested from the documentation I&rsquo;ve read. What I wanted to ensure is that Nginx was serving the static files, and proxying only the CFML files.</p>
+
+<p>A deeper issue here is whether or not the proxy_pass directive contains a URI. If it does, you can&rsquo;t use a regex to filter a location for CFML files only. A few examples will explain this better:</p>
+
+<p>This configuration contains a URI in the proxy_pass directive, namely <strong>/domain.com/</strong>. You cannot use a regex in the location directive to filter the request, so in my case, the location directive simply had to point to the root ( recursively in the way Nginx works, so essentially this directive will process any file under the root ).
+<code>
+location / {
+    proxy_pass  http://cf_servers/domain.com/;
+}
+</code>
+This configuration also contains a URI in the proxy_pass directive, the trailing slash. Again, no regex in the location is possible.</p>
+
+<pre><code>location / {
+    proxy_pass  http://cf_servers/;
+}
+</code></pre>
+
+<p>This config does not have a URI component in the proxy_pass directive, no trailing slash and no subdirectory are present here. In this case, we CAN apply a regex filter to pass only those files we want to our application server.</p>
+
+<pre><code>location ~ \.(cfm|cfc|cfml)$ {
+    proxy_pass  http://cf_servers;
+}
+</code></pre>
+
+<p>The tradeoff here is that if we use a filter to ensure only CFML files are pass to our app server, then we need to additionally configure each virtual host in Tomcat&rsquo;s server.xml ( assuming multiple hosts per server ) so that Tomcat can locate the files.</p>
+
+<p>If you&rsquo;d rather configure each server only in Nginx, as I did with my CF11 install, then another approach might be to use a regex to filter all your static files. Hence:</p>
+
+<pre><code>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+    ...
+}
+</code></pre>
+
+<p>With the essential background information out of the way, the question that arose was this. Is Nginx actually serving the static files, as I hoped, or are they all being passed to ColdFusion? The documention I found here and there seemed contradictory.</p>
+
+<p>Here&rsquo;s one way to test this using curl on the command line to fetch the response headers, with the output I got using the above settings:</p>
+
+<pre><code>$ curl -X GET -I http://domain.com/index.cfm
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 08 Jan 2015 21:48:26 GMT
+Content-Type: text/html;charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Set-Cookie: CFID=20071; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+Set-Cookie: CFTOKEN=8ff3e8f3dde25bcd-F33324A1-AEBC-7E8D-FEEEB610DD6412E7; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+Cache-Control: no-cache
+Pragma: no-cache
+Expires: Thu, 01 Jan 1970 00:00:01 GMT
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+
+$ curl -X GET -I http://domain.com/images/some_logo.gif
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 08 Jan 2015 21:50:12 GMT
+Content-Type: image/gif
+Content-Length: 10220
+Last-Modified: Thu, 11 Dec 2014 17:18:36 GMT
+Connection: keep-alive
+ETag: "5489d1ec-27ec"
+Expires: Wed, 11 Mar 2015 17:18:36 GMT
+Cache-Control: max-age=5340504
+Pragma: public
+Cache-Control: public, must-revalidate, proxy-revalidate
+Accept-Ranges: bytes
+</code></pre>
+
+<p>See the difference? The image is being cached on the browser and the headers are being set as per the static file location block, while index.cfm isn&rsquo;t being cached. The <code>expires epoch;</code> directive tells the browser to set the expires date to 01 Jan 1970, a date in the past means don&rsquo;t cache this, while the <code>expires modified +90d;</code> tells the browser to set the expires date 90 days from the Last-Modified date.</p>
+
+<p>Another way to see these headers is via Developer Tools in Chrome ( or a comparable tool in any other modern browser ). Open a Dev Tools window while browsing the web page you&rsquo;d like to check, refresh the page, go to the Network tab, and click on any file to see the headers. This approach will give you a better overview of how your Nginx settings are serving and caching each file involved in an http request.</p>
+
+<p>After some thought and study, I decided to change my initial approach to caching static content to one that will help guarentee any content that I modify is served fresh from the server rather that stale from the cache. Here&rsquo;s what I came up with, for now, for a particular business application that I am still developing:</p>
+
+<pre><code>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+    add_header Pragma public;
+    add_header Cache-Control "public, must-revalidate, proxy-revalidate, max-age=86400";
+    etag on;
+    gzip  off;
+    expires +1d;
+}
+</code></pre>
+
+<p>The users who access this site every day will only need to re-download static content once a day, an additional second or two once a day won&rsquo;t hurt them. In the version of Nginx I&rsquo;m currently using, enabling gzip disables etags. For now, I&rsquo;d rather have etag enabled, so I&rsquo;m disabling gzip for static content, but leaving it enabled for the dynamically generated content that is returned from the proxied app server.</p>
+
+<p>Resources for further reading:</p>
+
+<ol>
+<li><a href="https://www.mnot.net/cache_docs/">https://www.mnot.net/cache_docs/</a></li>
+<li><a href="http://en.wikipedia.org/wiki/HTTP_ETag">http://en.wikipedia.org/wiki/HTTP_ETag</a></li>
+<li><a href="http://stackoverflow.com/questions/499966/etag-vs-header-expires">http://stackoverflow.com/questions/499966/etag-vs-header-expires</a></li>
+<li><a href="http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers">http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers</a></li>
+<li><a href="https://www.owasp.org/index.php/List_of_useful_HTTP_headers">https://www.owasp.org/index.php/List_of_useful_HTTP_headers</a></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using Nginx With ColdFusion or Railo]]></title>

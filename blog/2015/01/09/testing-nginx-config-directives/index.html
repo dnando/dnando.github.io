@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Testing Nginx Config Directives - Nando @ Aria Media</title>
+  <meta name="author" content="Nando @ Aria Media">
+
+  
+  <meta name="description" content="After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='//fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nando @ Aria Media</a></h1>
+  
+    <h2>( learning Clojure ColdFusion Railo Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dnando.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Testing Nginx Config Directives</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-01-09T11:50:19+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:50 am</span></time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
+
+<p>Here&rsquo;s the configuration I wanted to test:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream    cf_servers {
+</span><span class='line'>  server          127.0.0.1:8500;
+</span><span class='line'>  keepalive       32; ## number of upstream connections to keep alive
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>  server_name     domain.com;
+</span><span class='line'>  listen          80;
+</span><span class='line'>  root            /var/sites/domain-com;
+</span><span class='line'>
+</span><span class='line'>  location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>      add_header Pragma public;
+</span><span class='line'>      add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+</span><span class='line'>      gzip  on;
+</span><span class='line'>      gzip_http_version 1.0;
+</span><span class='line'>      gzip_vary on;
+</span><span class='line'>      gzip_comp_level 6;
+</span><span class='line'>      gzip_proxied any;
+</span><span class='line'>      gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+</span><span class='line'>      gzip_buffers 16 8k;
+</span><span class='line'>      # Disable gzip for certain browsers.
+</span><span class='line'>      gzip_disable ~@~\MSIE [1-6].(?!.*SV1)~@~];
+</span><span class='line'>      expires modified +90d;
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  location / {
+</span><span class='line'>      proxy_pass  http://cf_servers/domain.com/;
+</span><span class='line'>      proxy_redirect '' /;
+</span><span class='line'>      proxy_http_version  1.1;
+</span><span class='line'>      proxy_set_header    Connection "";
+</span><span class='line'>      proxy_set_header    Host                $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-Host    $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-Server  $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;     ## CGI.REMOTE_ADDR
+</span><span class='line'>      proxy_set_header    X-Forwarded-Proto   $scheme;                        ## CGI.SERVER_PORT_SECURE
+</span><span class='line'>      proxy_set_header    X-Real-IP           $remote_addr;
+</span><span class='line'>      expires             epoch;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First off, I had a doubt regarding how Nginx was selecting which location directive to use for each file requested from the documentation I&rsquo;ve read. What I wanted to ensure is that Nginx was serving the static files, and proxying only the CFML files.</p>
+
+<p>A deeper issue here is whether or not the proxy_pass directive contains a URI. If it does, you can&rsquo;t use a regex to filter a location for CFML files only. A few examples will explain this better:</p>
+
+<p>This configuration contains a URI in the proxy_pass directive, namely <strong>/domain.com/</strong>. You cannot use a regex in the location directive to filter the request, so in my case, the location directive simply had to point to the root ( recursively in the way Nginx works, so essentially this directive will process any file under the root ).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  proxy_pass  http://cf_servers/domain.com/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This configuration also contains a URI in the proxy_pass directive, the trailing slash. Again, no regex in the location is possible.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  proxy_pass  http://cf_servers/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This config does not have a URI component in the proxy_pass directive, no trailing slash and no subdirectory are present here. In this case, we CAN apply a regex filter to pass only those files we want to our application server.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ \.(cfm|cfc|cfml)$ {
+</span><span class='line'>  proxy_pass  http://cf_servers;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The tradeoff here is that if we use a filter to ensure only CFML files are pass to our app server, then we need to additionally configure each virtual host in Tomcat&rsquo;s server.xml ( assuming multiple hosts per server ) so that Tomcat can locate the files.</p>
+
+<p>If you&rsquo;d rather configure each server only in Nginx, as I did with my CF11 install, then another approach might be to use a regex to filter all your static files. Hence:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>  ...
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With the essential background information out of the way, the question that arose was this. Is Nginx actually serving the static files, as I hoped, or are they all being passed to ColdFusion? The documention I found here and there seemed contradictory.</p>
+
+<p>Here&rsquo;s one way to test this using curl on the command line to fetch the response headers, with the output I got using the above settings:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ curl -X GET -I http://domain.com/index.cfm
+</span><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Server: nginx
+</span><span class='line'>Date: Thu, 08 Jan 2015 21:48:26 GMT
+</span><span class='line'>Content-Type: text/html;charset=UTF-8
+</span><span class='line'>Transfer-Encoding: chunked
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>Set-Cookie: CFID=20071; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+</span><span class='line'>Set-Cookie: CFTOKEN=8ff3e8f3dde25bcd-F33324A1-AEBC-7E8D-FEEEB610DD6412E7; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+</span><span class='line'>Cache-Control: no-cache
+</span><span class='line'>Pragma: no-cache
+</span><span class='line'>Expires: Thu, 01 Jan 1970 00:00:01 GMT
+</span><span class='line'>X-Frame-Options: SAMEORIGIN
+</span><span class='line'>X-Content-Type-Options: nosniff
+</span><span class='line'>X-XSS-Protection: 1; mode=block
+</span><span class='line'>
+</span><span class='line'>$ curl -X GET -I http://domain.com/images/some_logo.gif
+</span><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Server: nginx
+</span><span class='line'>Date: Thu, 08 Jan 2015 21:50:12 GMT
+</span><span class='line'>Content-Type: image/gif
+</span><span class='line'>Content-Length: 10220
+</span><span class='line'>Last-Modified: Thu, 11 Dec 2014 17:18:36 GMT
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>ETag: "5489d1ec-27ec"
+</span><span class='line'>Expires: Wed, 11 Mar 2015 17:18:36 GMT
+</span><span class='line'>Cache-Control: max-age=5340504
+</span><span class='line'>Pragma: public
+</span><span class='line'>Cache-Control: public, must-revalidate, proxy-revalidate
+</span><span class='line'>Accept-Ranges: bytes
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See the difference? The image is being cached on the browser and the headers are being set as per the static file location block, while index.cfm isn&rsquo;t being cached. The <code>expires epoch;</code> directive tells the browser to set the expires date to 01 Jan 1970, a date in the past means don&rsquo;t cache this, while the <code>expires modified +90d;</code> tells the browser to set the expires date 90 days from the Last-Modified date.</p>
+
+<p>Another way to see these headers is via Developer Tools in Chrome ( or a comparable tool in any other modern browser ). Open a Dev Tools window while browsing the web page you&rsquo;d like to check, refresh the page, go to the Network tab, and click on any file to see the headers. This approach will give you a better overview of how your Nginx settings are serving and caching each file involved in an http request.</p>
+
+<p>After some thought and study, I decided to change my initial approach to caching static content to one that will help guarentee any content that I modify is served fresh from the server rather that stale from the cache. Here&rsquo;s what I came up with, for now, for a particular business application that I am still developing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>  add_header Pragma public;
+</span><span class='line'>  add_header Cache-Control "public, must-revalidate, proxy-revalidate, max-age=86400";
+</span><span class='line'>  etag on;
+</span><span class='line'>  gzip  off;
+</span><span class='line'>    expires +1d;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The users who access this site every day will only need to re-download static content once a day, an additional second or two once a day won&rsquo;t hurt them. In the version of Nginx I&rsquo;m currently using, enabling gzip disables etags. For now, I&rsquo;d rather have etag enabled, so I&rsquo;m disabling gzip for static content, but leaving it enabled for the dynamically generated content that is returned from the proxied app server.</p>
+
+<p>Resources for further reading:</p>
+
+<ol>
+<li><a href="https://www.mnot.net/cache_docs/">https://www.mnot.net/cache_docs/</a></li>
+<li><a href="http://en.wikipedia.org/wiki/HTTP_ETag">http://en.wikipedia.org/wiki/HTTP_ETag</a></li>
+<li><a href="http://stackoverflow.com/questions/499966/etag-vs-header-expires">http://stackoverflow.com/questions/499966/etag-vs-header-expires</a></li>
+<li><a href="http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers">http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers</a></li>
+<li><a href="https://www.owasp.org/index.php/List_of_useful_HTTP_headers">https://www.owasp.org/index.php/List_of_useful_HTTP_headers</a></li>
+</ol>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Nando @ Aria Media</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-01-09T11:50:19+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:50 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nginx/'>nginx</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/" title="Previous Post: Getting Railo I/O functions to work with utf-8 file names">&laquo; Getting Railo I/O functions to work with utf-8 file names</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/01/09/testing-nginx-config-directives/">Testing Nginx Config Directives</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/">Getting Railo I/O Functions to Work With Utf-8 File Names</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/08/cannot-find-template-cf11/">Cannot Find Template CF11</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/05/advantages-of-nginx/">Using Nginx With ColdFusion or Railo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/04/change-location-of-cf11-webroot/">Change Location of ColdFusion Webroot</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dnando">@dnando</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'dnando',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Nando @ Aria Media -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nandoariamedia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/';
+        var disqus_url = 'http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

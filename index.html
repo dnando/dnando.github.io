@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I ran into an issue moving an application from CF9 to Railo 4.2 with file names that use extended utf-8 characters, such as Banner_Küste.jpg for &hellip;">
+  <meta name="description" content="After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,268 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/09/testing-nginx-config-directives/">Testing Nginx Config Directives</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-01-09T11:50:19+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:50 am</span></time>
+        
+           | <a href="/blog/2015/01/09/testing-nginx-config-directives/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
+
+<p>Here&rsquo;s the configuration I wanted to test:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream    cf_servers {
+</span><span class='line'>  server          127.0.0.1:8500;
+</span><span class='line'>  keepalive       32; ## number of upstream connections to keep alive
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>  server_name     domain.com;
+</span><span class='line'>  listen          80;
+</span><span class='line'>  root            /var/sites/domain-com;
+</span><span class='line'>
+</span><span class='line'>  location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>      add_header Pragma public;
+</span><span class='line'>      add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+</span><span class='line'>      gzip  on;
+</span><span class='line'>      gzip_http_version 1.0;
+</span><span class='line'>      gzip_vary on;
+</span><span class='line'>      gzip_comp_level 6;
+</span><span class='line'>      gzip_proxied any;
+</span><span class='line'>      gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+</span><span class='line'>      gzip_buffers 16 8k;
+</span><span class='line'>      # Disable gzip for certain browsers.
+</span><span class='line'>      gzip_disable ~@~\MSIE [1-6].(?!.*SV1)~@~];
+</span><span class='line'>      expires modified +90d;
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  location / {
+</span><span class='line'>      proxy_pass  http://cf_servers/domain.com/;
+</span><span class='line'>      proxy_redirect '' /;
+</span><span class='line'>      proxy_http_version  1.1;
+</span><span class='line'>      proxy_set_header    Connection "";
+</span><span class='line'>      proxy_set_header    Host                $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-Host    $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-Server  $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;     ## CGI.REMOTE_ADDR
+</span><span class='line'>      proxy_set_header    X-Forwarded-Proto   $scheme;                        ## CGI.SERVER_PORT_SECURE
+</span><span class='line'>      proxy_set_header    X-Real-IP           $remote_addr;
+</span><span class='line'>      expires             epoch;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First off, I had a doubt regarding how Nginx was selecting which location directive to use for each file requested from the documentation I&rsquo;ve read. What I wanted to ensure is that Nginx was serving the static files, and proxying only the CFML files.</p>
+
+<p>A deeper issue here is whether or not the proxy_pass directive contains a URI. If it does, you can&rsquo;t use a regex to filter a location for CFML files only. A few examples will explain this better:</p>
+
+<p>This configuration contains a URI in the proxy_pass directive, namely <strong>/domain.com/</strong>. You cannot use a regex in the location directive to filter the request, so in my case, the location directive simply had to point to the root ( recursively in the way Nginx works, so essentially this directive will process any file under the root ).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  proxy_pass  http://cf_servers/domain.com/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This configuration also contains a URI in the proxy_pass directive, the trailing slash. Again, no regex in the location is possible.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  proxy_pass  http://cf_servers/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This config does not have a URI component in the proxy_pass directive, no trailing slash and no subdirectory are present here. In this case, we CAN apply a regex filter to pass only those files we want to our application server.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ \.(cfm|cfc|cfml)$ {
+</span><span class='line'>  proxy_pass  http://cf_servers;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The tradeoff here is that if we use a filter to ensure only CFML files are pass to our app server, then we need to additionally configure each virtual host in Tomcat&rsquo;s server.xml ( assuming multiple hosts per server ) so that Tomcat can locate the files.</p>
+
+<p>If you&rsquo;d rather configure each server only in Nginx, as I did with my CF11 install, then another approach might be to use a regex to filter all your static files. Hence:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>  ...
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With the essential background information out of the way, the question that arose was this. Is Nginx actually serving the static files, as I hoped, or are they all being passed to ColdFusion? The documention I found here and there seemed contradictory.</p>
+
+<p>Here&rsquo;s one way to test this using curl on the command line to fetch the response headers, with the output I got using the above settings:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ curl -X GET -I http://domain.com/index.cfm
+</span><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Server: nginx
+</span><span class='line'>Date: Thu, 08 Jan 2015 21:48:26 GMT
+</span><span class='line'>Content-Type: text/html;charset=UTF-8
+</span><span class='line'>Transfer-Encoding: chunked
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>Set-Cookie: CFID=20071; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+</span><span class='line'>Set-Cookie: CFTOKEN=8ff3e8f3dde25bcd-F33324A1-AEBC-7E8D-FEEEB610DD6412E7; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+</span><span class='line'>Cache-Control: no-cache
+</span><span class='line'>Pragma: no-cache
+</span><span class='line'>Expires: Thu, 01 Jan 1970 00:00:01 GMT
+</span><span class='line'>X-Frame-Options: SAMEORIGIN
+</span><span class='line'>X-Content-Type-Options: nosniff
+</span><span class='line'>X-XSS-Protection: 1; mode=block
+</span><span class='line'>
+</span><span class='line'>$ curl -X GET -I http://domain.com/images/some_logo.gif
+</span><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Server: nginx
+</span><span class='line'>Date: Thu, 08 Jan 2015 21:50:12 GMT
+</span><span class='line'>Content-Type: image/gif
+</span><span class='line'>Content-Length: 10220
+</span><span class='line'>Last-Modified: Thu, 11 Dec 2014 17:18:36 GMT
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>ETag: "5489d1ec-27ec"
+</span><span class='line'>Expires: Wed, 11 Mar 2015 17:18:36 GMT
+</span><span class='line'>Cache-Control: max-age=5340504
+</span><span class='line'>Pragma: public
+</span><span class='line'>Cache-Control: public, must-revalidate, proxy-revalidate
+</span><span class='line'>Accept-Ranges: bytes
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See the difference? The image is being cached on the browser and the headers are being set as per the static file location block, while index.cfm isn&rsquo;t being cached. The <code>expires epoch;</code> directive tells the browser to set the expires date to 01 Jan 1970, a date in the past means don&rsquo;t cache this, while the <code>expires modified +90d;</code> tells the browser to set the expires date 90 days from the Last-Modified date.</p>
+
+<p>Another way to see these headers is via Developer Tools in Chrome ( or a comparable tool in any other modern browser ). Open a Dev Tools window while browsing the web page you&rsquo;d like to check, refresh the page, go to the Network tab, and click on any file to see the headers. This approach will give you a better overview of how your Nginx settings are serving and caching each file involved in an http request.</p>
+
+<p>After some thought and study, I decided to change my initial approach to caching static content to one that will help guarentee any content that I modify is served fresh from the server rather that stale from the cache. Here&rsquo;s what I came up with, for now, for a particular business application that I am still developing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>  add_header Pragma public;
+</span><span class='line'>  add_header Cache-Control "public, must-revalidate, proxy-revalidate, max-age=86400";
+</span><span class='line'>  etag on;
+</span><span class='line'>  gzip  off;
+</span><span class='line'>    expires +1d;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The users who access this site every day will only need to re-download static content once a day, an additional second or two once a day won&rsquo;t hurt them. In the version of Nginx I&rsquo;m currently using, enabling gzip disables etags. For now, I&rsquo;d rather have etag enabled, so I&rsquo;m disabling gzip for static content, but leaving it enabled for the dynamically generated content that is returned from the proxied app server.</p>
+
+<p>Resources for further reading:</p>
+
+<ol>
+<li><a href="https://www.mnot.net/cache_docs/">https://www.mnot.net/cache_docs/</a></li>
+<li><a href="http://en.wikipedia.org/wiki/HTTP_ETag">http://en.wikipedia.org/wiki/HTTP_ETag</a></li>
+<li><a href="http://stackoverflow.com/questions/499966/etag-vs-header-expires">http://stackoverflow.com/questions/499966/etag-vs-header-expires</a></li>
+<li><a href="http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers">http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers</a></li>
+<li><a href="https://www.owasp.org/index.php/List_of_useful_HTTP_headers">https://www.owasp.org/index.php/List_of_useful_HTTP_headers</a></li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1355,7 +1617,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#108;&#x74;&#111;&#58;&#117;&#115;&#x65;&#x72;&#64;&#x31;&#48;&#50;&#x2e;&#x31;&#x30;&#51;&#46;&#x31;&#x30;&#x38;&#46;&#51;&#x39;">&#117;&#x73;&#x65;&#x72;&#x40;&#49;&#48;&#x32;&#46;&#x31;&#48;&#x33;&#x2e;&#49;&#48;&#56;&#46;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#116;&#111;&#58;&#117;&#x73;&#101;&#114;&#x40;&#x31;&#48;&#x32;&#46;&#49;&#x30;&#51;&#46;&#x31;&#48;&#56;&#46;&#51;&#x39;">&#x75;&#115;&#101;&#x72;&#64;&#x31;&#x30;&#50;&#x2e;&#x31;&#48;&#x33;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -1497,130 +1759,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/09/23/check-digit-computation-swiss-pay-slips/">Check Digit Computation for Swiss Pay Slips</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-09-23T13:50:02+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2014</span></span> <span class='time'>1:50 pm</span></time>
-        
-           | <a href="/blog/2014/09/23/check-digit-computation-swiss-pay-slips/#disqus_thread"
-             data-disqus-identifier="http://dnando.github.io/blog/2014/09/23/check-digit-computation-swiss-pay-slips/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&rsquo;m working on a business application that generates invoices and pay slips for a company in Switzerland. Instead of checks, the Swiss banking system uses a pay slip, and these have an account number, a reference number and of course the total which should be paid, all with check digits, similar to what is found on credit card numbers. At first I thought the check digit was generated by the <a href="http://en.wikipedia.org/wiki/Luhn_algorithm">Luhn algorithm</a>, for which I could find plentiful examples, even in ColdFusion, such as <a href="http://www.danvega.org/blog/2009/9/3/Using-ColdFusion-to-generate-credit-card-numbers">Dan Vega&rsquo;s post</a> explaining how to generate credit card numbers with correct check digits. The meat of his implementation is here, which expects an array, ccnumber, with the card number in it and and cclen, which is of course <code>arrayLen( ccnumber )</code></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='cfc'><span class='line'><span class="o">&lt;</span><span class="nv">cfscript</span><span class="o">&gt;</span>
-</span><span class='line'>  <span class="cm">/* the luhn Algorithm is used to create the check digit number */</span>
-</span><span class='line'>  <span class="k">var</span> <span class="nv">sum</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">for</span><span class="p">(</span><span class="nv">j</span><span class="o">=</span><span class="m">1</span><span class="p">;</span> <span class="nv">j</span> <span class="o">&lt;</span> <span class="nv">cclen</span><span class="p">;</span> <span class="nv">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">var</span> <span class="nv">digit</span> <span class="o">=</span> <span class="nv">ccnumber</span><span class="p">[</span><span class="nv">j</span><span class="p">];</span>
-</span><span class='line'>      <span class="c1">// length of 16 for Visa|Mastercard|Discover &amp;&amp; length of 15 for Amex</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="p">(</span><span class="nv">cclen</span> <span class="o">==</span> <span class="m">16</span> <span class="o">&amp;&amp;</span> <span class="nv">j</span> <span class="err">%</span> <span class="m">2</span> <span class="o">!=</span> <span class="m">0</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nv">cclen</span> <span class="o">==</span> <span class="m">15</span> <span class="o">&amp;&amp;</span> <span class="nv">j</span> <span class="err">%</span> <span class="m">2</span> <span class="o">==</span> <span class="m">0</span><span class="p">)</span> <span class="p">){</span>
-</span><span class='line'>          <span class="nv">digit</span> <span class="o">=</span> <span class="nv">digit</span> <span class="o">*</span> <span class="m">2</span><span class="p">;</span>
-</span><span class='line'>          <span class="k">if</span><span class="p">(</span><span class="nv">digit</span> <span class="o">&gt;</span> <span class="m">9</span><span class="p">){</span>
-</span><span class='line'>              <span class="nv">digit</span> <span class="o">=</span> <span class="p">(</span> <span class="nf">left</span><span class="p">(</span><span class="nv">digit</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">right</span><span class="p">(</span><span class="nv">digit</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="p">);</span>
-</span><span class='line'>          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>              <span class="nv">digit</span> <span class="o">=</span> <span class="nv">digit</span><span class="p">;</span>
-</span><span class='line'>          <span class="p">}</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="nv">sum</span> <span class="o">+=</span> <span class="nv">digit</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">var</span> <span class="nv">check_digit</span> <span class="o">=</span> <span class="p">[</span><span class="m">0</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">];</span>
-</span><span class='line'>  <span class="nv">ccnumber</span><span class="p">[</span><span class="nv">cclen</span><span class="p">]</span> <span class="o">=</span> <span class="nv">check_digit</span><span class="p">[(</span><span class="nv">sum</span> <span class="err">%</span> <span class="m">10</span> <span class="o">+</span> <span class="m">1</span><span class="p">)];</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nv">cfscript</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I was hoping I could quickly adapt the above for my use case. However, I was disappointed to learn that Swiss pay slips use a non-standard algorithm to calculculate check digits. And genuinely disheartened when I was left staring at this explanation of the algorithm, the only one that seems to be provided by the banking sector.</p>
-
-<p><img src="/images/CheckDigit.gif" alt="Check digit computation module 10, recursive" /></p>
-
-<p>If you study it for a few minutes, you&rsquo;ll see how the check digit is calculated, using the chart provided. But it doesn&rsquo;t give much of a clue what algorithm should be used to generate the check digit, except in the title, which seems to suggest it might use mod 10, recursively, if you assume that it has been translated from German incorrectly, module instead of modulo or modulus.</p>
-
-<p>After a few sessions of Googling, I found an <a href="http://delphi.cjcsoft.net/viewthread.php?tid=48934">example someone wrote in Delphi</a> that seemed to demonstate it could be tackled rather simply, with a single array representing the entire chart. Unfortunately I couldn&rsquo;t grok some of the nuances of the syntax.</p>
-
-<p>Then I ran across <a href="http://www.hosang.ch/modulo10.aspx">another set of examples</a> variations of C and Visual Basic. His comment at the top of the page reads:</p>
-
-<p>Haben Sie sich auch schon über die nicht sehr programmiergerechte Beschreibung in den Unterlagen der PostFinance und der Telekurs geärgert? &hellip; which my Swiss client on this project translated as &ldquo;The descriptions from PostFinance and Telekurs are shit&hellip;&rdquo; - not at all useful for programmers.</p>
-
-<p>The VB example looked familiar enough, and after a bit of mucking around, came up with this CFML function that seems to work to generate the check digit, passing every test I&rsquo;ve thown at it from the pay slips I have laying around.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='cfc'><span class='line'><span class="o">&lt;</span><span class="nv">cfscript</span><span class="o">&gt;</span>
-</span><span class='line'>  <span class="nv">public</span> <span class="k">numeric</span> <span class="k">function</span> <span class="nf">calCheckDigit</span><span class="p">(</span> <span class="k">string</span> <span class="nv">number</span> <span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">var</span> <span class="nv">arrTable</span> <span class="o">=</span> <span class="p">[</span><span class="m">0</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">5</span><span class="p">];</span>
-</span><span class='line'>      <span class="k">var</span> <span class="nv">carry</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
-</span><span class='line'>      <span class="k">var</span> <span class="nv">i</span> <span class="o">=</span> <span class="m">1</span><span class="p">;</span>
-</span><span class='line'>      <span class="k">for</span> <span class="p">(</span> <span class="nv">i</span> <span class="o">=</span> <span class="m">1</span><span class="p">;</span> <span class="nv">i</span> <span class="o">&lt;=</span> <span class="k">len</span><span class="p">(</span> <span class="nv">number</span> <span class="p">);</span> <span class="nv">i</span><span class="o">++</span> <span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="nv">carry</span> <span class="o">=</span> <span class="nv">arrTable</span><span class="p">[</span> <span class="p">(</span> <span class="p">(</span> <span class="nv">carry</span> <span class="o">+</span> <span class="nf">mid</span><span class="p">(</span> <span class="nv">number</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="m">1</span> <span class="p">)</span> <span class="p">)</span> <span class="err">%</span> <span class="m">10</span> <span class="p">)</span> <span class="o">+</span> <span class="m">1</span> <span class="p">];</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">return</span> <span class="p">(</span> <span class="m">10</span> <span class="o">-</span> <span class="nv">carry</span> <span class="p">)</span> <span class="err">%</span> <span class="m">10</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'> <span class="o">&lt;/</span><span class="nv">cfscript</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you compare the VB solution with the above, you&rsquo;ll see I&rsquo;m adding 1 to each calculated index value. That&rsquo;s because ColdFusion arrays are 1-based rather than 0-based. If you happen to be using this example to build a similar function in another language that has 0 based arrays, remove the <code>+ 1</code> from line 7.</p>
-
-<p>This function expects a string with consecutive numeric digits 0-9 only. It will blow up if any other characters are passed into it.</p>
-
-<p>Here are some reference links for solving the more general problem of generating Swiss payment slips:</p>
-
-<p><a href="https://www.postfinance.ch/binp/postfinance/public/dam.M26m_i6_6ceYcN2XtAN4w8OHMynQG7FKxJVK8TtQzr0.spool/content/dam/pf/de/doc/consult/manual/dlserv/inpayslip_isr_man_en.pdf">Manual ISR - Orange Inpayment Slip with reference number</a> - the clearest explanation I&rsquo;ve found regarding how the data is structured and placed on the pay slip.</p>
-
-<p><a href="https://www.postfinance.ch/binp/postfinance/public/dam.kDeM1NfdktHxsoPgqxBgbWOwXjqUmZZMUW52ZpIhfU0.spool/content/dam/pf/de/doc/consult/manual/dldata/efin_recdescr_man_en.pdf">Record Description Electronic services</a> - the only information currently here is reproduced in the logic diagram above.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -1636,6 +1774,10 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/01/09/testing-nginx-config-directives/">Testing Nginx Config Directives</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/">Getting Railo I/O Functions to Work With Utf-8 File Names</a>
       </li>
     
@@ -1649,10 +1791,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
     
       <li class="post">
         <a href="/blog/2014/12/04/change-location-of-cf11-webroot/">Change Location of ColdFusion Webroot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/12/02/exploring-centos-7-firewalld/">Exploring CentOS 7 Firewalld</a>
       </li>
     
   </ul>

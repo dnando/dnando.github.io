@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-08T18:19:48+01:00</updated>
+  <updated>2015-01-09T18:28:40+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,245 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Testing Nginx Config Directives]]></title>
+    <link href="http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/"/>
+    <updated>2015-01-09T11:50:19+01:00</updated>
+    <id>http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives</id>
+    <content type="html"><![CDATA[<p>After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
+
+<p>Here&rsquo;s the configuration I wanted to test:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream    cf_servers {
+</span><span class='line'>  server          127.0.0.1:8500;
+</span><span class='line'>  keepalive       32; ## number of upstream connections to keep alive
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>  server_name     domain.com;
+</span><span class='line'>  listen          80;
+</span><span class='line'>  root            /var/sites/domain-com;
+</span><span class='line'>
+</span><span class='line'>  location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>      add_header Pragma public;
+</span><span class='line'>      add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+</span><span class='line'>      gzip  on;
+</span><span class='line'>      gzip_http_version 1.0;
+</span><span class='line'>      gzip_vary on;
+</span><span class='line'>      gzip_comp_level 6;
+</span><span class='line'>      gzip_proxied any;
+</span><span class='line'>      gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+</span><span class='line'>      gzip_buffers 16 8k;
+</span><span class='line'>      # Disable gzip for certain browsers.
+</span><span class='line'>      gzip_disable ~@~\MSIE [1-6].(?!.*SV1)~@~];
+</span><span class='line'>      expires modified +90d;
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  location / {
+</span><span class='line'>      proxy_pass  http://cf_servers/domain.com/;
+</span><span class='line'>      proxy_redirect '' /;
+</span><span class='line'>      proxy_http_version  1.1;
+</span><span class='line'>      proxy_set_header    Connection "";
+</span><span class='line'>      proxy_set_header    Host                $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-Host    $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-Server  $host;
+</span><span class='line'>      proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;     ## CGI.REMOTE_ADDR
+</span><span class='line'>      proxy_set_header    X-Forwarded-Proto   $scheme;                        ## CGI.SERVER_PORT_SECURE
+</span><span class='line'>      proxy_set_header    X-Real-IP           $remote_addr;
+</span><span class='line'>      expires             epoch;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First off, I had a doubt regarding how Nginx was selecting which location directive to use for each file requested from the documentation I&rsquo;ve read. What I wanted to ensure is that Nginx was serving the static files, and proxying only the CFML files.</p>
+
+<p>A deeper issue here is whether or not the proxy_pass directive contains a URI. If it does, you can&rsquo;t use a regex to filter a location for CFML files only. A few examples will explain this better:</p>
+
+<p>This configuration contains a URI in the proxy_pass directive, namely <strong>/domain.com/</strong>. You cannot use a regex in the location directive to filter the request, so in my case, the location directive simply had to point to the root ( recursively in the way Nginx works, so essentially this directive will process any file under the root ).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  proxy_pass  http://cf_servers/domain.com/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This configuration also contains a URI in the proxy_pass directive, the trailing slash. Again, no regex in the location is possible.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  proxy_pass  http://cf_servers/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This config does not have a URI component in the proxy_pass directive, no trailing slash and no subdirectory are present here. In this case, we CAN apply a regex filter to pass only those files we want to our application server.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ \.(cfm|cfc|cfml)$ {
+</span><span class='line'>  proxy_pass  http://cf_servers;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The tradeoff here is that if we use a filter to ensure only CFML files are pass to our app server, then we need to additionally configure each virtual host in Tomcat&rsquo;s server.xml ( assuming multiple hosts per server ) so that Tomcat can locate the files.</p>
+
+<p>If you&rsquo;d rather configure each server only in Nginx, as I did with my CF11 install, then another approach might be to use a regex to filter all your static files. Hence:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>  ...
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With the essential background information out of the way, the question that arose was this. Is Nginx actually serving the static files, as I hoped, or are they all being passed to ColdFusion? The documention I found here and there seemed contradictory.</p>
+
+<p>Here&rsquo;s one way to test this using curl on the command line to fetch the response headers, with the output I got using the above settings:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ curl -X GET -I http://domain.com/index.cfm
+</span><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Server: nginx
+</span><span class='line'>Date: Thu, 08 Jan 2015 21:48:26 GMT
+</span><span class='line'>Content-Type: text/html;charset=UTF-8
+</span><span class='line'>Transfer-Encoding: chunked
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>Set-Cookie: CFID=20071; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+</span><span class='line'>Set-Cookie: CFTOKEN=8ff3e8f3dde25bcd-F33324A1-AEBC-7E8D-FEEEB610DD6412E7; Expires=Sat, 31-Dec-2044 21:48:26 GMT; Path=/; HttpOnly
+</span><span class='line'>Cache-Control: no-cache
+</span><span class='line'>Pragma: no-cache
+</span><span class='line'>Expires: Thu, 01 Jan 1970 00:00:01 GMT
+</span><span class='line'>X-Frame-Options: SAMEORIGIN
+</span><span class='line'>X-Content-Type-Options: nosniff
+</span><span class='line'>X-XSS-Protection: 1; mode=block
+</span><span class='line'>
+</span><span class='line'>$ curl -X GET -I http://domain.com/images/some_logo.gif
+</span><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Server: nginx
+</span><span class='line'>Date: Thu, 08 Jan 2015 21:50:12 GMT
+</span><span class='line'>Content-Type: image/gif
+</span><span class='line'>Content-Length: 10220
+</span><span class='line'>Last-Modified: Thu, 11 Dec 2014 17:18:36 GMT
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>ETag: "5489d1ec-27ec"
+</span><span class='line'>Expires: Wed, 11 Mar 2015 17:18:36 GMT
+</span><span class='line'>Cache-Control: max-age=5340504
+</span><span class='line'>Pragma: public
+</span><span class='line'>Cache-Control: public, must-revalidate, proxy-revalidate
+</span><span class='line'>Accept-Ranges: bytes
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See the difference? The image is being cached on the browser and the headers are being set as per the static file location block, while index.cfm isn&rsquo;t being cached. The <code>expires epoch;</code> directive tells the browser to set the expires date to 01 Jan 1970, a date in the past means don&rsquo;t cache this, while the <code>expires modified +90d;</code> tells the browser to set the expires date 90 days from the Last-Modified date.</p>
+
+<p>Another way to see these headers is via Developer Tools in Chrome ( or a comparable tool in any other modern browser ). Open a Dev Tools window while browsing the web page you&rsquo;d like to check, refresh the page, go to the Network tab, and click on any file to see the headers. This approach will give you a better overview of how your Nginx settings are serving and caching each file involved in an http request.</p>
+
+<p>After some thought and study, I decided to change my initial approach to caching static content to one that will help guarentee any content that I modify is served fresh from the server rather that stale from the cache. Here&rsquo;s what I came up with, for now, for a particular business application that I am still developing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+</span><span class='line'>  add_header Pragma public;
+</span><span class='line'>  add_header Cache-Control "public, must-revalidate, proxy-revalidate, max-age=86400";
+</span><span class='line'>  etag on;
+</span><span class='line'>  gzip  off;
+</span><span class='line'>    expires +1d;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The users who access this site every day will only need to re-download static content once a day, an additional second or two once a day won&rsquo;t hurt them. In the version of Nginx I&rsquo;m currently using, enabling gzip disables etags. For now, I&rsquo;d rather have etag enabled, so I&rsquo;m disabling gzip for static content, but leaving it enabled for the dynamically generated content that is returned from the proxied app server.</p>
+
+<p>Resources for further reading:</p>
+
+<ol>
+<li><a href="https://www.mnot.net/cache_docs/">https://www.mnot.net/cache_docs/</a></li>
+<li><a href="http://en.wikipedia.org/wiki/HTTP_ETag">http://en.wikipedia.org/wiki/HTTP_ETag</a></li>
+<li><a href="http://stackoverflow.com/questions/499966/etag-vs-header-expires">http://stackoverflow.com/questions/499966/etag-vs-header-expires</a></li>
+<li><a href="http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers">http://stackoverflow.com/questions/5799906/what-s-the-difference-between-expires-and-cache-control-headers</a></li>
+<li><a href="https://www.owasp.org/index.php/List_of_useful_HTTP_headers">https://www.owasp.org/index.php/List_of_useful_HTTP_headers</a></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting Railo I/O Functions to Work With Utf-8 File Names]]></title>
@@ -1144,7 +1383,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#108;&#x74;&#111;&#58;&#117;&#115;&#x65;&#x72;&#64;&#x31;&#48;&#50;&#x2e;&#x31;&#x30;&#51;&#46;&#x31;&#x30;&#x38;&#46;&#51;&#x39;">&#117;&#x73;&#x65;&#x72;&#x40;&#49;&#48;&#x32;&#46;&#x31;&#48;&#x33;&#x2e;&#49;&#48;&#56;&#46;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#116;&#111;&#58;&#117;&#x73;&#101;&#114;&#x40;&#x31;&#48;&#x32;&#46;&#49;&#x30;&#51;&#46;&#x31;&#48;&#56;&#46;&#51;&#x39;">&#x75;&#115;&#101;&#x72;&#64;&#x31;&#x30;&#50;&#x2e;&#x31;&#48;&#x33;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
