@@ -3,6 +3,22 @@
   
   
   <url>
+    <loc>http://dnando.github.io/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/</loc>
+    
+    <lastmod>2015-01-15T13:05:56+01:00</lastmod>
+    
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/</loc>
+    
+    <lastmod>2015-01-15T13:04:08+01:00</lastmod>
+    
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/</loc>
     
     <lastmod>2015-01-09T11:50:19+01:00</lastmod>
@@ -133,14 +149,14 @@
   
   <url>
     <loc>http://dnando.github.io/blog/archives/</loc>
-    <lastmod>2015-01-09T18:31:42+01:00</lastmod>
+    <lastmod>2015-01-15T14:34:08+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dnando.github.io/</loc>
-    <lastmod>2015-01-09T18:31:42+01:00</lastmod>
+    <lastmod>2015-01-15T14:34:08+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>

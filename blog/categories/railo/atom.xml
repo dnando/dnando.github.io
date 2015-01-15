@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Railo | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/railo/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-09T18:31:42+01:00</updated>
+  <updated>2015-01-15T14:34:08+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,24 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[UTF-8 Extended Character File Names in Railo]]></title>
+    <link href="http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/"/>
+    <updated>2015-01-15T13:04:08+01:00</updated>
+    <id>http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo</id>
+    <content type="html"><![CDATA[<p>I ran into an issue when porting an application from ACF9 to Railo 4.2 where Railo could not find files that use extented characters in file names, namely letters with accents, umlauts and such. The  request would error out with a template not found error. I briefly considered renaming a bunch of files that my clients had uploaded, building a system to filter out and rename all files with extended characters in them, but decided there has to be a better way. And indeed there is!</p>
+
+<p>Specifically on a Linux or Mac OS, open setenv.sh, which should be located under <railo install directory>/tomcat/bin/ and add the following line at the end of the file:</p>
+
+<pre><code>export LC_CTYPE="en_US.UTF-8"
+</code></pre>
+
+<p>Restart Railo, and you should be good to go!</p>
+
+<p>The background here is that the default file encoding system used in tomcat isn&rsquo;t utf-8. There should be Tomcat documentation available for a Windows install somewhere. Feel free to add a comment if you happen to know how to set the file system encoding on Windows.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting Railo I/O Functions to Work With Utf-8 File Names]]></title>

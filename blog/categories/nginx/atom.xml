@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Nginx | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-09T18:31:42+01:00</updated>
+  <updated>2015-01-15T14:34:08+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,31 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx Tweaks Using Proxy_redirect and Rewrite Directives]]></title>
+    <link href="http://dnando.github.io/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/"/>
+    <updated>2015-01-15T13:05:56+01:00</updated>
+    <id>http://dnando.github.io/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives</id>
+    <content type="html"><![CDATA[<p>I ran across a few niggles in setting up ColdFusion and Railo behind a Nginx web server, and thought it might be helpful to document the solutions I came to.</p>
+
+<p>The first small problem was that when users logged out of an FW/1 app, they would encounter a blank screen rather than being redirected to the login screen. Further investigation, using Chrome&rsquo;s Developer Tools Network panel, showed that Nginx was returning a blank location response header on the redirect to the login screen. I&rsquo;m still not exactly clear why this is occuring - other 302 redirects within the app work as expected, but the solution I came up with worked like a charm. All I needed to do was use the proxy_redirect directive alongside the proxy_pass directive, redirecting a blank location to the root location, like so:</p>
+
+<pre><code>proxy_redirect '' /;
+</code></pre>
+
+<p>I was happy that it worked as I guessed it would. In any case, proxy_redirect is a handy directive to have in your toolkit.</p>
+
+<p>In another case, a url pointing to a directory without a trailing slash would result in a 404 error behind Nginx. This url was being processed using the proxy_pass directive. For example, <a href="http://domain.com/directory">http://domain.com/directory</a> would result in a 404 while <a href="http://domain.com/directory/">http://domain.com/directory/</a> works, locating the default index.cfm template under /directory.</p>
+
+<p>Since I had only one url to adjust, the solution was rather simple:</p>
+
+<pre><code>rewrite ^/directory$ /directory/ redirect;
+</code></pre>
+
+<p>There are several trailing slash issues using Nginx that need to be taken into account. Search for &ldquo;nginx trailing slash&rdquo; to get a handle on them.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Testing Nginx Config Directives]]></title>

@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>How to Rollback Yum Updates on CentOS - Nando @ Aria Media</title>
+  <title>UTF-8 Extended Character File Names in Railo - Nando @ Aria Media</title>
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="1) Open the yum config file: 1
-vi /etc/yum.conf and ensure the following line is included in the config settings 1
-tsflags=repackage 2) Open the rpm &hellip;">
+  <meta name="description" content="I ran into an issue when porting an application from ACF9 to Railo 4.2 where Railo could not find files that use extented characters in file names, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos">
+  <link rel="canonical" href="http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
@@ -71,7 +69,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
   
   <header>
     
-      <h1 class="entry-title">How to Rollback Yum Updates on CentOS</h1>
+      <h1 class="entry-title">UTF-8 Extended Character File Names in Railo</h1>
     
     
       <p class="meta">
@@ -80,7 +78,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
 
 
 
-<time class='entry-date' datetime='2014-10-24T16:26:50+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:26 pm</span></time>
+<time class='entry-date' datetime='2015-01-15T13:04:08+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:04 pm</span></time>
         
            | <a href="#disqus_thread"
              data-disqus-identifier="http://dnando.github.io">Comments</a>
@@ -90,43 +88,17 @@ tsflags=repackage 2) Open the rpm &hellip;">
   </header>
 
 
-<div class="entry-content"><p>1) Open the yum config file:</p>
+<div class="entry-content"><p>I ran into an issue when porting an application from ACF9 to Railo 4.2 where Railo could not find files that use extented characters in file names, namely letters with accents, umlauts and such. The  request would error out with a template not found error. I briefly considered renaming a bunch of files that my clients had uploaded, building a system to filter out and rename all files with extended characters in them, but decided there has to be a better way. And indeed there is!</p>
+
+<p>Specifically on a Linux or Mac OS, open setenv.sh, which should be located under <railo install directory>/tomcat/bin/ and add the following line at the end of the file:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/yum.conf</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>export LC_CTYPE="en_US.UTF-8"</span></code></pre></td></tr></table></div></figure>
 
 
-<p>and ensure the following line is included in the config settings</p>
+<p>Restart Railo, and you should be good to go!</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>tsflags=repackage</span></code></pre></td></tr></table></div></figure>
-
-
-<p>2) Open the rpm macro file ( or create it if it doesn&rsquo;t exist ):</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vi /etc/rpm/macros</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And ensure the following line is included:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>%_repackage_all_erasures 1</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now the rollback flag can be used on the rpm command as shown in the examples below to roll back updates to any point in the past:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rpm -Uvh –rollback ’21:00′
-</span><span class='line'>rpm -Uvh –rollback ’3 hours ago’
-</span><span class='line'>rpm -Uvh –rollback ‘august 13′
-</span><span class='line'>rpm -Uvh –rollback ‘yesterday’</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Simple.</p>
+<p>The background here is that the default file encoding system used in tomcat isn&rsquo;t utf-8. There should be Tomcat documentation available for a Windows install somewhere. Feel free to add a comment if you happen to know how to set the file system encoding on Windows.</p>
 </div>
 
 
@@ -142,12 +114,12 @@ tsflags=repackage 2) Open the rpm &hellip;">
 
 
 
-<time class='entry-date' datetime='2014-10-24T16:26:50+02:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:26 pm</span></time>
+<time class='entry-date' datetime='2015-01-15T13:04:08+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:04 pm</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/centos/'>centos</a>
+    <a class='category' href='/blog/categories/railo/'>railo</a>
   
 </span>
 
@@ -156,7 +128,7 @@ tsflags=repackage 2) Open the rpm &hellip;">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/" >Tweet</a>
   
   
   
@@ -165,10 +137,10 @@ tsflags=repackage 2) Open the rpm &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/10/17/is-this-acceptable/" title="Previous Post: Is This Acceptable?">&laquo; Is This Acceptable?</a>
+        <a class="basic-alignment left" href="/blog/2015/01/09/testing-nginx-config-directives/" title="Previous Post: Testing Nginx Config Directives">&laquo; Testing Nginx Config Directives</a>
       
       
-        <a class="basic-alignment right" href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/" title="Next Post: SSH Tunneling - ColdFusion Lockdown Technique">SSH Tunneling - ColdFusion Lockdown Technique &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/" title="Next Post: Nginx tweaks using proxy_redirect and rewrite directives">Nginx tweaks using proxy_redirect and rewrite directives &raquo;</a>
       
     </p>
   </footer>
@@ -263,8 +235,8 @@ tsflags=repackage 2) Open the rpm &hellip;">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/';
-        var disqus_url = 'http://dnando.github.io/blog/2014/10/24/how-to-rollback-yum-updates-on-centos/';
+        var disqus_identifier = 'http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/';
+        var disqus_url = 'http://dnando.github.io/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/';
         var disqus_script = 'embed.js';
       
     (function () {
