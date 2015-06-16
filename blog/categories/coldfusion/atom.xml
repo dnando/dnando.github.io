@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-06-16T18:36:49+02:00</updated>
+  <updated>2015-06-16T18:53:54+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CFML Queries in Script]]></title>
+    <link href="http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script/"/>
+    <updated>2015-06-16T18:39:54+02:00</updated>
+    <id>http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script</id>
+    <content type="html"><![CDATA[<p>Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort of thing, and came up with the following, submitted as an example without explanation. This approach works on both ACF and Lucee.</p>
+
+<pre><code>public query function findRawAudit( string entity, numeric userId, date dateFrom, date dateTo, numeric timeZoneOffset ) {
+    var newLine = "#CHR(13)##CHR(10)#";
+    var params = {};
+    var sql = "
+        select a.entity, a.entityId, a.timestamp, a.transaction, a.attribute, a.value as previousValue, u.name as username, null as currentValue, null as auditName
+        from Audit a inner join User u
+        on a.userId = u.userId
+        where 0=0
+    ";
+
+    if ( structKeyExists(arguments, 'entity') and len( arguments.entity ) ) {
+        sql &amp;= "#newLine#" &amp; "and entity = :entity";
+        structInsert(params, "entity", { value: arguments.entity, cfsqltype: "cf_sql_varchar" } );
+    }
+
+    if ( structKeyExists(arguments, 'userId') ) {
+        sql &amp;= "#newLine#" &amp; "and a.userId = :userId";
+        structInsert(params, "userId", { value: arguments.userId, cfsqltype: "cf_sql_integer" } );
+    }
+
+    if ( structKeyExists(arguments, 'dateFrom') ) {
+        sql &amp;= "#newLine#" &amp; "and timestamp &gt; :dateFrom";
+        //  adjust dateFrom to account for time zone difference between server and user
+        var dateFromUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateFrom );
+        structInsert(params, "dateFrom", { value: arguments.dateFrom, cfsqltype: "cf_sql_timestamp" } );
+    }
+
+    if ( structKeyExists(arguments, 'dateTo') ) {
+        sql &amp;= "#newLine#" &amp; "and timestamp &lt; :dateTo";
+        //  adjust dateFrom to account for time zone difference between server and user
+        var dateToUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateTo );
+        // we add a day to dateTo to arrive at an effectiveEndDateTime, namely midnight of the endDate
+        // so that the endDate is inclusive, as users would very likely expect
+        dateToUTC = dateAdd( 'd', 1, dateToUTC );
+        structInsert(params, "dateTo", { value: dateToUTC, cfsqltype: "cf_sql_timestamp" } );
+    }
+
+    sql &amp;= "#newLine#" &amp; "and a.attribute != 'version' ";
+
+    sql &amp;= "#newLine#" &amp; "and a.attribute != 'lastEdited' ";
+
+    sql &amp;= "#newLine#" &amp; "and a.attribute != 'userId' ";
+
+    sql &amp;= "#newLine#" &amp; "order by a.timestamp desc, a.transaction";
+
+    return queryExecute( sql, params );
+}
+</code></pre>
+
+<p>Thanks to Igal Sapir for helping me work this out!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Debugging Technique CFML Development]]></title>
@@ -506,102 +566,6 @@ Assuming the installation directory is /opt/cf11, so that I can give a concrete 
 <li><a href="http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10">http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10</a></li>
 </ol>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[SSH Tunneling - ColdFusion Lockdown Technique]]></title>
-    <link href="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/"/>
-    <updated>2014-11-04T14:40:42+01:00</updated>
-    <id>http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique</id>
-    <content type="html"><![CDATA[<p>The ColdFusion and Railo Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important to do because many security vulnerabilities have been discovered that exploit open access to admin directories. It is fairly easy to accomplish, using a directive in the Apache configuration for example. It would look something like this on ACF:</p>
-
-<pre><code>&lt;Location /CFIDE&gt;
-    Order Deny,Allow
-    Deny from All
-&lt;/Location&gt;
-</code></pre>
-
-<p>or this on Railo:</p>
-
-<pre><code>&lt;Location /railo-context&gt;
-    Order Deny,Allow
-    Deny from all
-&lt;/Location&gt;
-</code></pre>
-
-<p>So far so good, but now anyone needing to administer the server can&rsquo;t login. They will be denied access by the web server. There are various recommendations for allowing only selective access, for instance from a given fixed IP address at the office of the administrator:</p>
-
-<pre><code>&lt;Location /railo-context&gt;
-    Order Deny,Allow
-    Deny from all
-    Allow from 84.16.156.99
-&lt;/Location&gt;
-</code></pre>
-
-<p>But what if the server administrator(s) is/are out of the office when they need access to the server? Away at a conference, at a client&rsquo;s office, or at home? And what if your office doesn&rsquo;t have a fixed IP address? Should you get one &hellip; and then have to remember to change the &ldquo;allow from&rdquo; IP address in all of your server configuration files if and when that IP address changes? For a variety of reasons, this doesn&rsquo;t seem ideal.</p>
-
-<p>There&rsquo;s another &ldquo;small&rdquo; problem here. Best security practice dictates that all access to admin areas should be over an encrypted connection. I cannot ensure that the modem installed here in my office, or wherever else I happen to be when needing to admin my servers, a hotel for instance, is not compromised by a packet sniffer. In fact, I recently installed an update on our modem here specifically for a packet sniffing vulnerability, and I only ran across it by chance. No idea how long that remained unpatched, and I&rsquo;m simply not prepared to invest the time to learn how to monitor this sort of thing. This implies that I <em>definitely should</em> install SSL certificates and set up secure https access for all administrative areas on each server I maintain. That&rsquo;s painful.</p>
-
-<p>Put all that together, and it helps to explain why ACF and Railo servers are often not locked down.</p>
-
-<p>Here&rsquo;s where SSH tunneling comes to the rescue. In a nutshell, it allows you to securely browse a remote server as localhost, as if the server was under your desk and your keyboard and monitor where connected to it, even if it&rsquo;s located halfway around the world. The icing on the cake is it is very simple to set up, and the same setup will work for every server you admin!</p>
-
-<p>To use SSH tunneling to gain access to admin areas of your server, the first step to restrict access to any admin area to only localhost, for example:</p>
-
-<p>For ACF:</p>
-
-<pre><code>&lt;Location /CFIDE&gt;
-    Order Deny,Allow
-    Deny from All
-    Allow from localhost
-&lt;/Location&gt;
-</code></pre>
-
-<p>or for Railo:</p>
-
-<pre><code>&lt;Location /railo-context&gt;
-    Order Deny,Allow
-    Deny from all
-    Allow from localhost
-&lt;/Location&gt;
-</code></pre>
-
-<p>( While you are at it, restrict port access to only those ports you need to leave exposed, for instance 80, 443 and whatever port you are using for SSH access ).</p>
-
-<p>There are detailed instructions for SSH tunneling all over the web if you want to find out more, but the instructions below should work fine for our purposes.</p>
-
-<ol>
-<li><p>In your web browser, configure the proxy settings to point to &ldquo;localhost&rdquo;, a free port on your local machine (we&rsquo;ll use 60001), using SOCKS5. This should work with any browser. Using Firefox as an example, here&rsquo;s how to do that:</p>
-
-<ul>
-<li>Go to Preferences</li>
-<li>Click the Advanced icon</li>
-<li>Click the Network tab</li>
-<li>Click the Settings button, across from where it says &ldquo;Configure how Firefox connects to the Internet</li>
-<li>Select Manual proxy configuration</li>
-<li>In the SOCKS Host field put &ldquo;localhost&rdquo; without the quotation marks</li>
-<li>In the Port field put the port number you will use, 60001 in our example</li>
-<li>Select SOCKS v5</li>
-<li>Click OK</li>
-</ul>
-</li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#117;&#x73;&#101;&#x72;&#64;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#x33;&#x2e;&#x31;&#x30;&#56;&#x2e;&#51;&#x39;">&#x75;&#x73;&#101;&#x72;&#x40;&#x31;&#48;&#50;&#46;&#49;&#x30;&#x33;&#46;&#49;&#x30;&#x38;&#46;&#x33;&#x39;</a></p></li>
-<li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
-</ol>
-
-
-<p>Note that the port chosen is arbitrary. It only has to be available and match in both the -D flag and SOCKS port setting. To revert the browser to normal behavior, simply choose No Proxy in the Network Settings dialog.</p>
-
-<p>What I usually do is leave Firefox configured in this way and reserve it only for SSH tunnelling sessions. And again, once a browser is configured with these proxy settings, you can securely browse any server as localhost by SSH&#8217;ing into it with the -D port setting.</p>
-
-<p>Now say you have Fusion Reactor installed and want to ensure access is also restricted. Just leave your firewall configured to leave the ports Fusion Reactor uses closed, and access it, securely, via your SSH tunnel!</p>
-
-<p>Thanks to <a href="https://www.linkedin.com/in/davidjstockton">David Stockton</a>, who until recently worked with the fusion reactor team, for sharing this tip with me.</p>
-
-<p><strong>IMPORTANT NOTE:</strong> If you have difficulty logging in, or maintaining a login, particularly to the ACF admin panel, clear the cookies in the browser you are using for SSH tunneling and try again.</p>
-
-<p>In my case, I ran into this after using this technique to manage multiple instance of ACF, particularly on ACF 11. I could log in to the admin panel successfully, but if I tried to modify anything, set a datasource for instance, I was logged out and the action did not complete. The error log contained the message &ldquo;There was an error while verifying the token. Either the session timed out or un-authenticated access is suspected.&rdquo;</p>
 ]]></content>
   </entry>
   

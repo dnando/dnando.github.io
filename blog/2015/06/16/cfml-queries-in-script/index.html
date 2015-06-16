@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Disabling Browser Back Button - Nando @ Aria Media</title>
+  <title>CFML Queries in Script - Nando @ Aria Media</title>
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I&rsquo;m working on a particular process in a web application where the user could unintentionally create duplicate content using the browser back &hellip;">
+  <meta name="description" content="Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button">
+  <link rel="canonical" href="http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
@@ -71,7 +71,7 @@
   
   <header>
     
-      <h1 class="entry-title">Disabling Browser Back Button</h1>
+      <h1 class="entry-title">CFML Queries in Script</h1>
     
     
       <p class="meta">
@@ -80,7 +80,7 @@
 
 
 
-<time class='entry-date' datetime='2014-09-16T17:53:31+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>5:53 pm</span></time>
+<time class='entry-date' datetime='2015-06-16T18:39:54+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:39 pm</span></time>
         
            | <a href="#disqus_thread"
              data-disqus-identifier="http://dnando.github.io">Comments</a>
@@ -90,9 +90,9 @@
   </header>
 
 
-<div class="entry-content"><p>I&rsquo;m working on a particular process in a web application where the user could unintentionally create duplicate content using the browser back button. Here&rsquo;s a handy way I ran across to disable the back button, or indeed handle it in any way needed.</p>
+<div class="entry-content"><p>Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort of thing, and came up with the following, submitted as an example without explanation. This approach works on both ACF and Lucee.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -120,40 +120,76 @@
 <span class='line-number'>26</span>
 <span class='line-number'>27</span>
 <span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span> <span class="o">===</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span><span class="p">(</span><span class="s2">&quot;jibberish&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-</span><span class='line'>        <span class="nb">window</span><span class="p">.</span><span class="nx">onpopstate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span><span class="p">(</span><span class="s1">&#39;newjibberish&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-</span><span class='line'>            <span class="c1">// Handle the back (or forward) buttons here</span>
-</span><span class='line'>            <span class="c1">// Will NOT handle refresh, use onbeforeunload for this.</span>
-</span><span class='line'>            <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links instead.&#39;</span><span class="p">);</span>
-</span><span class='line'>        <span class="p">};</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kd">var</span> <span class="nx">ignoreHashChange</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-</span><span class='line'>        <span class="nb">window</span><span class="p">.</span><span class="nx">onhashchange</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ignoreHashChange</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                <span class="nx">ignoreHashChange</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-</span><span class='line'>                <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">();</span>
-</span><span class='line'>                <span class="c1">// Detect and redirect change here</span>
-</span><span class='line'>                <span class="c1">// Works in older FF and IE9</span>
-</span><span class='line'>                <span class="c1">// * it does mess with your hash symbol (anchor?) pound sign</span>
-</span><span class='line'>                <span class="c1">// delimiter on the end of the URL</span>
-</span><span class='line'>                <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links instead.&#39;</span><span class="p">);</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>            <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>                <span class="nx">ignoreHashChange</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>        <span class="p">};</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public query function findRawAudit( string entity, numeric userId, date dateFrom, date dateTo, numeric timeZoneOffset ) {
+</span><span class='line'>  var newLine = "#CHR(13)##CHR(10)#";
+</span><span class='line'>  var params = {};
+</span><span class='line'>  var sql = "
+</span><span class='line'>      select a.entity, a.entityId, a.timestamp, a.transaction, a.attribute, a.value as previousValue, u.name as username, null as currentValue, null as auditName
+</span><span class='line'>      from Audit a inner join User u
+</span><span class='line'>      on a.userId = u.userId
+</span><span class='line'>      where 0=0
+</span><span class='line'>  ";
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'entity') and len( arguments.entity ) ) {
+</span><span class='line'>      sql &= "#newLine#" & "and entity = :entity";
+</span><span class='line'>      structInsert(params, "entity", { value: arguments.entity, cfsqltype: "cf_sql_varchar" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'userId') ) {
+</span><span class='line'>      sql &= "#newLine#" & "and a.userId = :userId";
+</span><span class='line'>      structInsert(params, "userId", { value: arguments.userId, cfsqltype: "cf_sql_integer" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'dateFrom') ) {
+</span><span class='line'>      sql &= "#newLine#" & "and timestamp &gt; :dateFrom";
+</span><span class='line'>      //  adjust dateFrom to account for time zone difference between server and user
+</span><span class='line'>      var dateFromUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateFrom );
+</span><span class='line'>      structInsert(params, "dateFrom", { value: arguments.dateFrom, cfsqltype: "cf_sql_timestamp" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'dateTo') ) {
+</span><span class='line'>      sql &= "#newLine#" & "and timestamp &lt; :dateTo";
+</span><span class='line'>      //  adjust dateFrom to account for time zone difference between server and user
+</span><span class='line'>      var dateToUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateTo );
+</span><span class='line'>      // we add a day to dateTo to arrive at an effectiveEndDateTime, namely midnight of the endDate
+</span><span class='line'>      // so that the endDate is inclusive, as users would very likely expect
+</span><span class='line'>      dateToUTC = dateAdd( 'd', 1, dateToUTC );
+</span><span class='line'>      structInsert(params, "dateTo", { value: dateToUTC, cfsqltype: "cf_sql_timestamp" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'version' ";
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'lastEdited' ";
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'userId' ";
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "order by a.timestamp desc, a.transaction";
+</span><span class='line'>
+</span><span class='line'>  return queryExecute( sql, params );
+</span><span class='line'>}
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Apparently, this works with older browsers that do not support HTML5.</p>
-
-<p>Source: <a href="http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser">http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser</a></p>
+<p>Thanks to Igal Sapir for helping me work this out!</p>
 </div>
 
 
@@ -169,12 +205,12 @@
 
 
 
-<time class='entry-date' datetime='2014-09-16T17:53:31+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>5:53 pm</span></time>
+<time class='entry-date' datetime='2015-06-16T18:39:54+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:39 pm</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/javascript/'>javascript</a>
+    <a class='category' href='/blog/categories/coldfusion/'>coldfusion</a>, <a class='category' href='/blog/categories/lucee/'>lucee</a>
   
 </span>
 
@@ -183,7 +219,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script/" >Tweet</a>
   
   
   
@@ -192,10 +228,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/09/12/octopress-cheat-sheet/" title="Previous Post: Octopress Cheat Sheet">&laquo; Octopress Cheat Sheet</a>
+        <a class="basic-alignment left" href="/blog/2015/06/16/debugging-technique-cfml-development/" title="Previous Post: Debugging Technique CFML Development">&laquo; Debugging Technique CFML Development</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/09/17/documentation-for-cfscript/" title="Next Post: Documentation for CFScript">Documentation for CFScript &raquo;</a>
       
     </p>
   </footer>
@@ -290,8 +324,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button/';
-        var disqus_url = 'http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button/';
+        var disqus_identifier = 'http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script/';
+        var disqus_url = 'http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script/';
         var disqus_script = 'embed.js';
       
     (function () {

@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I learned a debugging techique from Sean Corfield recently that I think is well worth sharing more widely. It works just as well for Lucee, Railo or &hellip;">
+  <meta name="description" content="Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +68,137 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/06/16/cfml-queries-in-script/">CFML Queries in Script</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-16T18:39:54+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:39 pm</span></time>
+        
+           | <a href="/blog/2015/06/16/cfml-queries-in-script/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort of thing, and came up with the following, submitted as an example without explanation. This approach works on both ACF and Lucee.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public query function findRawAudit( string entity, numeric userId, date dateFrom, date dateTo, numeric timeZoneOffset ) {
+</span><span class='line'>  var newLine = "#CHR(13)##CHR(10)#";
+</span><span class='line'>  var params = {};
+</span><span class='line'>  var sql = "
+</span><span class='line'>      select a.entity, a.entityId, a.timestamp, a.transaction, a.attribute, a.value as previousValue, u.name as username, null as currentValue, null as auditName
+</span><span class='line'>      from Audit a inner join User u
+</span><span class='line'>      on a.userId = u.userId
+</span><span class='line'>      where 0=0
+</span><span class='line'>  ";
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'entity') and len( arguments.entity ) ) {
+</span><span class='line'>      sql &= "#newLine#" & "and entity = :entity";
+</span><span class='line'>      structInsert(params, "entity", { value: arguments.entity, cfsqltype: "cf_sql_varchar" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'userId') ) {
+</span><span class='line'>      sql &= "#newLine#" & "and a.userId = :userId";
+</span><span class='line'>      structInsert(params, "userId", { value: arguments.userId, cfsqltype: "cf_sql_integer" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'dateFrom') ) {
+</span><span class='line'>      sql &= "#newLine#" & "and timestamp &gt; :dateFrom";
+</span><span class='line'>      //  adjust dateFrom to account for time zone difference between server and user
+</span><span class='line'>      var dateFromUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateFrom );
+</span><span class='line'>      structInsert(params, "dateFrom", { value: arguments.dateFrom, cfsqltype: "cf_sql_timestamp" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  if ( structKeyExists(arguments, 'dateTo') ) {
+</span><span class='line'>      sql &= "#newLine#" & "and timestamp &lt; :dateTo";
+</span><span class='line'>      //  adjust dateFrom to account for time zone difference between server and user
+</span><span class='line'>      var dateToUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateTo );
+</span><span class='line'>      // we add a day to dateTo to arrive at an effectiveEndDateTime, namely midnight of the endDate
+</span><span class='line'>      // so that the endDate is inclusive, as users would very likely expect
+</span><span class='line'>      dateToUTC = dateAdd( 'd', 1, dateToUTC );
+</span><span class='line'>      structInsert(params, "dateTo", { value: dateToUTC, cfsqltype: "cf_sql_timestamp" } );
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'version' ";
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'lastEdited' ";
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'userId' ";
+</span><span class='line'>
+</span><span class='line'>  sql &= "#newLine#" & "order by a.timestamp desc, a.transaction";
+</span><span class='line'>
+</span><span class='line'>  return queryExecute( sql, params );
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Thanks to Igal Sapir for helping me work this out!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1557,120 +1688,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/">Setting Up a Local Testing Server on VMWare</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-12-01T15:55:49+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2014</span></span> <span class='time'>3:55 pm</span></time>
-        
-           | <a href="/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/#disqus_thread"
-             data-disqus-identifier="http://dnando.github.io/blog/2014/12/01/setting-up-a-local-testing-server-on-vmware/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&rsquo;ve been wondering how to best set up a local testing environment for some time. My production servers are all on CentOS. On the advice of Nolan Erck, whom I met at CFCamp this year, I&rsquo;ve decided to use VMWare to set up a CentOS server on a virtual machine here in the office. This approach allows me to have multiple test environments, and I can easily move them to another machine if needed simply by copying the disk image.</p>
-
-<p>For ease of access, each VM needs a static ip on the local network. It&rsquo;s not hard to do once you figure it out, but getting all the pieces in place took some hours of digging, trial and error. This post, while specific to VMWare and CentOS 7, is intended to help both my future self and anyone else set up networking quickly and easily in such a scenario.  Adapt as necessary for your specific environment.</p>
-
-<p>The obvious first step was to download the ISO image from a <a href="http://www.centos.org/download/mirrors/">CentOS mirror site</a>. I grabbed the minimal install as a nearest approximation to a production environment, and created a VM from it using VMWare on an unused Mac mini we had laying around the office.</p>
-
-<p>On the minimal install, networking isn&rsquo;t enabled by default. So before I could proceed, I had to figure how to enable networking, and get it working via a static IP. Here&rsquo;s a summary of what finally worked for me.</p>
-
-<p>1) Figure out what the ethernet device is named by running the command :</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>nmcli dev status</span></code></pre></td></tr></table></div></figure>
-
-
-<p><img src="/images/nmcli.gif" alt="nmcli dev status" /></p>
-
-<p>As you can see, mine was named eno16777736, which is not the RedHat default you may find in many examples online.</p>
-
-<p>2) cd to the directory /etc/sysconfig/network-scripts and run ls to display its files</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd /etc/sysconfig/network-scripts
-</span><span class='line'>ls</span></code></pre></td></tr></table></div></figure>
-
-
-<p><img src="/images/networkScriptsLs.gif" alt="network-scripts ls" /></p>
-
-<p>3) Look for the configuration file for your ethernet device, mine was named ifcfg-eno16777736 and open it for editing using vm or nano</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>nano ifcfg-eno16777736</span></code></pre></td></tr></table></div></figure>
-
-
-<p><img src="/images/nano-ifcfg.gif" alt="network-scripts ls" /></p>
-
-<p>The above screenshot was taken after it was edited. The lines to change or add are:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>BOOTPROTO=static
-</span><span class='line'>IPADDR=&lt;the static ip address you want to assign to this instance&gt;
-</span><span class='line'>NETMASK=255.255.255.0
-</span><span class='line'>GATEWAY=&lt;the gateway ip address of your internal network&gt;
-</span><span class='line'>NM_CONTROLLED=no
-</span><span class='line'>ONBOOT=yes</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I found that adding the correct gateway ip was essential. NM_CONTROLLED specifies whether or not this device is controlled by the Network Manager. We are setting the parameters manually here, so this must be no. ONBOOT=yes specifies to connect this network device on boot.</p>
-
-<p>Save the file, exit nano, and run the following command to restart the network:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>systemctl restart network</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now CentOS 7 should be setup to network via the static local ip of your choice. But the connection isn&rsquo;t bridged outside of the VM. After some fiddling around, here&rsquo;s what worked for me. I went out to the VMWare interface, clicked on the double arrow icon to open the networking menu, and clicked Network Adapter Settings&hellip;</p>
-
-<p><img src="/images/vmWareNAS1.jpg" alt="VMWare Network menu" /></p>
-
-<p>From the menu, I chose Autodetect, as shown below:</p>
-
-<p><img src="/images/vmWareNAS2.jpg" alt="VMWare Network menu" /></p>
-
-<p>Once I had these configuration changes in place, I could access the CentOS instance via SSH and SFTP from my dev machine.</p>
-
-<p>By the way, from my reading, it also seems possible to use the Network Manager to achieve the same end. In this case, you&rsquo;d leave the config file for your network device alone, and instead run the nmtui command. Search Google for more complete instructions. You&rsquo;ll still need to bridge the connection through VMWare tho&#8217;.</p>
-
-<p>Hope this helps somebody.</p>
-
-<p>PS - If you can access the instance via SSH or SFTP, but cannot from a browser, you may need to either disable and stop firewalld:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>systemctl disable firewalld
-</span><span class='line'>systemctl stop firewalld</span></code></pre></td></tr></table></div></figure>
-
-
-<p>or better, figure out how to configure it properly to allow access via a browser, which I cover in the next article, <a href="http://dnando.github.io/blog/2014/12/02/exploring-centos-7-firewalld/">Exploring CentOS 7 firewalld</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -1686,6 +1703,10 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/06/16/cfml-queries-in-script/">CFML Queries in Script</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/06/16/debugging-technique-cfml-development/">Debugging Technique CFML Development</a>
       </li>
     
@@ -1699,10 +1720,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
     
       <li class="post">
         <a href="/blog/2015/01/09/testing-nginx-config-directives/">Testing Nginx Config Directives</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/">Getting Railo I/O Functions to Work With Utf-8 File Names</a>
       </li>
     
   </ul>
