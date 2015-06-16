@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-06-16T18:56:40+02:00</updated>
+  <updated>2015-06-16T23:20:32+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -21,49 +21,50 @@
     <content type="html"><![CDATA[<p>Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort of thing, and came up with the following using queryExecute(), submitted as an example without explanation. This approach works on both ACF and Lucee.</p>
 
 <pre><code>public query function findRawAudit( string entity, numeric userId, date dateFrom, date dateTo, numeric timeZoneOffset ) {
-    var newLine = "#CHR(13)##CHR(10)#";
+    var newLine = CHR(13) &amp; CHR(10);
     var params = {};
     var sql = "
-        select a.entity, a.entityId, a.timestamp, a.transaction, a.attribute, a.value as previousValue, u.name as username, null as currentValue, null as auditName
+        select a.entity, a.entityId, a.timestamp, a.transaction, a.attribute, a.value as previousValue, u.name as username, null as currentValue, null as auditName, null as asql
         from Audit a inner join User u
         on a.userId = u.userId
         where 0=0
     ";
 
     if ( structKeyExists(arguments, 'entity') and len( arguments.entity ) ) {
-        sql &amp;= "#newLine#" &amp; "and entity = :entity";
+        sql &amp;= newLine &amp; "and entity = :entity";
         structInsert(params, "entity", { value: arguments.entity, cfsqltype: "cf_sql_varchar" } );
     }
 
     if ( structKeyExists(arguments, 'userId') ) {
-        sql &amp;= "#newLine#" &amp; "and a.userId = :userId";
+        sql &amp;= newLine &amp; "and a.userId = :userId";
         structInsert(params, "userId", { value: arguments.userId, cfsqltype: "cf_sql_integer" } );
     }
 
     if ( structKeyExists(arguments, 'dateFrom') ) {
-        sql &amp;= "#newLine#" &amp; "and timestamp &gt; :dateFrom";
+        sql &amp;= newLine &amp; "and timestamp &gt; :dateFrom";
         //  adjust dateFrom to account for time zone difference between server and user
         var dateFromUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateFrom );
         structInsert(params, "dateFrom", { value: arguments.dateFrom, cfsqltype: "cf_sql_timestamp" } );
     }
 
     if ( structKeyExists(arguments, 'dateTo') ) {
-        sql &amp;= "#newLine#" &amp; "and timestamp &lt; :dateTo";
+        sql &amp;= newLine &amp; "and timestamp &lt; :dateTo";
         //  adjust dateFrom to account for time zone difference between server and user
         var dateToUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateTo );
         // we add a day to dateTo to arrive at an effectiveEndDateTime, namely midnight of the endDate
         // so that the endDate is inclusive, as users would very likely expect
         dateToUTC = dateAdd( 'd', 1, dateToUTC );
+        // stdout.println( "dateToUTC : #dateToUTC #" );
         structInsert(params, "dateTo", { value: dateToUTC, cfsqltype: "cf_sql_timestamp" } );
     }
 
-    sql &amp;= "#newLine#" &amp; "and a.attribute != 'version' ";
+    sql &amp;= newLine &amp; "and a.attribute != 'version' ";
 
-    sql &amp;= "#newLine#" &amp; "and a.attribute != 'lastEdited' ";
+    sql &amp;= newLine &amp; "and a.attribute != 'lastEdited' ";
 
-    sql &amp;= "#newLine#" &amp; "and a.attribute != 'userId' ";
+    sql &amp;= newLine &amp; "and a.attribute != 'userId' ";
 
-    sql &amp;= "#newLine#" &amp; "order by a.timestamp desc, a.transaction";
+    sql &amp;= newLine &amp; "order by a.timestamp desc, a.transaction";
 
     return queryExecute( sql, params );
 }

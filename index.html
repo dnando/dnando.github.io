@@ -142,50 +142,52 @@
 <span class='line-number'>45</span>
 <span class='line-number'>46</span>
 <span class='line-number'>47</span>
+<span class='line-number'>48</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>public query function findRawAudit( string entity, numeric userId, date dateFrom, date dateTo, numeric timeZoneOffset ) {
-</span><span class='line'>  var newLine = "#CHR(13)##CHR(10)#";
+</span><span class='line'>  var newLine = CHR(13) & CHR(10);
 </span><span class='line'>  var params = {};
 </span><span class='line'>  var sql = "
-</span><span class='line'>      select a.entity, a.entityId, a.timestamp, a.transaction, a.attribute, a.value as previousValue, u.name as username, null as currentValue, null as auditName
+</span><span class='line'>      select a.entity, a.entityId, a.timestamp, a.transaction, a.attribute, a.value as previousValue, u.name as username, null as currentValue, null as auditName, null as asql
 </span><span class='line'>      from Audit a inner join User u
 </span><span class='line'>      on a.userId = u.userId
 </span><span class='line'>      where 0=0
 </span><span class='line'>  ";
 </span><span class='line'>
 </span><span class='line'>  if ( structKeyExists(arguments, 'entity') and len( arguments.entity ) ) {
-</span><span class='line'>      sql &= "#newLine#" & "and entity = :entity";
+</span><span class='line'>      sql &= newLine & "and entity = :entity";
 </span><span class='line'>      structInsert(params, "entity", { value: arguments.entity, cfsqltype: "cf_sql_varchar" } );
 </span><span class='line'>  }
 </span><span class='line'>
 </span><span class='line'>  if ( structKeyExists(arguments, 'userId') ) {
-</span><span class='line'>      sql &= "#newLine#" & "and a.userId = :userId";
+</span><span class='line'>      sql &= newLine & "and a.userId = :userId";
 </span><span class='line'>      structInsert(params, "userId", { value: arguments.userId, cfsqltype: "cf_sql_integer" } );
 </span><span class='line'>  }
 </span><span class='line'>
 </span><span class='line'>  if ( structKeyExists(arguments, 'dateFrom') ) {
-</span><span class='line'>      sql &= "#newLine#" & "and timestamp &gt; :dateFrom";
+</span><span class='line'>      sql &= newLine & "and timestamp &gt; :dateFrom";
 </span><span class='line'>      //  adjust dateFrom to account for time zone difference between server and user
 </span><span class='line'>      var dateFromUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateFrom );
 </span><span class='line'>      structInsert(params, "dateFrom", { value: arguments.dateFrom, cfsqltype: "cf_sql_timestamp" } );
 </span><span class='line'>  }
 </span><span class='line'>
 </span><span class='line'>  if ( structKeyExists(arguments, 'dateTo') ) {
-</span><span class='line'>      sql &= "#newLine#" & "and timestamp &lt; :dateTo";
+</span><span class='line'>      sql &= newLine & "and timestamp &lt; :dateTo";
 </span><span class='line'>      //  adjust dateFrom to account for time zone difference between server and user
 </span><span class='line'>      var dateToUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateTo );
 </span><span class='line'>      // we add a day to dateTo to arrive at an effectiveEndDateTime, namely midnight of the endDate
 </span><span class='line'>      // so that the endDate is inclusive, as users would very likely expect
 </span><span class='line'>      dateToUTC = dateAdd( 'd', 1, dateToUTC );
+</span><span class='line'>      // stdout.println( "dateToUTC : #dateToUTC #" );
 </span><span class='line'>      structInsert(params, "dateTo", { value: dateToUTC, cfsqltype: "cf_sql_timestamp" } );
 </span><span class='line'>  }
 </span><span class='line'>
-</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'version' ";
+</span><span class='line'>  sql &= newLine & "and a.attribute != 'version' ";
 </span><span class='line'>
-</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'lastEdited' ";
+</span><span class='line'>  sql &= newLine & "and a.attribute != 'lastEdited' ";
 </span><span class='line'>
-</span><span class='line'>  sql &= "#newLine#" & "and a.attribute != 'userId' ";
+</span><span class='line'>  sql &= newLine & "and a.attribute != 'userId' ";
 </span><span class='line'>
-</span><span class='line'>  sql &= "#newLine#" & "order by a.timestamp desc, a.transaction";
+</span><span class='line'>  sql &= newLine & "order by a.timestamp desc, a.transaction";
 </span><span class='line'>
 </span><span class='line'>  return queryExecute( sql, params );
 </span><span class='line'>}
