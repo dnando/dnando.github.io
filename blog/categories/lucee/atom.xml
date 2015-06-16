@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Lucee | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/lucee/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-06-16T18:53:54+02:00</updated>
+  <updated>2015-06-16T18:56:40+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -18,7 +18,7 @@
     <link href="http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script/"/>
     <updated>2015-06-16T18:39:54+02:00</updated>
     <id>http://dnando.github.io/blog/2015/06/16/cfml-queries-in-script</id>
-    <content type="html"><![CDATA[<p>Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort of thing, and came up with the following, submitted as an example without explanation. This approach works on both ACF and Lucee.</p>
+    <content type="html"><![CDATA[<p>Recently, I needed to write a somewhat complex query with a conditional where clause. I resisted the urge to revert to the cfquery tag for this sort of thing, and came up with the following using queryExecute(), submitted as an example without explanation. This approach works on both ACF and Lucee.</p>
 
 <pre><code>public query function findRawAudit( string entity, numeric userId, date dateFrom, date dateTo, numeric timeZoneOffset ) {
     var newLine = "#CHR(13)##CHR(10)#";
