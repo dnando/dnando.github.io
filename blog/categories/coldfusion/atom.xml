@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-06-16T18:08:13+02:00</updated>
+  <updated>2015-06-16T18:36:49+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -61,11 +61,11 @@
     }
 </code></pre>
 
-<p>Note the lines <code>var stdout = createObject( "java", "java.lang.System" ).out;</code> and <code>stdout.println( "dateToUTC : #dateToUTC #" );</code> .</p>
+<p>Note the lines <code>var stdout = createObject( "java", "java.lang.System" ).out;</code> and <code>stdout.println( "dateToUTC : #dateToUTC #" );</code> which creates an instance of java.lang.System.out and prints a line to the log file.</p>
 
-<p>Immediately upon running this code <code>dateToUTC : {ts '2015-06-16 22:00:00'}</code> appeared in my tail output. I find this very useful. It&rsquo;s simple and effective, and it works in the same way across ACF, Lucee and Railo. I don&rsquo;t have to fiddle around with an admin setting to turn on trace output, check if trace output is enabled, remember the syntax used for cftrace / trace, and I can use it directly on a production server in a pinch in case of need.</p>
+<p>Immediately upon running this code <code>dateToUTC : {ts '2015-06-16 22:00:00'}</code> appeared in my tail output, which is what I expected. The bug was elsewhere, . I find this very useful. It&rsquo;s simple and effective, and it works in the same way across ACF, Lucee and Railo. I don&rsquo;t have to fiddle around with an admin setting to turn on trace output, check if trace output is enabled, remember the syntax used for cftrace / trace, and I can use it directly on a production server in a pinch in case of need.</p>
 
-<p>Of course, you can tail any log file necessary, or use WriteLog() or Trace() if you prefer instead of Java.</p>
+<p>Of course, you can tail any log file necessary, or use WriteLog() or Trace() if you prefer.</p>
 ]]></content>
   </entry>
   
@@ -586,7 +586,7 @@ Assuming the installation directory is /opt/cf11, so that I can give a concrete 
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#x75;&#x73;&#x65;&#x72;&#64;&#x31;&#x30;&#50;&#46;&#x31;&#48;&#x33;&#x2e;&#x31;&#x30;&#56;&#46;&#x33;&#57;">&#x75;&#115;&#101;&#x72;&#64;&#49;&#48;&#50;&#46;&#x31;&#48;&#x33;&#46;&#x31;&#x30;&#x38;&#x2e;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#117;&#x73;&#101;&#x72;&#64;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#x33;&#x2e;&#x31;&#x30;&#56;&#x2e;&#51;&#x39;">&#x75;&#x73;&#101;&#x72;&#x40;&#x31;&#48;&#50;&#46;&#49;&#x30;&#x33;&#46;&#49;&#x30;&#x38;&#46;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
