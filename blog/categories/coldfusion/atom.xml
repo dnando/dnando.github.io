@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-01-15T18:21:06+01:00</updated>
+  <updated>2015-06-16T18:08:13+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,62 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Debugging Technique CFML Development]]></title>
+    <link href="http://dnando.github.io/blog/2015/06/16/debugging-technique-cfml-development/"/>
+    <updated>2015-06-16T17:01:52+02:00</updated>
+    <id>http://dnando.github.io/blog/2015/06/16/debugging-technique-cfml-development</id>
+    <content type="html"><![CDATA[<p>I learned a debugging techique from Sean Corfield recently that I think is well worth sharing more widely. It works just as well for Lucee, Railo or Adobe Coldfusion. Here&rsquo;s what he reccommends:</p>
+
+<p><blockquote><p>For ease of debugging any problems that may occur, I strongly recommend you always keep a Terminal / Console window open containing a tail of the console output from your CFML server. If you’re using Lucee or a Railo installation based on Tomcat, you’ll want to find the catalina.out log file and tail that. If you’re using ColdFusion 11, even tho’ it is notionally based on Tomcat, it’s completely non-standard and you’ll want to tail cfusion/logs/coldfusion-out.log.</p><footer><strong>Sean Corfield <a href="https://framework-one.github.io/documentation/3.5/cfml-and-clojure.html">https://framework-one.github.io/documentation/3.5/cfml-and-clojure.html</a></strong></footer></blockquote></p>
+
+<p>To &ldquo;tail&rdquo;, in this case, means to show the newly added contents of a log file in real time. To get this to work, I open Terminal on my Mac and issue the following commands:</p>
+
+<p> &hellip; for my local CF11 install:</p>
+
+<pre><code class="`"> tail -f /Applications/ColdFusion11/cfusion/logs/coldfusion-out.log
+</code></pre>
+
+<p>  and for my local Lucee install:</p>
+
+<pre><code class="``">  tail -f ~/tomcat/logs/catalina.out
+</code></pre>
+
+<p>  You will of course need to change those paths to match the directory under which your applications are installed.</p>
+
+<p>  To get out of tail mode and back to the command line, hit CTRL-C.</p>
+
+<p>  What I see when I do this is the last 10 lines of the log file, to start with. Anytime an additional line is added to the log file, it immediately appears in the console display in real time.</p>
+
+<p>  Now what I can do in my code is send output to these log files. An example should explain it sufficiently. I just used this technique to debug a the following service function, where I wanted to ensure that dateTo UTC was being set as needed:</p>
+
+<pre><code class="``">    public query function findRawAudit( string entity, numeric userId, date dateFrom, date dateTo, numeric timeZoneOffset ) {
+        var stdout = createObject( "java", "java.lang.System" ).out;
+
+        ...
+
+        if ( structKeyExists(arguments, 'dateTo') ) {
+            sql &amp;= "#newLine#" &amp; "and timestamp &lt; :dateTo";
+            //  adjust dateFrom to account for time zone difference between server and user
+            var dateToUTC = DateAdd( 'h', -arguments.timeZoneOffset, arguments.dateTo );
+            // we add a day to dateTo to arrive at an effectiveEndDateTime, namely midnight of the endDate
+            // so that the endDate is inclusive, as users would very likely expect
+            dateToUTC = dateAdd( 'd', 1, dateToUTC );
+            stdout.println( "dateToUTC : #dateToUTC #" );
+            structInsert(params, "dateTo", { value: dateToUTC, cfsqltype: "cf_sql_timestamp" } );
+        }
+        ...
+    }
+</code></pre>
+
+<p>Note the lines <code>var stdout = createObject( "java", "java.lang.System" ).out;</code> and <code>stdout.println( "dateToUTC : #dateToUTC #" );</code> .</p>
+
+<p>Immediately upon running this code <code>dateToUTC : {ts '2015-06-16 22:00:00'}</code> appeared in my tail output. I find this very useful. It&rsquo;s simple and effective, and it works in the same way across ACF, Lucee and Railo. I don&rsquo;t have to fiddle around with an admin setting to turn on trace output, check if trace output is enabled, remember the syntax used for cftrace / trace, and I can use it directly on a production server in a pinch in case of need.</p>
+
+<p>Of course, you can tail any log file necessary, or use WriteLog() or Trace() if you prefer instead of Java.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Cannot Find Template CF11]]></title>
@@ -530,7 +586,7 @@ Assuming the installation directory is /opt/cf11, so that I can give a concrete 
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#x69;&#x6c;&#116;&#111;&#58;&#117;&#115;&#101;&#114;&#x40;&#49;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#x39;">&#x75;&#x73;&#x65;&#x72;&#64;&#x31;&#x30;&#x32;&#x2e;&#x31;&#x30;&#x33;&#x2e;&#x31;&#x30;&#56;&#x2e;&#51;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#x75;&#x73;&#x65;&#x72;&#64;&#x31;&#x30;&#50;&#46;&#x31;&#48;&#x33;&#x2e;&#x31;&#x30;&#56;&#46;&#x33;&#57;">&#x75;&#115;&#101;&#x72;&#64;&#49;&#48;&#50;&#46;&#x31;&#48;&#x33;&#46;&#x31;&#x30;&#x38;&#x2e;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -546,33 +602,6 @@ Assuming the installation directory is /opt/cf11, so that I can give a concrete 
 <p><strong>IMPORTANT NOTE:</strong> If you have difficulty logging in, or maintaining a login, particularly to the ACF admin panel, clear the cookies in the browser you are using for SSH tunneling and try again.</p>
 
 <p>In my case, I ran into this after using this technique to manage multiple instance of ACF, particularly on ACF 11. I could log in to the admin panel successfully, but if I tried to modify anything, set a datasource for instance, I was logged out and the action did not complete. The error log contained the message &ldquo;There was an error while verifying the token. Either the session timed out or un-authenticated access is suspected.&rdquo;</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Is This Acceptable?]]></title>
-    <link href="http://dnando.github.io/blog/2014/10/17/is-this-acceptable/"/>
-    <updated>2014-10-17T14:09:18+02:00</updated>
-    <id>http://dnando.github.io/blog/2014/10/17/is-this-acceptable</id>
-    <content type="html"><![CDATA[<p>A few days ago, Adobe released <a href="http://blogs.coldfusion.com/post.cfm/updates-for-coldfusion-11-coldfusion-10-and-coldfusion-9-released">updates</a> for CF 9, 10 and 11. I&rsquo;ve been following comments raised about them since, and I&rsquo;m disturbed to see some developers struggling to get their servers patched, especially when applying the update has taken the server down. I don&rsquo;t know if these cases are isolated or might be more widespread, but I find this unacceptable.</p>
-
-<p>I run several instances of ACF on CentOS. I&rsquo;m subscribed to the CentOS-announce Digest mailing list, as I&rsquo;m sure most CentOS server admins are. For many years now, whenever an update is released, perhaps once or twice a week, I ssh directly onto our servers, run yum update, and generally within less than a minute, the update completes. Never once has the process failed. Never once have I seen an incoming email on the CentOS mailing list that someone experienced a server crash, or any other issue for that matter, because of an update.</p>
-
-<p>This is how ColdFusion updates <strong>should</strong> function, flawlessly.</p>
-
-<p>In stark contrast, CF developers have become wary of applying updates. There is a risk that their server will compromised because of the security vulnerability the update is meant to patch, and there seems to be an equal if not greater risk that their server will be compromised, in one way or another, in the update process. CF 10 introduced automated updates, but as we see, the automated update process remains error prone.</p>
-
-<p>It should not be like this. Rather than focusing on new features, the CF dev team needs to focus on getting the update process as flawless as it is on CentOS. What they seem to have lost track of is that, for a start, developers have families to support. Our clients expect us to keep their servers up and running 24/7. Our clients depend on the applications we build to run their businesses. As developers, we <em>cannot</em> afford to experiment on our clients. And yet, when Adobe releases a flawed update that takes servers down, effectively experimenting on us and our clients, <em>oh, look, they are trapped between a security vulerability and a flawed update</em>, the implicit statement received on our end is &ldquo;We don&rsquo;t care if you keep your clients. It does not matter to us at all.&rdquo; Really?</p>
-
-<p>What is even more disturbing is the way the Adobe dev team now uses us as their QA department, as if ColdFusion server was loosely organized open source project among wannabe hackers. It is not disturbing because the CF devs are actively reaching out trying to solve problems that are occurring, asking for logs, error message screenshots, suggesting the possible need to copy and paste jar files from here to there if some functionality is broken, instructing us to manually install the updates one at a time if the automated updater doesn&rsquo;t work, etc. It is because these interchanges should never occur in the first place regarding an update. The update process needs to be flawless, as near to it as possible, so that we can rely on it. Like it is on CentOS. If they can do it, the CF dev team can do it.</p>
-
-<p>The worst, however, is <a href="http://blogs.coldfusion.com/post.cfm/updates-for-coldfusion-11-coldfusion-10-and-coldfusion-9-released#comment-2A6D270F-CEF1-319F-EDCFF7262E950FC0">this</a>, linked for reference but replicated below, an Adobe engineer asking a developer, a paying customer, to effectively crash his server &ldquo;in off peak hours&rdquo; so that he can get at the log files that might reveal what the problem is.</p>
-
-<p><blockquote><p></p></p><p><p>Hi Mark,</p></p><p><p>Of all the things connector logs with debug_level=debug are the most important one&rsquo;s. Till now with all the information you have shared I can tell that there is some problem with shared memory access between worker threads. But to exactly pin point the problem I will be needing the connector logs. I understand it will be difficult for you to do something on production server but it is a must for this problem to be resolved.</p></p><p><p>If possible in off-peak hours, apply the update14 and reconfigure the connector. Once the connector is installed go to connector directory c:\coldfusion10\config\wsconfig\magicnumber\ and open isapi_redirect.properties in notepad.<br/>Edit the line &ldquo;log_level= info&rdquo; and change it to &ldquo;log_level= debug&rdquo; and save the changes. Restart IIS, hit any cfm page and wait for app pool to crash. Once it is crashed take a backup of isapi_redirect.log(created in connector directory) in some other directory like c:\connector_logs\ directory. After the backup you can revert back the changes.<br/>Lastly you have to share this backed up logs with us.</p></p><p><p>Thanks,<br/>Milan.</p></p><p><p></p></blockquote></p>
-
-<p>When I say this is unacceptable, I mean that it is not acceptable for Adobe to use CF developers and their clients as their QA team, especially in that Milan says &ldquo;I understand it will be difficult for you to do something on production server but it is a <em>must</em> for this problem to be resolved.&rdquo; No, it is <strong>not</strong> a must to take down our servers, possibly endangering our client relationships, to fix your bugs.</p>
-
-<p>Yes, this is very complex stuff. But in today&rsquo;s world, that simply means Adobe needs to employ a vastly improved QA strategy than the one they have in place today for ColdFusion releases, especially for the update process itself.</p>
 ]]></content>
   </entry>
   

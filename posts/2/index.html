@@ -9,9 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="1) Open the yum config file: 1
-vi /etc/yum.conf and ensure the following line is included in the config settings 1
-tsflags=repackage 2) Open the rpm &hellip;">
+  <meta name="description" content="The ColdFusion and Railo Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -70,6 +68,150 @@ tsflags=repackage 2) Open the rpm &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/">SSH Tunneling - ColdFusion Lockdown Technique</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-11-04T14:40:42+01:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:40 pm</span></time>
+        
+           | <a href="/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The ColdFusion and Railo Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important to do because many security vulnerabilities have been discovered that exploit open access to admin directories. It is fairly easy to accomplish, using a directive in the Apache configuration for example. It would look something like this on ACF:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /CFIDE&gt;
+</span><span class='line'>  Order Deny,Allow
+</span><span class='line'>  Deny from All
+</span><span class='line'>&lt;/Location&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or this on Railo:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /railo-context&gt;
+</span><span class='line'>  Order Deny,Allow
+</span><span class='line'>  Deny from all
+</span><span class='line'>&lt;/Location&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So far so good, but now anyone needing to administer the server can&rsquo;t login. They will be denied access by the web server. There are various recommendations for allowing only selective access, for instance from a given fixed IP address at the office of the administrator:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /railo-context&gt;
+</span><span class='line'>  Order Deny,Allow
+</span><span class='line'>  Deny from all
+</span><span class='line'>  Allow from 84.16.156.99
+</span><span class='line'>&lt;/Location&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But what if the server administrator(s) is/are out of the office when they need access to the server? Away at a conference, at a client&rsquo;s office, or at home? And what if your office doesn&rsquo;t have a fixed IP address? Should you get one &hellip; and then have to remember to change the &ldquo;allow from&rdquo; IP address in all of your server configuration files if and when that IP address changes? For a variety of reasons, this doesn&rsquo;t seem ideal.</p>
+
+<p>There&rsquo;s another &ldquo;small&rdquo; problem here. Best security practice dictates that all access to admin areas should be over an encrypted connection. I cannot ensure that the modem installed here in my office, or wherever else I happen to be when needing to admin my servers, a hotel for instance, is not compromised by a packet sniffer. In fact, I recently installed an update on our modem here specifically for a packet sniffing vulnerability, and I only ran across it by chance. No idea how long that remained unpatched, and I&rsquo;m simply not prepared to invest the time to learn how to monitor this sort of thing. This implies that I <em>definitely should</em> install SSL certificates and set up secure https access for all administrative areas on each server I maintain. That&rsquo;s painful.</p>
+
+<p>Put all that together, and it helps to explain why ACF and Railo servers are often not locked down.</p>
+
+<p>Here&rsquo;s where SSH tunneling comes to the rescue. In a nutshell, it allows you to securely browse a remote server as localhost, as if the server was under your desk and your keyboard and monitor where connected to it, even if it&rsquo;s located halfway around the world. The icing on the cake is it is very simple to set up, and the same setup will work for every server you admin!</p>
+
+<p>To use SSH tunneling to gain access to admin areas of your server, the first step to restrict access to any admin area to only localhost, for example:</p>
+
+<p>For ACF:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /CFIDE&gt;
+</span><span class='line'>  Order Deny,Allow
+</span><span class='line'>  Deny from All
+</span><span class='line'>  Allow from localhost
+</span><span class='line'>&lt;/Location&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or for Railo:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /railo-context&gt;
+</span><span class='line'>  Order Deny,Allow
+</span><span class='line'>  Deny from all
+</span><span class='line'>  Allow from localhost
+</span><span class='line'>&lt;/Location&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>( While you are at it, restrict port access to only those ports you need to leave exposed, for instance 80, 443 and whatever port you are using for SSH access ).</p>
+
+<p>There are detailed instructions for SSH tunneling all over the web if you want to find out more, but the instructions below should work fine for our purposes.</p>
+
+<ol>
+<li><p>In your web browser, configure the proxy settings to point to &ldquo;localhost&rdquo;, a free port on your local machine (we&rsquo;ll use 60001), using SOCKS5. This should work with any browser. Using Firefox as an example, here&rsquo;s how to do that:</p>
+
+<ul>
+<li>Go to Preferences</li>
+<li>Click the Advanced icon</li>
+<li>Click the Network tab</li>
+<li>Click the Settings button, across from where it says &ldquo;Configure how Firefox connects to the Internet</li>
+<li>Select Manual proxy configuration</li>
+<li>In the SOCKS Host field put &ldquo;localhost&rdquo; without the quotation marks</li>
+<li>In the Port field put the port number you will use, 60001 in our example</li>
+<li>Select SOCKS v5</li>
+<li>Click OK</li>
+</ul>
+</li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#117;&#x73;&#101;&#x72;&#64;&#x31;&#x30;&#x32;&#46;&#x31;&#48;&#x33;&#46;&#x31;&#x30;&#x38;&#46;&#x33;&#57;">&#x75;&#x73;&#101;&#x72;&#64;&#x31;&#48;&#50;&#x2e;&#x31;&#48;&#x33;&#x2e;&#49;&#x30;&#56;&#46;&#51;&#57;</a></p></li>
+<li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
+</ol>
+
+
+<p>Note that the port chosen is arbitrary. It only has to be available and match in both the -D flag and SOCKS port setting. To revert the browser to normal behavior, simply choose No Proxy in the Network Settings dialog.</p>
+
+<p>What I usually do is leave Firefox configured in this way and reserve it only for SSH tunnelling sessions. And again, once a browser is configured with these proxy settings, you can securely browse any server as localhost by SSH&#8217;ing into it with the -D port setting.</p>
+
+<p>Now say you have Fusion Reactor installed and want to ensure access is also restricted. Just leave your firewall configured to leave the ports Fusion Reactor uses closed, and access it, securely, via your SSH tunnel!</p>
+
+<p>Thanks to <a href="https://www.linkedin.com/in/davidjstockton">David Stockton</a>, who until recently worked with the fusion reactor team, for sharing this tip with me.</p>
+
+<p><strong>IMPORTANT NOTE:</strong> If you have difficulty logging in, or maintaining a login, particularly to the ACF admin panel, clear the cookies in the browser you are using for SSH tunneling and try again.</p>
+
+<p>In my case, I ran into this after using this technique to manage multiple instance of ACF, particularly on ACF 11. I could log in to the admin panel successfully, but if I tried to modify anything, set a datasource for instance, I was logged out and the action did not complete. The error log contained the message &ldquo;There was an error while verifying the token. Either the session timed out or un-authenticated access is suspected.&rdquo;</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -666,6 +808,10 @@ tsflags=repackage 2) Open the rpm &hellip;">
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/06/16/debugging-technique-cfml-development/">Debugging Technique CFML Development</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/">Nginx Tweaks Using Proxy_redirect and Rewrite Directives</a>
       </li>
     
@@ -679,10 +825,6 @@ tsflags=repackage 2) Open the rpm &hellip;">
     
       <li class="post">
         <a href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/">Getting Railo I/O Functions to Work With Utf-8 File Names</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/08/cannot-find-template-cf11/">Cannot Find Template CF11</a>
       </li>
     
   </ul>
