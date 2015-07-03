@@ -179,86 +179,165 @@
 
 <p>As of this writing, available CSS attributes remain limited. There is a list of CSS attributes that work in the ACF documentation for cfdocument, reproduced here:</p>
 
-<p>The cfdocument tag supports the following CSS styles:</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>The cfdocument tag supports the following CSS styles:
+</span><span class='line'>
+</span><span class='line'>background
+</span><span class='line'>background-attachment
+</span><span class='line'>background-color
+</span><span class='line'>background-image
+</span><span class='line'>background-position
+</span><span class='line'>background-repeat
+</span><span class='line'>border
+</span><span class='line'>border-bottom
+</span><span class='line'>border-bottom-color
+</span><span class='line'>border-bottom-style (solid border only)
+</span><span class='line'>border-bottom-width
+</span><span class='line'>border-color
+</span><span class='line'>border-left
+</span><span class='line'>border-left-color
+</span><span class='line'>border-left-style (solid border only)
+</span><span class='line'>border-left-width
+</span><span class='line'>border-right
+</span><span class='line'>border-right-color
+</span><span class='line'>border-right-style (solid border only)
+</span><span class='line'>border-right-width
+</span><span class='line'>border-spacing
+</span><span class='line'>border-style (solid border only)
+</span><span class='line'>border-top
+</span><span class='line'>border-top-color
+</span><span class='line'>border-top-style (solid border only)
+</span><span class='line'>border-top-width
+</span><span class='line'>border-width
+</span><span class='line'>bottom
+</span><span class='line'>clear
+</span><span class='line'>clip
+</span><span class='line'>color
+</span><span class='line'>content (strings, counters only)
+</span><span class='line'>counter-increment
+</span><span class='line'>counter-reset
+</span><span class='line'>cursor
+</span><span class='line'>display
+</span><span class='line'>float
+</span><span class='line'>font
+</span><span class='line'>font-family
+</span><span class='line'>font-size
+</span><span class='line'>font-style
+</span><span class='line'>font-weight
+</span><span class='line'>height
+</span><span class='line'>left
+</span><span class='line'>letter-spacing
+</span><span class='line'>line-height
+</span><span class='line'>list-style-type
+</span><span class='line'>margin
+</span><span class='line'>margin-bottom
+</span><span class='line'>margin-left
+</span><span class='line'>margin-right
+</span><span class='line'>margin-top
+</span><span class='line'>outline
+</span><span class='line'>outline-color
+</span><span class='line'>outline-style (solid, dotted, dashed only)
+</span><span class='line'>outline-width
+</span><span class='line'>padding
+</span><span class='line'>padding-bottom
+</span><span class='line'>padding-left
+</span><span class='line'>padding-right
+</span><span class='line'>padding-top
+</span><span class='line'>page-break-after
+</span><span class='line'>page-break-before
+</span><span class='line'>page-break-inside
+</span><span class='line'>position
+</span><span class='line'>right
+</span><span class='line'>text-align (left, right, and center)
+</span><span class='line'>text-decoration
+</span><span class='line'>text-indent
+</span><span class='line'>top
+</span><span class='line'>unicode-bidi
+</span><span class='line'>vertical-align
+</span><span class='line'>visibility
+</span><span class='line'>white space (normal, nowrap only)
+</span><span class='line'>width
+</span><span class='line'>z-index</span></code></pre></td></tr></table></div></figure>
 
-<p>background
-background-attachment
-background-color
-background-image
-background-position
-background-repeat
-border
-border-bottom
-border-bottom-color
-border-bottom-style (solid border only)
-border-bottom-width
-border-color
-border-left
-border-left-color
-border-left-style (solid border only)
-border-left-width
-border-right
-border-right-color
-border-right-style (solid border only)
-border-right-width
-border-spacing
-border-style (solid border only)
-border-top
-border-top-color
-border-top-style (solid border only)
-border-top-width
-border-width
-bottom
-clear
-clip
-color
-content (strings, counters only)
-counter-increment
-counter-reset
-cursor
-display
-float
-font
-font-family
-font-size
-font-style
-font-weight
-height
-left
-letter-spacing
-line-height
-list-style-type
-margin
-margin-bottom
-margin-left
-margin-right
-margin-top
-outline
-outline-color
-outline-style (solid, dotted, dashed only)
-outline-width
-padding
-padding-bottom
-padding-left
-padding-right
-padding-top
-page-break-after
-page-break-before
-page-break-inside
-position
-right
-text-align (left, right, and center)
-text-decoration
-text-indent
-top
-unicode-bidi
-vertical-align
-visibility
-white space (normal, nowrap only)
-width
-z-index</p>
 
-<h2>Fonts</h2>
+<h2>Custom fonts</h2>
 
 <p>Scattered around the internet I found a variety of comments suggesting that getting a &ldquo;custom&rdquo; font to work within cfdocument isn&rsquo;t at all easy. Once you know how, it&rsquo;s actually fairly simple. For both ACF and Lucee, it&rsquo;s a question of getting the correct font file in the right place, with the right permissions, and restarting ACF/Lucee.</p>
 
