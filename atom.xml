@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-06-16T23:20:32+02:00</updated>
+  <updated>2015-07-03T16:00:49+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,249 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Generating Accurate PDFs Using Cfdocument]]></title>
+    <link href="http://dnando.github.io/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/"/>
+    <updated>2015-07-01T23:55:41+02:00</updated>
+    <id>http://dnando.github.io/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument</id>
+    <content type="html"><![CDATA[<p>I&rsquo;ve been developing a PDF, generated within a CFML application, that needs very accurate placement of chunks of text so that it can be printed on a standard form. It also needs to use a specified font, OCR-B, so that a line of text on the printed form can be machine scanned. I&rsquo;ve managed to get this working much better than expected on both ACF and Lucee, in a cross-compatible way, so I thought I&rsquo;d write everything up to remember the details down the line.</p>
+
+<p>I was at first thinking I might be able to use the new cfhtmltopdf tag, but quickly dropped that idea: I couldn&rsquo;t get the PDF Service needed to use this tag to work on my Mac; it seems to be an enterprise only feature; and I wasn&rsquo;t so sure this approach would be compatible to use within Lucee. After looking around over the fence for a bit at potential solutions outside of CFML, nothing hit me as particularly appealing, so I dug into getting cfdocument to work as best I could. First the tag attributes.</p>
+
+<h2>Attributes</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;cfdocument format="pdf" pagetype="A4" orientation="portrait" fontEmbed="true" unit="cm" localUrl="true" saveAsName="#pdfFileName#" marginLeft="0" margintop="0" marginright="0" marginbottom="0"&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>FontEmbed=&ldquo;true&rdquo; is essential so that anyone can print the PDF with the OCR-B code line correctly displayed, even if they don&rsquo;t have this font on their system. LocalUrl is set to true to easily pull in a logo image from the local file system. Note the margins are set to 0, because I&rsquo;m using a <code>&lt;div&gt;</code> tag to define the size of the page to control the tendency of the 2 different PDF generation engines used in ACF and Lucee to scale the layout, differently.</p>
+
+<h2>Layout</h2>
+
+<p>Nested directly within the cfdocument tag is a div tag that sets the page width, with <code>position:relative</code> so it remains within the page flow, and acts as the parent tag within which all layout divs that position text are nested <em>and proportionally scaled against</em>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;div style="position:relative; top:0mm; left:0mm; width:210mm;"&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then within that parent div tag are nested the various div tags, absolutely positioned, containing the blocks of text and images that make up the PDF content. Here are a few examples to demonstrate:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;div class="address"  style="position:absolute; top:13mm; left:100mm; "&gt;
+</span><span class='line'>  #biller.address1# &middot #biller.zipcode# #biller.city# 
+</span><span class='line'>&lt;/div&gt;
+</span><span class='line'>&lt;!--- client address ---&gt;
+</span><span class='line'>&lt;div class="text" style="position:absolute; top:45mm; left:130mm"&gt;
+</span><span class='line'>  #invoice.getClient().getName()#&lt;br&gt;
+</span><span class='line'>  &lt;cfif len( trim( invoice.getClient().getAddress1() ) )&gt;#invoice.getClient().getAddress1()#&lt;br&gt;&lt;/cfif&gt;
+</span><span class='line'>  &lt;cfif len( trim( invoice.getClient().getAddress2() ) )&gt;#invoice.getClient().getAddress2()#&lt;br&gt;&lt;/cfif&gt;
+</span><span class='line'>  &lt;cfif len( trim( invoice.getClient().getAddress3() ) )&gt;#invoice.getClient().getAddress3()#&lt;br&gt;&lt;/cfif&gt;
+</span><span class='line'>  #invoice.getClient().getCountryCode()#-#invoice.getClient().getZipCode()# #invoice.getClient().getCity()#
+</span><span class='line'>&lt;/div&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What I really like about this approach is that each of the text blocks winds up very close to the top and left dimensions specified, and the ACF and Lucee outputs are nearly identical.</p>
+
+<p>Without the parent div tag specifying the width, the results between the 2 engines are vastly different, and positioning the elements is much more a question of trial and error than simply entering the top and left positions as measured with a ruler (and perhaps tweaking them by a few milimeters if necessary). Also without the parent div tag to control how layout elements scale, changing the dimension of one absolutely positioned div within the PDF can easily alter the position or size of other divs, which can be very frustrating if you have 20 or 30 elements that all need to be precisely positioned.</p>
+
+<p>Feel free to experiment with paddings or margins on the parent div if you want - I suspect it would work just as well (but haven&rsquo;t tried). For myself, I found it easier simply to measure placement from the edge of the page.</p>
+
+<p>I haven&rsquo;t tried this myself, yet, but I have it from a reliable source that a parent div tag in the layout specifying the page width, as above, will fix page break issues if a table extends over more than one page.</p>
+
+<h2>Fonts</h2>
+
+<p>Specifying a font for a block of text is simple. You can use a CSS style declaration within a style block that is nested <em>within</em> the cfdocument tag, or you can place the font specification directly in a style attribute of an html tag like `<div> <span> <td>. Here are the styles I used for the above text blocks (and again, the style block must be nested within the cfdocument tag, or the PDF generator won&rsquo;t see it):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;cfdocument format="pdf" pagetype="A4" orientation="portrait" fontEmbed="true" unit="cm" localUrl="true" saveAsName="#pdfFileName#" marginLeft="0" margintop="0" marginright="0" marginbottom="0"&gt;
+</span><span class='line'>&lt;style&gt;
+</span><span class='line'>  div.text {  
+</span><span class='line'>      font: 9pt Arial;
+</span><span class='line'>      line-height: 13pt;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  div.address {
+</span><span class='line'>      font: 9pt Arial;
+</span><span class='line'>      color: #033B7D;
+</span><span class='line'>  }
+</span><span class='line'>  ...
+</span><span class='line'>&lt;/style&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As of this writing, available CSS attributes remain limited. There is a list of CSS attributes that work in the ACF documentation for cfdocument, reproduced here:</p>
+
+<p>The cfdocument tag supports the following CSS styles:</p>
+
+<p>background
+background-attachment
+background-color
+background-image
+background-position
+background-repeat
+border
+border-bottom
+border-bottom-color
+border-bottom-style (solid border only)
+border-bottom-width
+border-color
+border-left
+border-left-color
+border-left-style (solid border only)
+border-left-width
+border-right
+border-right-color
+border-right-style (solid border only)
+border-right-width
+border-spacing
+border-style (solid border only)
+border-top
+border-top-color
+border-top-style (solid border only)
+border-top-width
+border-width
+bottom
+clear
+clip
+color
+content (strings, counters only)
+counter-increment
+counter-reset
+cursor
+display
+float
+font
+font-family
+font-size
+font-style
+font-weight
+height
+left
+letter-spacing
+line-height
+list-style-type
+margin
+margin-bottom
+margin-left
+margin-right
+margin-top
+outline
+outline-color
+outline-style (solid, dotted, dashed only)
+outline-width
+padding
+padding-bottom
+padding-left
+padding-right
+padding-top
+page-break-after
+page-break-before
+page-break-inside
+position
+right
+text-align (left, right, and center)
+text-decoration
+text-indent
+top
+unicode-bidi
+vertical-align
+visibility
+white space (normal, nowrap only)
+width
+z-index</p>
+
+<h2>Fonts</h2>
+
+<p>Scattered around the internet I found a variety of comments suggesting that getting a &ldquo;custom&rdquo; font to work within cfdocument isn&rsquo;t at all easy. Once you know how, it&rsquo;s actually fairly simple. For both ACF and Lucee, it&rsquo;s a question of getting the correct font file in the right place, with the right permissions, and restarting ACF/Lucee.</p>
+
+<p>For ACF, log into the administrator and go to the Font Management Panel. There you will see all the fonts available to use in cfdocument &hellip; except that as of this writing, the OTF fonts won&rsquo;t work, even tho&#8217; the Font Management panel claims they are useable in PDFs. Unless something changes in the future, forget OTF fonts for cfdocument. I tried a bunch that already seemed to be recognized, none worked.</p>
+
+<p>At the top of the font panel, you&rsquo;ll see a feature that allows you to add fonts &ldquo;Register New Font(s) with ColdFusion&rdquo;. I couldn&rsquo;t get this to work reliably - I think the validation routine on it isn&rsquo;t well designed. Go ahead and try if you like, but I found it easier to simply find a path to a font directory already recognized by ACF from the list of fonts installed ( I chose a directory with TTF files, just to be sure ), copy the TTF font files you want to use to that directory, change the owner/group and permissions to match the other font files in that directory (if necessary on your OS), restart ACF, log back into the administrator, go to the Font Management panel again and look for your fonts. In the left columns of the font table there are 3 names, Font Family, Font Face, Postscript Name. From my experience, using the font face name in your CSS specification should work. ( If not, try the other names - I saw a post suggesting that. )</p>
+
+<p>To be clear, after you get the font installed in a directory that ACF recognizes as a font directory, one way or another, you&rsquo;ll need to find the name you need to use in your CSS. The file name often does not match the font name.</p>
+
+<p>For Lucee, the process is different. ;-) Go to your Lucee installation directory, and within the /lib/ directory underneath it, find the fonts.jar file. Copy it to a working directory, rename the copy to fonts.zip and unzip it. ( A .jar file is essentially a ZIP file ). In the unzipped <em>fonts</em> directory that results, add your custom font files, again use only TTFs, and then open the pd4fonts.properties file you find in there and following the pattern you see, add the names of the fonts. In Lucee, you can choose the name, but to be cross compatible with ACF, I used the same name that ACF picked up from the font file. Here&rsquo;s what my pd4fonts.properties looked like after I added the OCR-B font I needed:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#this is an autogenerated file. please remove manually any references to copyrighted fonts
+</span><span class='line'>#Fri Apr 17 20:00:52 CEST 2009
+</span><span class='line'>Arial=arial.ttf
+</span><span class='line'>Arial\ Bold=arialbd.ttf
+</span><span class='line'>Arial\ Bold\ Italic=arialbi.ttf
+</span><span class='line'>Arial\ Italic=ariali.ttf
+</span><span class='line'>Courier\ New=cour.ttf
+</span><span class='line'>Courier\ New\ Bold=courbd.ttf
+</span><span class='line'>Courier\ New\ Bold\ Italic=courbi.ttf
+</span><span class='line'>Courier\ New\ Italic=couri.ttf
+</span><span class='line'>Times\ New\ Roman=times.ttf
+</span><span class='line'>Times\ New\ Roman\ Bold=timesbd.ttf
+</span><span class='line'>Times\ New\ Roman\ Bold\ Italic=timesbi.ttf
+</span><span class='line'>Times\ New\ Roman\ Italic=timesi.ttf
+</span><span class='line'>OCRB=ob______.ttf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I added the last line, <code>OCRB=ob______.ttf</code>, following the pattern <code>FontFaceName=fontFileName.ttf</code>.</p>
+
+<p>Note that spaces in the font name are escaped with backslashes, so those look like this <code>Font\ Face\ Name=fontFileName.ttf</code>.</p>
+
+<p>Ok, save pd4fonts.properties when you&rsquo;re done, zip the fonts directory up into fonts.zip, rename it to fonts.jar, copy it back where it came from in the /lib/ directory, overwriting &hellip; no wait! Don&rsquo;t just overwrite the old fonts.jar. Keep a copy of it, just in case &hellip; replace the old fonts.jar with the new fonts.jar, change the owner/group permissions to match the old file, and then restart Lucee.</p>
+
+<p>The name to use in your CSS for the font is the name you placed in the pd4fonts.properties file.</p>
+
+<p>Of course, the above approach for Lucee ( 4.5 ) might certainly change in the future. But for now, it works like this.</p>
+
+<p>A big thanks to <a href="http://blog.hnat.de/post.cfm/schriftarten-zu-railo-hinzufugen">Michael Hnat</a> for pointing me in the right direction regarding Lucee with his very helpful blog post.</p>
+
+<h2>Images</h2>
+
+<p>There is a logo image at the top of this PDF that was scaling up when rendered in Lucee in a way that caused it to be misplaced. The top left position was correct, but it was about 50% too big, pixelated, and overran other text. After a bunch of reading that indicated modifying the image print size or resolution would not help, I tried adding a css style declaration to the image that specified a size in mm, and it worked! Thanks to faxi05 for the suggestion.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;img src="logos/imageName.png" style="width:78mm; height:14mm" /&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&hellip; and it&rsquo;s cross compatible with ACF!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CFML Queries in Script]]></title>
@@ -1597,7 +1840,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#x75;&#115;&#x65;&#x72;&#x40;&#49;&#x30;&#x32;&#46;&#x31;&#x30;&#51;&#x2e;&#x31;&#48;&#x38;&#x2e;&#51;&#57;">&#x75;&#x73;&#101;&#114;&#x40;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#x33;&#x2e;&#x31;&#x30;&#56;&#46;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#x74;&#111;&#58;&#117;&#115;&#x65;&#x72;&#x40;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#x33;&#46;&#49;&#x30;&#x38;&#x2e;&#x33;&#57;">&#x75;&#x73;&#101;&#114;&#64;&#x31;&#x30;&#50;&#x2e;&#49;&#48;&#x33;&#46;&#x31;&#48;&#x38;&#46;&#51;&#57;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -1990,25 +2233,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 
 
 <p>Being in the dark all the time, confronting that ever changing vortex of things I don&rsquo;t know, affects me in various ways. It&rsquo;s an ongoing source of stress. One of my coping mechanisms is to shut down, distract myself, and that leaves me less productive than I could be. It also seems to impact my ability to learn. What impressed me about Feynman is that he seems both enthusiastic, and very clear-headed, about what he does not know. He seems to genuinely enjoy not knowing things, to embrace the state of not knowing. To me, that&rsquo;s a wonderful perspective to cultivate, both as a human being, but particularly as a programmer. It&rsquo;s an inner gestalt that I want to develop.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Redefining How I Learn New Technologies]]></title>
-    <link href="http://dnando.github.io/blog/2014/09/11/redefining-how-i-learn-new-technologies/"/>
-    <updated>2014-09-11T15:17:20+02:00</updated>
-    <id>http://dnando.github.io/blog/2014/09/11/redefining-how-i-learn-new-technologies</id>
-    <content type="html"><![CDATA[<p>I&rsquo;m a programmer. Learning new technologies and techniques is essential to what I do. However, I have noticed lately that learning has become burdened - burdened with time pressure, lots of time pressure; burdened with the sheer volume, diversity and complexity of all the things it seems I <em>must</em> learn to keep up, burdened with the feeling that I am falling ever further behind the hundreds of thousands of brilliant programmers that are constantly pushing our field forward, in every direction, a constantly expanding universe that includes everything from server administration to user interface design to unit / integration testing and a plethora of languages and frameworks that are used to develop web applications. Sum all that up, and to me, learning has become burdened with a fear that I simply won&rsquo;t be able to keep up.</p>
-
-<p>The truth is that I really enjoy learning new things. I feel that&rsquo;s one of the reasons I like programming, why I was attracted to it in the first place. And you know, looking at it clearly, my fear is <em>entirely</em> justified. There is no way in the world for a working programming to keep up with the whole field. It&rsquo;s just too bloody big. And complex. So how can I deal with this situation?</p>
-
-<p>Here is my proposal, to myself. What about taking one <em>small</em> bite at a time? What about simply enjoying the flavor, the taste of learning something new, as it is happening? On a practical basis, I don&rsquo;t have a choice. The field is waayy too big to consume in one go. But on a personal level, I <em>do</em> have a choice.</p>
-
-<p>So this blog is my space for learning new stuff. I&rsquo;ve decided that I&rsquo;m going to redefine my attitude toward learning. Until now, it has seemed that if I&rsquo;m going to keep up, I have to gulp everything down as quickly as possible. Well, that doesn&rsquo;t work. I&rsquo;m left somewhat confused and overwhelmed, and I don&rsquo;t really learn anything, not in a way that I can practically use.</p>
-
-<p>This blog is for taking small bites, chewing things over, and enjoying what I&rsquo;m learning.</p>
-
-<p>Or at least when I must gulp, writing it down here may help me digest it better!</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Generating Accurate PDFs Using Cfdocument - Nando @ Aria Media</title>
+  <meta name="author" content="Nando @ Aria Media">
+
+  
+  <meta name="description" content="I&rsquo;ve been developing a PDF, generated within a CFML application, that needs very accurate placement of chunks of text so that it can be printed &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dnando.github.io/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='//fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nando @ Aria Media</a></h1>
+  
+    <h2>( learning Clojure ColdFusion Railo Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dnando.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About Me</a></li>
+  <li><a href="http://aria-media.com/">Aria Media</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Generating Accurate PDFs Using Cfdocument</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-07-01T23:55:41+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>11:55 pm</span></time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I&rsquo;ve been developing a PDF, generated within a CFML application, that needs very accurate placement of chunks of text so that it can be printed on a standard form. It also needs to use a specified font, OCR-B, so that a line of text on the printed form can be machine scanned. I&rsquo;ve managed to get this working much better than expected on both ACF and Lucee, in a cross-compatible way, so I thought I&rsquo;d write everything up to remember the details down the line.</p>
+
+<p>I was at first thinking I might be able to use the new cfhtmltopdf tag, but quickly dropped that idea: I couldn&rsquo;t get the PDF Service needed to use this tag to work on my Mac; it seems to be an enterprise only feature; and I wasn&rsquo;t so sure this approach would be compatible to use within Lucee. After looking around over the fence for a bit at potential solutions outside of CFML, nothing hit me as particularly appealing, so I dug into getting cfdocument to work as best I could. First the tag attributes.</p>
+
+<h2>Attributes</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;cfdocument format="pdf" pagetype="A4" orientation="portrait" fontEmbed="true" unit="cm" localUrl="true" saveAsName="#pdfFileName#" marginLeft="0" margintop="0" marginright="0" marginbottom="0"&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>FontEmbed=&ldquo;true&rdquo; is essential so that anyone can print the PDF with the OCR-B code line correctly displayed, even if they don&rsquo;t have this font on their system. LocalUrl is set to true to easily pull in a logo image from the local file system. Note the margins are set to 0, because I&rsquo;m using a <code>&lt;div&gt;</code> tag to define the size of the page to control the tendency of the 2 different PDF generation engines used in ACF and Lucee to scale the layout, differently.</p>
+
+<h2>Layout</h2>
+
+<p>Nested directly within the cfdocument tag is a div tag that sets the page width, with <code>position:relative</code> so it remains within the page flow, and acts as the parent tag within which all layout divs that position text are nested <em>and proportionally scaled against</em>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;div style="position:relative; top:0mm; left:0mm; width:210mm;"&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then within that parent div tag are nested the various div tags, absolutely positioned, containing the blocks of text and images that make up the PDF content. Here are a few examples to demonstrate:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;div class="address"  style="position:absolute; top:13mm; left:100mm; "&gt;
+</span><span class='line'>  #biller.address1# &middot #biller.zipcode# #biller.city# 
+</span><span class='line'>&lt;/div&gt;
+</span><span class='line'>&lt;!--- client address ---&gt;
+</span><span class='line'>&lt;div class="text" style="position:absolute; top:45mm; left:130mm"&gt;
+</span><span class='line'>  #invoice.getClient().getName()#&lt;br&gt;
+</span><span class='line'>  &lt;cfif len( trim( invoice.getClient().getAddress1() ) )&gt;#invoice.getClient().getAddress1()#&lt;br&gt;&lt;/cfif&gt;
+</span><span class='line'>  &lt;cfif len( trim( invoice.getClient().getAddress2() ) )&gt;#invoice.getClient().getAddress2()#&lt;br&gt;&lt;/cfif&gt;
+</span><span class='line'>  &lt;cfif len( trim( invoice.getClient().getAddress3() ) )&gt;#invoice.getClient().getAddress3()#&lt;br&gt;&lt;/cfif&gt;
+</span><span class='line'>  #invoice.getClient().getCountryCode()#-#invoice.getClient().getZipCode()# #invoice.getClient().getCity()#
+</span><span class='line'>&lt;/div&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What I really like about this approach is that each of the text blocks winds up very close to the top and left dimensions specified, and the ACF and Lucee outputs are nearly identical.</p>
+
+<p>Without the parent div tag specifying the width, the results between the 2 engines are vastly different, and positioning the elements is much more a question of trial and error than simply entering the top and left positions as measured with a ruler (and perhaps tweaking them by a few milimeters if necessary). Also without the parent div tag to control how layout elements scale, changing the dimension of one absolutely positioned div within the PDF can easily alter the position or size of other divs, which can be very frustrating if you have 20 or 30 elements that all need to be precisely positioned.</p>
+
+<p>Feel free to experiment with paddings or margins on the parent div if you want - I suspect it would work just as well (but haven&rsquo;t tried). For myself, I found it easier simply to measure placement from the edge of the page.</p>
+
+<p>I haven&rsquo;t tried this myself, yet, but I have it from a reliable source that a parent div tag in the layout specifying the page width, as above, will fix page break issues if a table extends over more than one page.</p>
+
+<h2>Fonts</h2>
+
+<p>Specifying a font for a block of text is simple. You can use a CSS style declaration within a style block that is nested <em>within</em> the cfdocument tag, or you can place the font specification directly in a style attribute of an html tag like `<div> <span> <td>. Here are the styles I used for the above text blocks (and again, the style block must be nested within the cfdocument tag, or the PDF generator won&rsquo;t see it):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;cfdocument format="pdf" pagetype="A4" orientation="portrait" fontEmbed="true" unit="cm" localUrl="true" saveAsName="#pdfFileName#" marginLeft="0" margintop="0" marginright="0" marginbottom="0"&gt;
+</span><span class='line'>&lt;style&gt;
+</span><span class='line'>  div.text {  
+</span><span class='line'>      font: 9pt Arial;
+</span><span class='line'>      line-height: 13pt;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  div.address {
+</span><span class='line'>      font: 9pt Arial;
+</span><span class='line'>      color: #033B7D;
+</span><span class='line'>  }
+</span><span class='line'>  ...
+</span><span class='line'>&lt;/style&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As of this writing, available CSS attributes remain limited. There is a list of CSS attributes that work in the ACF documentation for cfdocument, reproduced here:</p>
+
+<p>The cfdocument tag supports the following CSS styles:</p>
+
+<p>background
+background-attachment
+background-color
+background-image
+background-position
+background-repeat
+border
+border-bottom
+border-bottom-color
+border-bottom-style (solid border only)
+border-bottom-width
+border-color
+border-left
+border-left-color
+border-left-style (solid border only)
+border-left-width
+border-right
+border-right-color
+border-right-style (solid border only)
+border-right-width
+border-spacing
+border-style (solid border only)
+border-top
+border-top-color
+border-top-style (solid border only)
+border-top-width
+border-width
+bottom
+clear
+clip
+color
+content (strings, counters only)
+counter-increment
+counter-reset
+cursor
+display
+float
+font
+font-family
+font-size
+font-style
+font-weight
+height
+left
+letter-spacing
+line-height
+list-style-type
+margin
+margin-bottom
+margin-left
+margin-right
+margin-top
+outline
+outline-color
+outline-style (solid, dotted, dashed only)
+outline-width
+padding
+padding-bottom
+padding-left
+padding-right
+padding-top
+page-break-after
+page-break-before
+page-break-inside
+position
+right
+text-align (left, right, and center)
+text-decoration
+text-indent
+top
+unicode-bidi
+vertical-align
+visibility
+white space (normal, nowrap only)
+width
+z-index</p>
+
+<h2>Fonts</h2>
+
+<p>Scattered around the internet I found a variety of comments suggesting that getting a &ldquo;custom&rdquo; font to work within cfdocument isn&rsquo;t at all easy. Once you know how, it&rsquo;s actually fairly simple. For both ACF and Lucee, it&rsquo;s a question of getting the correct font file in the right place, with the right permissions, and restarting ACF/Lucee.</p>
+
+<p>For ACF, log into the administrator and go to the Font Management Panel. There you will see all the fonts available to use in cfdocument &hellip; except that as of this writing, the OTF fonts won&rsquo;t work, even tho&#8217; the Font Management panel claims they are useable in PDFs. Unless something changes in the future, forget OTF fonts for cfdocument. I tried a bunch that already seemed to be recognized, none worked.</p>
+
+<p>At the top of the font panel, you&rsquo;ll see a feature that allows you to add fonts &ldquo;Register New Font(s) with ColdFusion&rdquo;. I couldn&rsquo;t get this to work reliably - I think the validation routine on it isn&rsquo;t well designed. Go ahead and try if you like, but I found it easier to simply find a path to a font directory already recognized by ACF from the list of fonts installed ( I chose a directory with TTF files, just to be sure ), copy the TTF font files you want to use to that directory, change the owner/group and permissions to match the other font files in that directory (if necessary on your OS), restart ACF, log back into the administrator, go to the Font Management panel again and look for your fonts. In the left columns of the font table there are 3 names, Font Family, Font Face, Postscript Name. From my experience, using the font face name in your CSS specification should work. ( If not, try the other names - I saw a post suggesting that. )</p>
+
+<p>To be clear, after you get the font installed in a directory that ACF recognizes as a font directory, one way or another, you&rsquo;ll need to find the name you need to use in your CSS. The file name often does not match the font name.</p>
+
+<p>For Lucee, the process is different. ;-) Go to your Lucee installation directory, and within the /lib/ directory underneath it, find the fonts.jar file. Copy it to a working directory, rename the copy to fonts.zip and unzip it. ( A .jar file is essentially a ZIP file ). In the unzipped <em>fonts</em> directory that results, add your custom font files, again use only TTFs, and then open the pd4fonts.properties file you find in there and following the pattern you see, add the names of the fonts. In Lucee, you can choose the name, but to be cross compatible with ACF, I used the same name that ACF picked up from the font file. Here&rsquo;s what my pd4fonts.properties looked like after I added the OCR-B font I needed:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#this is an autogenerated file. please remove manually any references to copyrighted fonts
+</span><span class='line'>#Fri Apr 17 20:00:52 CEST 2009
+</span><span class='line'>Arial=arial.ttf
+</span><span class='line'>Arial\ Bold=arialbd.ttf
+</span><span class='line'>Arial\ Bold\ Italic=arialbi.ttf
+</span><span class='line'>Arial\ Italic=ariali.ttf
+</span><span class='line'>Courier\ New=cour.ttf
+</span><span class='line'>Courier\ New\ Bold=courbd.ttf
+</span><span class='line'>Courier\ New\ Bold\ Italic=courbi.ttf
+</span><span class='line'>Courier\ New\ Italic=couri.ttf
+</span><span class='line'>Times\ New\ Roman=times.ttf
+</span><span class='line'>Times\ New\ Roman\ Bold=timesbd.ttf
+</span><span class='line'>Times\ New\ Roman\ Bold\ Italic=timesbi.ttf
+</span><span class='line'>Times\ New\ Roman\ Italic=timesi.ttf
+</span><span class='line'>OCRB=ob______.ttf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I added the last line, <code>OCRB=ob______.ttf</code>, following the pattern <code>FontFaceName=fontFileName.ttf</code>.</p>
+
+<p>Note that spaces in the font name are escaped with backslashes, so those look like this <code>Font\ Face\ Name=fontFileName.ttf</code>.</p>
+
+<p>Ok, save pd4fonts.properties when you&rsquo;re done, zip the fonts directory up into fonts.zip, rename it to fonts.jar, copy it back where it came from in the /lib/ directory, overwriting &hellip; no wait! Don&rsquo;t just overwrite the old fonts.jar. Keep a copy of it, just in case &hellip; replace the old fonts.jar with the new fonts.jar, change the owner/group permissions to match the old file, and then restart Lucee.</p>
+
+<p>The name to use in your CSS for the font is the name you placed in the pd4fonts.properties file.</p>
+
+<p>Of course, the above approach for Lucee ( 4.5 ) might certainly change in the future. But for now, it works like this.</p>
+
+<p>A big thanks to <a href="http://blog.hnat.de/post.cfm/schriftarten-zu-railo-hinzufugen">Michael Hnat</a> for pointing me in the right direction regarding Lucee with his very helpful blog post.</p>
+
+<h2>Images</h2>
+
+<p>There is a logo image at the top of this PDF that was scaling up when rendered in Lucee in a way that caused it to be misplaced. The top left position was correct, but it was about 50% too big, pixelated, and overran other text. After a bunch of reading that indicated modifying the image print size or resolution would not help, I tried adding a css style declaration to the image that specified a size in mm, and it worked! Thanks to faxi05 for the suggestion.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;img src="logos/imageName.png" style="width:78mm; height:14mm" /&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&hellip; and it&rsquo;s cross compatible with ACF!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Nando @ Aria Media</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-07-01T23:55:41+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>11:55 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/06/16/cfml-queries-in-script/" title="Previous Post: CFML queries in script">&laquo; CFML queries in script</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/">Generating Accurate PDFs Using Cfdocument</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/06/16/cfml-queries-in-script/">CFML Queries in Script</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/06/16/debugging-technique-cfml-development/">Debugging Technique CFML Development</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/">Nginx Tweaks Using Proxy_redirect and Rewrite Directives</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/">UTF-8 Extended Character File Names in Railo</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dnando">@dnando</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'dnando',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Nando @ Aria Media -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nandoariamedia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dnando.github.io/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/';
+        var disqus_url = 'http://dnando.github.io/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
