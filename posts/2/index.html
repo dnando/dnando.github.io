@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="New with CentOS 7 is firewalld, a replacement for iptables to manage the firewall. As with anything new, at first glance it seems confusing, but I& &hellip;">
+  <meta name="description" content="I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -39,7 +39,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">Nando @ Aria Media</a></h1>
   
-    <h2>( learning Clojure ColdFusion Railo Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
+    <h2>( learning Clojure ColdFusion Lucee Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
   
 </hgroup>
 
@@ -68,6 +68,68 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/04/change-location-of-cf11-webroot/">Change Location of ColdFusion Webroot</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-12-04T18:12:08+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:12 pm</span></time>
+        
+           | <a href="/blog/2014/12/04/change-location-of-cf11-webroot/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any files that need to be processed by CF, essentially .cfm files, and serve any other assets directly, images, css and js files, etc, I want to relocate the ColdFusion webroot to a directory outside of the cf installation directories. A little googling led me to a <a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">old blog post</a> that outlined the process in sufficient detail that I got it working on the first shot. Thanks Ryan! This post is both to refresh the collective knowledge cache and affirm that the technique works on CF11 as well as CF10.</p>
+
+<p>The first step is to locate the server.xml file, which you will find at</p>
+
+<p><cfInstallationDirectory>/cfusion/runtime/conf/server.xml</p>
+
+<p>Make a backup of it. If something goes wrong, you can use the backup to restore CF to a working state again. Note that CF needs to be able to locate the CFIDE and WEB-INF directories to function properly, and these are both located with in the default webroot location. So make a backup of server.xml before proceeding.</p>
+
+<p>Open server.xml for editing, scroll down to the bottom of the file where you should find the following line commented out:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!-- &lt;Context path="/" docBase="&lt;cf_home&gt;\wwwroot" WorkDir="&lt;cf_home&gt;\runtime\conf\Catalina\localhost\tmp" &gt;&lt;/Context&gt;  --&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Assuming the installation directory is /opt/cf11, so that I can give a concrete example, uncomment that line and adapt it to the following model, which is working on my CF11 installation:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"&gt;&lt;/Context&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The docBase is the new webroot location, which must already exist, but can be of your choice. WorkDir points to an existing location in the installation directories. The aliases are essential, so that CF can find the CFIDE and WEB-INF directories. Adjust the slant of the slashes depending on your operating system, Windows or Linux. Use absolute paths for these settings, so on a Windows server, they would likely begin with a drive letter.</p>
+
+<p>After you&rsquo;ve edited and saved server.xml, restart ColdFusion, place some cf code in the docBase directory, and browse to it via localhost:8500/ to make sure it works. Also check if you can still access the CF admin panel at localhost:8500/CFIDE/administrator/, which CF should find via the <em>aliases=</em> declaration. If both those tests succeed, you should be good to go!</p>
+
+<p>References:</p>
+
+<ol>
+<li><a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html</a></li>
+<li><a href="http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10">http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10</a></li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -572,7 +634,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#x69;&#x6c;&#116;&#111;&#x3a;&#x75;&#115;&#x65;&#x72;&#x40;&#x31;&#x30;&#50;&#x2e;&#x31;&#x30;&#51;&#46;&#x31;&#x30;&#56;&#x2e;&#x33;&#57;">&#117;&#115;&#101;&#114;&#x40;&#x31;&#x30;&#50;&#46;&#x31;&#x30;&#51;&#46;&#x31;&#x30;&#x38;&#46;&#51;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#117;&#115;&#x65;&#114;&#x40;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#51;&#x2e;&#49;&#x30;&#56;&#46;&#51;&#x39;">&#117;&#x73;&#x65;&#x72;&#64;&#x31;&#48;&#x32;&#46;&#x31;&#48;&#51;&#x2e;&#49;&#x30;&#56;&#46;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -1092,47 +1154,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/09/12/im-in-the-dark-here/">I&#8217;m in the Dark Here</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-09-12T00:33:09+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>12:33 am</span></time>
-        
-           | <a href="/blog/2014/09/12/im-in-the-dark-here/#disqus_thread"
-             data-disqus-identifier="http://dnando.github.io/blog/2014/09/12/im-in-the-dark-here/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was watching a <a href="http://youtu.be/Bgaw9qe7DEE?t=48m7s">video of Richard Feynman</a> some time back that inspired me in a very specific way. In it, he talks about his attitude toward not knowing things. Here&rsquo;s a quote from it:</p>
-
-<p>&ldquo;You see, one thing is, I can live with doubt, and uncertainty, and not knowing. I think it&rsquo;s much more interesting to live not knowing than to have answers which might be wrong. I have approximate answers and possible beliefs and different degrees of certainty about different things, but I&rsquo;m not absolutely sure about anything, and there are many things I don&rsquo;t know anything about &hellip; But I don&rsquo;t have to know an answer. I&rsquo;m not frightened by not knowing things.&rdquo;</p>
-
-<p>As a programmer, I&rsquo;m constantly confronted by a cascading, bubbling vortex of all kinds of things I don&rsquo;t know. I don&rsquo;t remember a syntax; my &ldquo;Google Foo&rdquo; is failing me and I can&rsquo;t find an answer; I&rsquo;m not sure of the best way to architect a given process; I&rsquo;m not really clear how a particular business process I&rsquo;m trying to model actually works in the real world; I&rsquo;m only familiar with certain aspects of a language or framework, and the rest lurks in the shadows of what I don&rsquo;t know. In the words of one of my favorite movie scenes &ldquo;I&rsquo;m in the dark here.&rdquo;</p>
-
-<iframe width="853" height="480" src="//www.youtube.com/embed/WZ6p4t3StSc?rel=0" frameborder="0" allowfullscreen></iframe>
-
-
-<p>Being in the dark all the time, confronting that ever changing vortex of things I don&rsquo;t know, affects me in various ways. It&rsquo;s an ongoing source of stress. One of my coping mechanisms is to shut down, distract myself, and that leaves me less productive than I could be. It also seems to impact my ability to learn. What impressed me about Feynman is that he seems both enthusiastic, and very clear-headed, about what he does not know. He seems to genuinely enjoy not knowing things, to embrace the state of not knowing. To me, that&rsquo;s a wonderful perspective to cultivate, both as a human being, but particularly as a programmer. It&rsquo;s an inner gestalt that I want to develop.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -1150,6 +1171,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/">First Steps With the Clojure Version of FW/1</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/">Generating Accurate PDFs Using Cfdocument</a>
       </li>
     
@@ -1163,10 +1188,6 @@
     
       <li class="post">
         <a href="/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/">Nginx Tweaks Using Proxy_redirect and Rewrite Directives</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/">UTF-8 Extended Character File Names in Railo</a>
       </li>
     
   </ul>
@@ -1211,7 +1232,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Nando @ Aria Media -
+  Copyright &copy; 2016 - Nando @ Aria Media -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

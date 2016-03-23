@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>First Steps With the Clojure Version of FW/1 - Nando @ Aria Media</title>
+  <meta name="author" content="Nando @ Aria Media">
+
+  
+  <meta name="description" content="Sean Corfield has built a Clojure version of the popular CFML framework FW/1. I&rsquo;ve been using FW/1 for a number of years, so I thought it might &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Nando @ Aria Media" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='//fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nando @ Aria Media</a></h1>
+  
+    <h2>( learning Clojure ColdFusion Lucee Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dnando.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About Me</a></li>
+  <li><a href="http://aria-media.com/">Aria Media</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">First Steps With the Clojure Version of FW/1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-03-22T20:45:04+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>8:45 pm</span></time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Sean Corfield has built a Clojure version of the popular CFML framework FW/1. I&rsquo;ve been using FW/1 for a number of years, so I thought it might help me learn Clojure to begin developing an app in fw1-clj.</p>
+
+<p>The first step to get up and running is to head on over to the <a href="https://github.com/framework-one/fw1-clj">fw1-clj GitHub repository</a> and follow the directions to <a href="https://github.com/boot-clj/boot#install">install Boot</a>, which is a build tool for Clojure. Next, as per the instructions on the fw1-clj GitHub repository, we run a boot command in a terminal to create a new fw1-clj app, which currently looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>boot -d seancorfield/boot-new new -t fw1 -n myfw1app
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(Sean has indicated this invocation may change in the future, so best to follow the fw1-clj repository instructions.)</p>
+
+<p>Then, we &ldquo;cd&rdquo; into the application directory we specified above, in this example &ldquo;myfw1app&rdquo;, and start the application up like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>myfw1app
+</span><span class='line'><span class="nv">PORT</span><span class="o">=</span><span class="m">8111</span> boot run
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Specifying the PORT variable isn&rsquo;t required, but may be necessary to avoid conflicts. If omitted, the default port is 8080.</p>
+
+<p>Navigating to localhost:8111, we see a lovely default page that says &ldquo;Framework One - Welcome to FW/1&rdquo;. Yay! It certainly is impressive how easy that is. No server to install. Nothing to download. No settings to find and configure. We&rsquo;re ready to start developing.</p>
+
+<p>There are several options to choose from in terms of an IDE for Clojure. Many experienced Clojure developers use <a href="https://www.gnu.org/software/emacs/">Emacs</a> with <a href="https://github.com/clojure-emacs/cider">CIDER</a>, or the <a href="https://cursive-ide.com/userguide/index.html">Cursive plugin</a> for <a href="https://www.jetbrains.com/idea/download/index.html">Intellij</a>. Both of those have a learning curve that you may prefer to avoid to focus on getting the basics of Clojure down first.</p>
+
+<p>For beginners, good IDE&rsquo;s for experimentation are <a href="http://lighttable.com/">Light Table</a> or <a href="https://atom.io/">Atom</a> with <a href="https://atom.io/packages/search?q=clojure">a few Clojure packages</a> installed, such as language-clojure, proto-repl and parinfer. I&rsquo;m using Atom at the moment because I&rsquo;m also using it for CFML development, and also because the Clojure packages seem to work very well.</p>
+
+<p>One of the first things I wanted to figure out was how to visualize the rc map (or struct as it would be known in CFML). With a tip from Sean, I navigated to src/projectName/controllers/main.clj in the project that boot generated for me, and within the default function definition, I added <code>(println rc)</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">default</span> <span class="s">&quot;/main/default handler&quot;</span> <span class="p">[</span><span class="nv">rc</span><span class="p">]</span>
+</span><span class='line'>  <span class="p">(</span><span class="nb">println </span><span class="nv">rc</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">rc</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>reloaded the app in the browser, and then checked the terminal window where I had started the app with the boot command for the output. Nothing was output there. After a moment, I remembered that I probably had to reload the application to get the changes picked up. Checking the somewhat sparse documentation on the Github page, I found the default reload query string would be &ldquo;?reload=secret&rdquo;. Hitting localhost:8111?reload=secret in the browser then generated the rc map in my terminal window - all in one <em>very</em> long line. After another suggestion from Sean, I replaced the print line function <code>(println rc)</code> with the clojure pretty print function  <code>(clojure.pprint/pprint rc)</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">default</span> <span class="s">&quot;/main/default handler&quot;</span> <span class="p">[</span><span class="nv">rc</span><span class="p">]</span>
+</span><span class='line'>  <span class="p">(</span><span class="nf">clojure.pprint/pprint</span> <span class="nv">rc</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">rc</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>hit localhost:8111?reload=secret again, and now the keys within the rc map were nicely separated by line breaks in the terminal output. Much more readable that way.</p>
+
+<p>I noticed within the output that the :reload-application-on-every-request key was set to false. Better in development to have that set to true, so reading the docs, I found &ldquo;the call to (fw1/start) can be passed configuration parameters either as a map or as an arbitrary number of inline key / value pairs&rdquo;</p>
+
+<p>Ok, so opening src/projectName/main.clj, I found the call to (fw1/start) and changed it from</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">port</span> <span class="p">(</span><span class="nf">Integer/parseInt</span> <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nf">System/getenv</span><span class="p">)</span> <span class="s">&quot;PORT&quot;</span> <span class="s">&quot;8080&quot;</span><span class="p">))]</span>
+</span><span class='line'>    <span class="p">(</span><span class="nf">run-jetty</span> <span class="p">(</span><span class="nf">fw1/start</span> <span class="ss">:application-key</span> <span class="s">&quot;easycalclj&quot;</span><span class="p">)</span>
+</span><span class='line'>               <span class="p">{</span><span class="ss">:port</span> <span class="nv">port</span><span class="p">})))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>to</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">port</span> <span class="p">(</span><span class="nf">Integer/parseInt</span> <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nf">System/getenv</span><span class="p">)</span> <span class="s">&quot;PORT&quot;</span> <span class="s">&quot;8080&quot;</span><span class="p">))]</span>
+</span><span class='line'>    <span class="p">(</span><span class="nf">run-jetty</span> <span class="p">(</span><span class="nf">fw1/start</span> <span class="ss">:application-key</span> <span class="s">&quot;easycalclj&quot;</span> <span class="ss">:reload-application-on-every-request</span> <span class="s">&quot;true&quot;</span><span class="p">)</span>
+</span><span class='line'>               <span class="p">{</span><span class="ss">:port</span> <span class="nv">port</span><span class="p">})))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then I reloaded the app with &ldquo;?reload=secret&rdquo;, and the rc output for :reload-application-on-every-request didn&rsquo;t change. Hmmm &hellip;</p>
+
+<p>After a bit of investigation, (I asked Sean again on Slack), I found that to reload changes to the configuration params, I needed to go to the terminal window where I started the app with <code>boot run</code>, shut the app down with <code>control-c</code>, and then start it up again with <code>PORT=8111 boot run</code>.</p>
+
+<p>Checking the rc output in the console again, I saw that :reload-application-on-every-request was now true!</p>
+
+<p>These were all small baby steps, but unless I take them, I won&rsquo;t learn.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Nando @ Aria Media</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-03-22T20:45:04+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>8:45 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/clojure/'>clojure</a>, <a class='category' href='/blog/categories/fw1/'>fw1</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/" data-via="dnando" data-counturl="http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/" title="Previous Post: Generating Accurate PDFs using cfdocument">&laquo; Generating Accurate PDFs using cfdocument</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/">First Steps With the Clojure Version of FW/1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/">Generating Accurate PDFs Using Cfdocument</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/06/16/cfml-queries-in-script/">CFML Queries in Script</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/06/16/debugging-technique-cfml-development/">Debugging Technique CFML Development</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/">Nginx Tweaks Using Proxy_redirect and Rewrite Directives</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dnando">@dnando</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'dnando',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Nando @ Aria Media -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nandoariamedia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/';
+        var disqus_url = 'http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

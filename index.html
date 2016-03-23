@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I&rsquo;ve been developing a PDF, generated within a CFML application, that needs very accurate placement of chunks of text so that it can be printed &hellip;">
+  <meta name="description" content="Sean Corfield has built a Clojure version of the popular CFML framework FW/1. I&rsquo;ve been using FW/1 for a number of years, so I thought it might &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -39,7 +39,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">Nando @ Aria Media</a></h1>
   
-    <h2>( learning Clojure ColdFusion Railo Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
+    <h2>( learning Clojure ColdFusion Lucee Javascript jQuery Angular CSS Linux Apache HTML5 & etc )</h2>
   
 </hgroup>
 
@@ -68,6 +68,124 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/">First Steps With the Clojure Version of FW/1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-03-22T20:45:04+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>8:45 pm</span></time>
+        
+           | <a href="/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Sean Corfield has built a Clojure version of the popular CFML framework FW/1. I&rsquo;ve been using FW/1 for a number of years, so I thought it might help me learn Clojure to begin developing an app in fw1-clj.</p>
+
+<p>The first step to get up and running is to head on over to the <a href="https://github.com/framework-one/fw1-clj">fw1-clj GitHub repository</a> and follow the directions to <a href="https://github.com/boot-clj/boot#install">install Boot</a>, which is a build tool for Clojure. Next, as per the instructions on the fw1-clj GitHub repository, we run a boot command in a terminal to create a new fw1-clj app, which currently looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>boot -d seancorfield/boot-new new -t fw1 -n myfw1app
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(Sean has indicated this invocation may change in the future, so best to follow the fw1-clj repository instructions.)</p>
+
+<p>Then, we &ldquo;cd&rdquo; into the application directory we specified above, in this example &ldquo;myfw1app&rdquo;, and start the application up like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>myfw1app
+</span><span class='line'><span class="nv">PORT</span><span class="o">=</span><span class="m">8111</span> boot run
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Specifying the PORT variable isn&rsquo;t required, but may be necessary to avoid conflicts. If omitted, the default port is 8080.</p>
+
+<p>Navigating to localhost:8111, we see a lovely default page that says &ldquo;Framework One - Welcome to FW/1&rdquo;. Yay! It certainly is impressive how easy that is. No server to install. Nothing to download. No settings to find and configure. We&rsquo;re ready to start developing.</p>
+
+<p>There are several options to choose from in terms of an IDE for Clojure. Many experienced Clojure developers use <a href="https://www.gnu.org/software/emacs/">Emacs</a> with <a href="https://github.com/clojure-emacs/cider">CIDER</a>, or the <a href="https://cursive-ide.com/userguide/index.html">Cursive plugin</a> for <a href="https://www.jetbrains.com/idea/download/index.html">Intellij</a>. Both of those have a learning curve that you may prefer to avoid to focus on getting the basics of Clojure down first.</p>
+
+<p>For beginners, good IDE&rsquo;s for experimentation are <a href="http://lighttable.com/">Light Table</a> or <a href="https://atom.io/">Atom</a> with <a href="https://atom.io/packages/search?q=clojure">a few Clojure packages</a> installed, such as language-clojure, proto-repl and parinfer. I&rsquo;m using Atom at the moment because I&rsquo;m also using it for CFML development, and also because the Clojure packages seem to work very well.</p>
+
+<p>One of the first things I wanted to figure out was how to visualize the rc map (or struct as it would be known in CFML). With a tip from Sean, I navigated to src/projectName/controllers/main.clj in the project that boot generated for me, and within the default function definition, I added <code>(println rc)</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">default</span> <span class="s">&quot;/main/default handler&quot;</span> <span class="p">[</span><span class="nv">rc</span><span class="p">]</span>
+</span><span class='line'>  <span class="p">(</span><span class="nb">println </span><span class="nv">rc</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">rc</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>reloaded the app in the browser, and then checked the terminal window where I had started the app with the boot command for the output. Nothing was output there. After a moment, I remembered that I probably had to reload the application to get the changes picked up. Checking the somewhat sparse documentation on the Github page, I found the default reload query string would be &ldquo;?reload=secret&rdquo;. Hitting localhost:8111?reload=secret in the browser then generated the rc map in my terminal window - all in one <em>very</em> long line. After another suggestion from Sean, I replaced the print line function <code>(println rc)</code> with the clojure pretty print function  <code>(clojure.pprint/pprint rc)</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">default</span> <span class="s">&quot;/main/default handler&quot;</span> <span class="p">[</span><span class="nv">rc</span><span class="p">]</span>
+</span><span class='line'>  <span class="p">(</span><span class="nf">clojure.pprint/pprint</span> <span class="nv">rc</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">rc</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>hit localhost:8111?reload=secret again, and now the keys within the rc map were nicely separated by line breaks in the terminal output. Much more readable that way.</p>
+
+<p>I noticed within the output that the :reload-application-on-every-request key was set to false. Better in development to have that set to true, so reading the docs, I found &ldquo;the call to (fw1/start) can be passed configuration parameters either as a map or as an arbitrary number of inline key / value pairs&rdquo;</p>
+
+<p>Ok, so opening src/projectName/main.clj, I found the call to (fw1/start) and changed it from</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">port</span> <span class="p">(</span><span class="nf">Integer/parseInt</span> <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nf">System/getenv</span><span class="p">)</span> <span class="s">&quot;PORT&quot;</span> <span class="s">&quot;8080&quot;</span><span class="p">))]</span>
+</span><span class='line'>    <span class="p">(</span><span class="nf">run-jetty</span> <span class="p">(</span><span class="nf">fw1/start</span> <span class="ss">:application-key</span> <span class="s">&quot;easycalclj&quot;</span><span class="p">)</span>
+</span><span class='line'>               <span class="p">{</span><span class="ss">:port</span> <span class="nv">port</span><span class="p">})))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>to</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">port</span> <span class="p">(</span><span class="nf">Integer/parseInt</span> <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nf">System/getenv</span><span class="p">)</span> <span class="s">&quot;PORT&quot;</span> <span class="s">&quot;8080&quot;</span><span class="p">))]</span>
+</span><span class='line'>    <span class="p">(</span><span class="nf">run-jetty</span> <span class="p">(</span><span class="nf">fw1/start</span> <span class="ss">:application-key</span> <span class="s">&quot;easycalclj&quot;</span> <span class="ss">:reload-application-on-every-request</span> <span class="s">&quot;true&quot;</span><span class="p">)</span>
+</span><span class='line'>               <span class="p">{</span><span class="ss">:port</span> <span class="nv">port</span><span class="p">})))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then I reloaded the app with &ldquo;?reload=secret&rdquo;, and the rc output for :reload-application-on-every-request didn&rsquo;t change. Hmmm &hellip;</p>
+
+<p>After a bit of investigation, (I asked Sean again on Slack), I found that to reload changes to the configuration params, I needed to go to the terminal window where I started the app with <code>boot run</code>, shut the app down with <code>control-c</code>, and then start it up again with <code>PORT=8111 boot run</code>.</p>
+
+<p>Checking the rc output in the console again, I saw that :reload-application-on-every-request was now true!</p>
+
+<p>These were all small baby steps, but unless I take them, I won&rsquo;t learn.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -127,7 +245,7 @@
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>&lt;div class="address"  style="position:absolute; top:13mm; left:100mm; "&gt;
-</span><span class='line'>  #biller.address1# &middot #biller.zipcode# #biller.city# 
+</span><span class='line'>  #biller.address1# &middot #biller.zipcode# #biller.city#
 </span><span class='line'>&lt;/div&gt;
 </span><span class='line'>&lt;!--- client address ---&gt;
 </span><span class='line'>&lt;div class="text" style="position:absolute; top:45mm; left:130mm"&gt;
@@ -166,7 +284,7 @@
 <span class='line-number'>13</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>&lt;cfdocument format="pdf" pagetype="A4" orientation="portrait" fontEmbed="true" unit="cm" localUrl="true" saveAsName="#pdfFileName#" marginLeft="0" margintop="0" marginright="0" marginbottom="0"&gt;
 </span><span class='line'>&lt;style&gt;
-</span><span class='line'>  div.text {  
+</span><span class='line'>  div.text {
 </span><span class='line'>      font: 9pt Arial;
 </span><span class='line'>      line-height: 13pt;
 </span><span class='line'>  }
@@ -1705,68 +1823,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/12/04/change-location-of-cf11-webroot/">Change Location of ColdFusion Webroot</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-12-04T18:12:08+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:12 pm</span></time>
-        
-           | <a href="/blog/2014/12/04/change-location-of-cf11-webroot/#disqus_thread"
-             data-disqus-identifier="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&rsquo;m in the process of preparing a server to test CF11 with nginx as the front end webserver. Since nginx will act as a reverse proxy for any files that need to be processed by CF, essentially .cfm files, and serve any other assets directly, images, css and js files, etc, I want to relocate the ColdFusion webroot to a directory outside of the cf installation directories. A little googling led me to a <a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">old blog post</a> that outlined the process in sufficient detail that I got it working on the first shot. Thanks Ryan! This post is both to refresh the collective knowledge cache and affirm that the technique works on CF11 as well as CF10.</p>
-
-<p>The first step is to locate the server.xml file, which you will find at</p>
-
-<p><cfInstallationDirectory>/cfusion/runtime/conf/server.xml</p>
-
-<p>Make a backup of it. If something goes wrong, you can use the backup to restore CF to a working state again. Note that CF needs to be able to locate the CFIDE and WEB-INF directories to function properly, and these are both located with in the default webroot location. So make a backup of server.xml before proceeding.</p>
-
-<p>Open server.xml for editing, scroll down to the bottom of the file where you should find the following line commented out:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!-- &lt;Context path="/" docBase="&lt;cf_home&gt;\wwwroot" WorkDir="&lt;cf_home&gt;\runtime\conf\Catalina\localhost\tmp" &gt;&lt;/Context&gt;  --&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Assuming the installation directory is /opt/cf11, so that I can give a concrete example, uncomment that line and adapt it to the following model, which is working on my CF11 installation:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Context path="/" docBase="/var/www" WorkDir="/opt/cf11/cfusion/runtime/conf/Catalina/localhost/tmp" aliases="/CFIDE=/opt/cf11/cfusion/wwwroot/CFIDE,/WEB-INF=/opt/cf11/cfusion/wwwroot/WEB-INF"&gt;&lt;/Context&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The docBase is the new webroot location, which must already exist, but can be of your choice. WorkDir points to an existing location in the installation directories. The aliases are essential, so that CF can find the CFIDE and WEB-INF directories. Adjust the slant of the slashes depending on your operating system, Windows or Linux. Use absolute paths for these settings, so on a Windows server, they would likely begin with a drive letter.</p>
-
-<p>After you&rsquo;ve edited and saved server.xml, restart ColdFusion, place some cf code in the docBase directory, and browse to it via localhost:8500/ to make sure it works. Also check if you can still access the CF admin panel at localhost:8500/CFIDE/administrator/, which CF should find via the <em>aliases=</em> declaration. If both those tests succeed, you should be good to go!</p>
-
-<p>References:</p>
-
-<ol>
-<li><a href="http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html">http://blog.bittersweetryan.com/2012/02/changing-webroot-of-coldfusion-zeus.html</a></li>
-<li><a href="http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10">http://blogs.coldfusion.com/post.cfm/getting-started-with-tomcat-in-coldfusion-10</a></li>
-</ol>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -1782,6 +1838,10 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/">First Steps With the Clojure Version of FW/1</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/">Generating Accurate PDFs Using Cfdocument</a>
       </li>
     
@@ -1795,10 +1855,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
     
       <li class="post">
         <a href="/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/">Nginx Tweaks Using Proxy_redirect and Rewrite Directives</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/">UTF-8 Extended Character File Names in Railo</a>
       </li>
     
   </ul>
@@ -1843,7 +1899,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Nando @ Aria Media -
+  Copyright &copy; 2016 - Nando @ Aria Media -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

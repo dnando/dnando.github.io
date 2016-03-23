@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Clojure | Nando @ Aria Media]]></title>
+  <link href="http://dnando.github.io/blog/categories/clojure/atom.xml" rel="self"/>
+  <link href="http://dnando.github.io/"/>
+  <updated>2016-03-23T13:35:17+01:00</updated>
+  <id>http://dnando.github.io/</id>
+  <author>
+    <name><![CDATA[Nando @ Aria Media]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[First Steps With the Clojure Version of FW/1]]></title>
+    <link href="http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/"/>
+    <updated>2016-03-22T20:45:04+01:00</updated>
+    <id>http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1</id>
+    <content type="html"><![CDATA[<p>Sean Corfield has built a Clojure version of the popular CFML framework FW/1. I&rsquo;ve been using FW/1 for a number of years, so I thought it might help me learn Clojure to begin developing an app in fw1-clj.</p>
+
+<p>The first step to get up and running is to head on over to the <a href="https://github.com/framework-one/fw1-clj">fw1-clj GitHub repository</a> and follow the directions to <a href="https://github.com/boot-clj/boot#install">install Boot</a>, which is a build tool for Clojure. Next, as per the instructions on the fw1-clj GitHub repository, we run a boot command in a terminal to create a new fw1-clj app, which currently looks like this:</p>
+
+<pre><code class="bash">boot -d seancorfield/boot-new new -t fw1 -n myfw1app
+</code></pre>
+
+<p>(Sean has indicated this invocation may change in the future, so best to follow the fw1-clj repository instructions.)</p>
+
+<p>Then, we &ldquo;cd&rdquo; into the application directory we specified above, in this example &ldquo;myfw1app&rdquo;, and start the application up like so:</p>
+
+<pre><code class="bash">cd myfw1app
+PORT=8111 boot run
+</code></pre>
+
+<p>Specifying the PORT variable isn&rsquo;t required, but may be necessary to avoid conflicts. If omitted, the default port is 8080.</p>
+
+<p>Navigating to localhost:8111, we see a lovely default page that says &ldquo;Framework One - Welcome to FW/1&rdquo;. Yay! It certainly is impressive how easy that is. No server to install. Nothing to download. No settings to find and configure. We&rsquo;re ready to start developing.</p>
+
+<p>There are several options to choose from in terms of an IDE for Clojure. Many experienced Clojure developers use <a href="https://www.gnu.org/software/emacs/">Emacs</a> with <a href="https://github.com/clojure-emacs/cider">CIDER</a>, or the <a href="https://cursive-ide.com/userguide/index.html">Cursive plugin</a> for <a href="https://www.jetbrains.com/idea/download/index.html">Intellij</a>. Both of those have a learning curve that you may prefer to avoid to focus on getting the basics of Clojure down first.</p>
+
+<p>For beginners, good IDE&rsquo;s for experimentation are <a href="http://lighttable.com/">Light Table</a> or <a href="https://atom.io/">Atom</a> with <a href="https://atom.io/packages/search?q=clojure">a few Clojure packages</a> installed, such as language-clojure, proto-repl and parinfer. I&rsquo;m using Atom at the moment because I&rsquo;m also using it for CFML development, and also because the Clojure packages seem to work very well.</p>
+
+<p>One of the first things I wanted to figure out was how to visualize the rc map (or struct as it would be known in CFML). With a tip from Sean, I navigated to src/projectName/controllers/main.clj in the project that boot generated for me, and within the default function definition, I added <code>(println rc)</code></p>
+
+<pre><code class="clojure">(defn default "/main/default handler" [rc]
+  (println rc)
+  rc)
+</code></pre>
+
+<p>reloaded the app in the browser, and then checked the terminal window where I had started the app with the boot command for the output. Nothing was output there. After a moment, I remembered that I probably had to reload the application to get the changes picked up. Checking the somewhat sparse documentation on the Github page, I found the default reload query string would be &ldquo;?reload=secret&rdquo;. Hitting localhost:8111?reload=secret in the browser then generated the rc map in my terminal window - all in one <em>very</em> long line. After another suggestion from Sean, I replaced the print line function <code>(println rc)</code> with the clojure pretty print function  <code>(clojure.pprint/pprint rc)</code></p>
+
+<pre><code class="clojure">(defn default "/main/default handler" [rc]
+  (clojure.pprint/pprint rc)
+  rc)
+</code></pre>
+
+<p>hit localhost:8111?reload=secret again, and now the keys within the rc map were nicely separated by line breaks in the terminal output. Much more readable that way.</p>
+
+<p>I noticed within the output that the :reload-application-on-every-request key was set to false. Better in development to have that set to true, so reading the docs, I found &ldquo;the call to (fw1/start) can be passed configuration parameters either as a map or as an arbitrary number of inline key / value pairs&rdquo;</p>
+
+<p>Ok, so opening src/projectName/main.clj, I found the call to (fw1/start) and changed it from</p>
+
+<pre><code class="clojure">(defn -main []
+  (let [port (Integer/parseInt (get (System/getenv) "PORT" "8080"))]
+    (run-jetty (fw1/start :application-key "easycalclj")
+               {:port port})))
+</code></pre>
+
+<p>to</p>
+
+<pre><code class="clojure">(defn -main []
+  (let [port (Integer/parseInt (get (System/getenv) "PORT" "8080"))]
+    (run-jetty (fw1/start :application-key "easycalclj" :reload-application-on-every-request "true")
+               {:port port})))
+</code></pre>
+
+<p>Then I reloaded the app with &ldquo;?reload=secret&rdquo;, and the rc output for :reload-application-on-every-request didn&rsquo;t change. Hmmm &hellip;</p>
+
+<p>After a bit of investigation, (I asked Sean again on Slack), I found that to reload changes to the configuration params, I needed to go to the terminal window where I started the app with <code>boot run</code>, shut the app down with <code>control-c</code>, and then start it up again with <code>PORT=8111 boot run</code>.</p>
+
+<p>Checking the rc output in the console again, I saw that :reload-application-on-every-request was now true!</p>
+
+<p>These were all small baby steps, but unless I take them, I won&rsquo;t learn.</p>
+]]></content>
+  </entry>
+  
+</feed>

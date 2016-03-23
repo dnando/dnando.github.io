@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2015-07-03T16:03:17+02:00</updated>
+  <updated>2016-03-23T13:35:17+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,101 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[First Steps With the Clojure Version of FW/1]]></title>
+    <link href="http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/"/>
+    <updated>2016-03-22T20:45:04+01:00</updated>
+    <id>http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1</id>
+    <content type="html"><![CDATA[<p>Sean Corfield has built a Clojure version of the popular CFML framework FW/1. I&rsquo;ve been using FW/1 for a number of years, so I thought it might help me learn Clojure to begin developing an app in fw1-clj.</p>
+
+<p>The first step to get up and running is to head on over to the <a href="https://github.com/framework-one/fw1-clj">fw1-clj GitHub repository</a> and follow the directions to <a href="https://github.com/boot-clj/boot#install">install Boot</a>, which is a build tool for Clojure. Next, as per the instructions on the fw1-clj GitHub repository, we run a boot command in a terminal to create a new fw1-clj app, which currently looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>boot -d seancorfield/boot-new new -t fw1 -n myfw1app
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(Sean has indicated this invocation may change in the future, so best to follow the fw1-clj repository instructions.)</p>
+
+<p>Then, we &ldquo;cd&rdquo; into the application directory we specified above, in this example &ldquo;myfw1app&rdquo;, and start the application up like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>myfw1app
+</span><span class='line'><span class="nv">PORT</span><span class="o">=</span><span class="m">8111</span> boot run
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Specifying the PORT variable isn&rsquo;t required, but may be necessary to avoid conflicts. If omitted, the default port is 8080.</p>
+
+<p>Navigating to localhost:8111, we see a lovely default page that says &ldquo;Framework One - Welcome to FW/1&rdquo;. Yay! It certainly is impressive how easy that is. No server to install. Nothing to download. No settings to find and configure. We&rsquo;re ready to start developing.</p>
+
+<p>There are several options to choose from in terms of an IDE for Clojure. Many experienced Clojure developers use <a href="https://www.gnu.org/software/emacs/">Emacs</a> with <a href="https://github.com/clojure-emacs/cider">CIDER</a>, or the <a href="https://cursive-ide.com/userguide/index.html">Cursive plugin</a> for <a href="https://www.jetbrains.com/idea/download/index.html">Intellij</a>. Both of those have a learning curve that you may prefer to avoid to focus on getting the basics of Clojure down first.</p>
+
+<p>For beginners, good IDE&rsquo;s for experimentation are <a href="http://lighttable.com/">Light Table</a> or <a href="https://atom.io/">Atom</a> with <a href="https://atom.io/packages/search?q=clojure">a few Clojure packages</a> installed, such as language-clojure, proto-repl and parinfer. I&rsquo;m using Atom at the moment because I&rsquo;m also using it for CFML development, and also because the Clojure packages seem to work very well.</p>
+
+<p>One of the first things I wanted to figure out was how to visualize the rc map (or struct as it would be known in CFML). With a tip from Sean, I navigated to src/projectName/controllers/main.clj in the project that boot generated for me, and within the default function definition, I added <code>(println rc)</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">default</span> <span class="s">&quot;/main/default handler&quot;</span> <span class="p">[</span><span class="nv">rc</span><span class="p">]</span>
+</span><span class='line'>  <span class="p">(</span><span class="nb">println </span><span class="nv">rc</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">rc</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>reloaded the app in the browser, and then checked the terminal window where I had started the app with the boot command for the output. Nothing was output there. After a moment, I remembered that I probably had to reload the application to get the changes picked up. Checking the somewhat sparse documentation on the Github page, I found the default reload query string would be &ldquo;?reload=secret&rdquo;. Hitting localhost:8111?reload=secret in the browser then generated the rc map in my terminal window - all in one <em>very</em> long line. After another suggestion from Sean, I replaced the print line function <code>(println rc)</code> with the clojure pretty print function  <code>(clojure.pprint/pprint rc)</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">default</span> <span class="s">&quot;/main/default handler&quot;</span> <span class="p">[</span><span class="nv">rc</span><span class="p">]</span>
+</span><span class='line'>  <span class="p">(</span><span class="nf">clojure.pprint/pprint</span> <span class="nv">rc</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">rc</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>hit localhost:8111?reload=secret again, and now the keys within the rc map were nicely separated by line breaks in the terminal output. Much more readable that way.</p>
+
+<p>I noticed within the output that the :reload-application-on-every-request key was set to false. Better in development to have that set to true, so reading the docs, I found &ldquo;the call to (fw1/start) can be passed configuration parameters either as a map or as an arbitrary number of inline key / value pairs&rdquo;</p>
+
+<p>Ok, so opening src/projectName/main.clj, I found the call to (fw1/start) and changed it from</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">port</span> <span class="p">(</span><span class="nf">Integer/parseInt</span> <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nf">System/getenv</span><span class="p">)</span> <span class="s">&quot;PORT&quot;</span> <span class="s">&quot;8080&quot;</span><span class="p">))]</span>
+</span><span class='line'>    <span class="p">(</span><span class="nf">run-jetty</span> <span class="p">(</span><span class="nf">fw1/start</span> <span class="ss">:application-key</span> <span class="s">&quot;easycalclj&quot;</span><span class="p">)</span>
+</span><span class='line'>               <span class="p">{</span><span class="ss">:port</span> <span class="nv">port</span><span class="p">})))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>to</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">port</span> <span class="p">(</span><span class="nf">Integer/parseInt</span> <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nf">System/getenv</span><span class="p">)</span> <span class="s">&quot;PORT&quot;</span> <span class="s">&quot;8080&quot;</span><span class="p">))]</span>
+</span><span class='line'>    <span class="p">(</span><span class="nf">run-jetty</span> <span class="p">(</span><span class="nf">fw1/start</span> <span class="ss">:application-key</span> <span class="s">&quot;easycalclj&quot;</span> <span class="ss">:reload-application-on-every-request</span> <span class="s">&quot;true&quot;</span><span class="p">)</span>
+</span><span class='line'>               <span class="p">{</span><span class="ss">:port</span> <span class="nv">port</span><span class="p">})))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then I reloaded the app with &ldquo;?reload=secret&rdquo;, and the rc output for :reload-application-on-every-request didn&rsquo;t change. Hmmm &hellip;</p>
+
+<p>After a bit of investigation, (I asked Sean again on Slack), I found that to reload changes to the configuration params, I needed to go to the terminal window where I started the app with <code>boot run</code>, shut the app down with <code>control-c</code>, and then start it up again with <code>PORT=8111 boot run</code>.</p>
+
+<p>Checking the rc output in the console again, I saw that :reload-application-on-every-request was now true!</p>
+
+<p>These were all small baby steps, but unless I take them, I won&rsquo;t learn.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Generating Accurate PDFs Using Cfdocument]]></title>
@@ -52,7 +147,7 @@
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>&lt;div class="address"  style="position:absolute; top:13mm; left:100mm; "&gt;
-</span><span class='line'>  #biller.address1# &middot #biller.zipcode# #biller.city# 
+</span><span class='line'>  #biller.address1# &middot #biller.zipcode# #biller.city#
 </span><span class='line'>&lt;/div&gt;
 </span><span class='line'>&lt;!--- client address ---&gt;
 </span><span class='line'>&lt;div class="text" style="position:absolute; top:45mm; left:130mm"&gt;
@@ -91,7 +186,7 @@
 <span class='line-number'>13</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>&lt;cfdocument format="pdf" pagetype="A4" orientation="portrait" fontEmbed="true" unit="cm" localUrl="true" saveAsName="#pdfFileName#" marginLeft="0" margintop="0" marginright="0" marginbottom="0"&gt;
 </span><span class='line'>&lt;style&gt;
-</span><span class='line'>  div.text {  
+</span><span class='line'>  div.text {
 </span><span class='line'>      font: 9pt Arial;
 </span><span class='line'>      line-height: 13pt;
 </span><span class='line'>  }
@@ -1919,7 +2014,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#x69;&#x6c;&#116;&#111;&#x3a;&#x75;&#115;&#x65;&#x72;&#x40;&#x31;&#x30;&#50;&#x2e;&#x31;&#x30;&#51;&#46;&#x31;&#x30;&#56;&#x2e;&#x33;&#57;">&#117;&#115;&#101;&#114;&#x40;&#x31;&#x30;&#50;&#46;&#x31;&#x30;&#51;&#46;&#x31;&#x30;&#x38;&#46;&#51;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#117;&#115;&#x65;&#114;&#x40;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#51;&#x2e;&#49;&#x30;&#56;&#46;&#51;&#x39;">&#117;&#x73;&#x65;&#x72;&#64;&#x31;&#48;&#x32;&#46;&#x31;&#48;&#51;&#x2e;&#49;&#x30;&#56;&#46;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -2294,24 +2389,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 
 
 <p><a href="http://dreamrunner.org/wiki/public_html/docs/Web/octopress.html">Reference Octopress Cheat Sheet</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[I'm in the Dark Here]]></title>
-    <link href="http://dnando.github.io/blog/2014/09/12/im-in-the-dark-here/"/>
-    <updated>2014-09-12T00:33:09+02:00</updated>
-    <id>http://dnando.github.io/blog/2014/09/12/im-in-the-dark-here</id>
-    <content type="html"><![CDATA[<p>I was watching a <a href="http://youtu.be/Bgaw9qe7DEE?t=48m7s">video of Richard Feynman</a> some time back that inspired me in a very specific way. In it, he talks about his attitude toward not knowing things. Here&rsquo;s a quote from it:</p>
-
-<p>&ldquo;You see, one thing is, I can live with doubt, and uncertainty, and not knowing. I think it&rsquo;s much more interesting to live not knowing than to have answers which might be wrong. I have approximate answers and possible beliefs and different degrees of certainty about different things, but I&rsquo;m not absolutely sure about anything, and there are many things I don&rsquo;t know anything about &hellip; But I don&rsquo;t have to know an answer. I&rsquo;m not frightened by not knowing things.&rdquo;</p>
-
-<p>As a programmer, I&rsquo;m constantly confronted by a cascading, bubbling vortex of all kinds of things I don&rsquo;t know. I don&rsquo;t remember a syntax; my &ldquo;Google Foo&rdquo; is failing me and I can&rsquo;t find an answer; I&rsquo;m not sure of the best way to architect a given process; I&rsquo;m not really clear how a particular business process I&rsquo;m trying to model actually works in the real world; I&rsquo;m only familiar with certain aspects of a language or framework, and the rest lurks in the shadows of what I don&rsquo;t know. In the words of one of my favorite movie scenes &ldquo;I&rsquo;m in the dark here.&rdquo;</p>
-
-<iframe width="853" height="480" src="//www.youtube.com/embed/WZ6p4t3StSc?rel=0" frameborder="0" allowfullscreen></iframe>
-
-
-<p>Being in the dark all the time, confronting that ever changing vortex of things I don&rsquo;t know, affects me in various ways. It&rsquo;s an ongoing source of stress. One of my coping mechanisms is to shut down, distract myself, and that leaves me less productive than I could be. It also seems to impact my ability to learn. What impressed me about Feynman is that he seems both enthusiastic, and very clear-headed, about what he does not know. He seems to genuinely enjoy not knowing things, to embrace the state of not knowing. To me, that&rsquo;s a wonderful perspective to cultivate, both as a human being, but particularly as a programmer. It&rsquo;s an inner gestalt that I want to develop.</p>
 ]]></content>
   </entry>
   
