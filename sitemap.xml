@@ -3,6 +3,14 @@
   
   
   <url>
+    <loc>http://dnando.github.io/blog/2016/08/05/scale-attribute-is-essential-with-decimal-cfsqltype/</loc>
+    
+    <lastmod>2016-08-05T00:22:47+02:00</lastmod>
+    
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://dnando.github.io/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/</loc>
     
     <lastmod>2016-03-22T20:45:04+01:00</lastmod>
@@ -181,21 +189,21 @@
   
   <url>
     <loc>http://dnando.github.io/blog/archives/</loc>
-    <lastmod>2016-03-23T13:35:17+01:00</lastmod>
+    <lastmod>2016-08-05T01:02:35+02:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dnando.github.io/</loc>
-    <lastmod>2016-03-23T13:35:17+01:00</lastmod>
+    <lastmod>2016-08-05T01:02:35+02:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://dnando.github.io/about-me/</loc>
-    <lastmod>2016-03-23T13:35:17+01:00</lastmod>
+    <lastmod>2016-08-05T01:02:35+02:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

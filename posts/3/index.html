@@ -9,7 +9,12 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I was watching a video of Richard Feynman some time back that inspired me in a very specific way. In it, he talks about his attitude toward not &hellip;">
+  <meta name="description" content="Here&rsquo;s my quick and dirty cheat sheet for using the Octopress blogging framework. Command Line 1
+2
+3
+4
+rake new_post["Post title here"]
+rake &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +73,133 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/09/12/octopress-cheat-sheet/">Octopress Cheat Sheet</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-09-12T12:45:32+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>12:45 pm</span></time>
+        
+           | <a href="/blog/2014/09/12/octopress-cheat-sheet/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2014/09/12/octopress-cheat-sheet/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Here&rsquo;s my quick and dirty cheat sheet for using the Octopress blogging framework.</p>
+
+<h3>Command Line</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["Post title here"]
+</span><span class='line'>rake preview ( http://localhost:4000 )
+</span><span class='line'>rake generate
+</span><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Markdown Syntax</h3>
+
+<h4>Headers</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># This is an &lt;h1&gt; tag
+</span><span class='line'>## This is an &lt;h2&gt; tag
+</span><span class='line'>###### This is an &lt;h6&gt; tag</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Emphasis</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*This text will be italic*
+</span><span class='line'>_This will also be italic_
+</span><span class='line'>
+</span><span class='line'>**This text will be bold**
+</span><span class='line'>__This will also be bold__
+</span><span class='line'>
+</span><span class='line'>*You **can** combine them*</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Unordered Lists</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>* Item 1
+</span><span class='line'>* Item 2
+</span><span class='line'>  * Item 2a
+</span><span class='line'>  * Item 2b</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Ordered Lists</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>1. Item 1
+</span><span class='line'>2. Item 2
+</span><span class='line'>3. Item 3
+</span><span class='line'>   * Item 3a
+</span><span class='line'>   * Item 3b
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Images</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>![GitHub Logo](/images/logo.png)
+</span><span class='line'>Format: ![Alt Text](url)</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Links</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://github.com - automatic!
+</span><span class='line'>[GitHub](http://github.com)</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Inline code</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>I think you should use an
+</span><span class='line'>`&lt;addr&gt;` element here instead.</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://dreamrunner.org/wiki/public_html/docs/Web/octopress.html">Reference Octopress Cheat Sheet</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -167,6 +299,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/08/05/scale-attribute-is-essential-with-decimal-cfsqltype/">Scale Attribute Is Essential With Decimal Cfsqltype !</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/03/22/first-steps-with-the-clojure-version-of-fw-slash-1/">First Steps With the Clojure Version of FW/1</a>
       </li>
     
@@ -180,10 +316,6 @@
     
       <li class="post">
         <a href="/blog/2015/06/16/debugging-technique-cfml-development/">Debugging Technique CFML Development</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/">Nginx Tweaks Using Proxy_redirect and Rewrite Directives</a>
       </li>
     
   </ul>

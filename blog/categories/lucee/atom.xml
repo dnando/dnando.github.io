@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Lucee | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/lucee/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2016-03-23T13:35:17+01:00</updated>
+  <updated>2016-08-05T01:02:35+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,33 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Scale Attribute Is Essential With Decimal Cfsqltype !]]></title>
+    <link href="http://dnando.github.io/blog/2016/08/05/scale-attribute-is-essential-with-decimal-cfsqltype/"/>
+    <updated>2016-08-05T00:22:47+02:00</updated>
+    <id>http://dnando.github.io/blog/2016/08/05/scale-attribute-is-essential-with-decimal-cfsqltype</id>
+    <content type="html"><![CDATA[<p>I just ran across something important to know regarding the cfsqltype cf_sql_decimal. Here&rsquo;s the code I was testing:</p>
+
+<pre><code>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );
+</code></pre>
+
+<p>Here&rsquo;s what it would look like if you are using the cfqueryparam tag:</p>
+
+<pre><code>&lt;cfqueryparam value='#preNDuration#' cfsqltype='cf_sql_decimal' /&gt;
+</code></pre>
+
+<p>The database column this is persisted to is defined as a <code>decimal(4,2)</code>, so 2 digits are reserved for the whole number portion of the value and 2 digits reserved for the decimal portion of the value. Logging showed values being calculated such as 4.25 and 4.5, but these were being persisted to the database rounded to the nearest integer, but with 2 decimal places none the less, so 4.25 was persisted as <em>4.00</em> and 4.5 was persisted as <em>5.00</em>. Definitely not what I wanted. What&rsquo;s the point of a decimal datatype if the decimal portion is always 0?</p>
+
+<p>Digging into the documentation for cfqueryparam I found a scale attribute that until today I hadn&rsquo;t realized was absolutely essential to use for decimal fields like this. Scale defines the &hellip; &ldquo;Number of decimal places in parameter. Applies to CF_SQL_NUMERIC and CF_SQL_DECIMAL.&rdquo; Its default is 0, so my values were being rounded to 0 decimal places. After changing my code to the following:
+<code>
+params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );
+</code>
+the decimal portion of the values was then persisted correctly.</p>
+
+<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Generating Accurate PDFs Using Cfdocument]]></title>

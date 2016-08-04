@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2016-03-23T13:35:17+01:00</updated>
+  <updated>2016-08-05T01:02:35+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,37 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Scale Attribute Is Essential With Decimal Cfsqltype !]]></title>
+    <link href="http://dnando.github.io/blog/2016/08/05/scale-attribute-is-essential-with-decimal-cfsqltype/"/>
+    <updated>2016-08-05T00:22:47+02:00</updated>
+    <id>http://dnando.github.io/blog/2016/08/05/scale-attribute-is-essential-with-decimal-cfsqltype</id>
+    <content type="html"><![CDATA[<p>I just ran across something important to know regarding the cfsqltype cf_sql_decimal. Here&rsquo;s the code I was testing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here&rsquo;s what it would look like if you are using the cfqueryparam tag:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;cfqueryparam value='#preNDuration#' cfsqltype='cf_sql_decimal' /&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The database column this is persisted to is defined as a <code>decimal(4,2)</code>, so 2 digits are reserved for the whole number portion of the value and 2 digits reserved for the decimal portion of the value. Logging showed values being calculated such as 4.25 and 4.5, but these were being persisted to the database rounded to the nearest integer, but with 2 decimal places none the less, so 4.25 was persisted as <em>4.00</em> and 4.5 was persisted as <em>5.00</em>. Definitely not what I wanted. What&rsquo;s the point of a decimal datatype if the decimal portion is always 0?</p>
+
+<p>Digging into the documentation for cfqueryparam I found a scale attribute that until today I hadn&rsquo;t realized was absolutely essential to use for decimal fields like this. Scale defines the &hellip; &ldquo;Number of decimal places in parameter. Applies to CF_SQL_NUMERIC and CF_SQL_DECIMAL.&rdquo; Its default is 0, so my values were being rounded to 0 decimal places. After changing my code to the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );</span></code></pre></td></tr></table></div></figure>
+
+
+<p>the decimal portion of the values was then persisted correctly.</p>
+
+<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[First Steps With the Clojure Version of FW/1]]></title>
@@ -2014,7 +2045,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#117;&#115;&#x65;&#114;&#x40;&#49;&#x30;&#50;&#46;&#x31;&#x30;&#51;&#x2e;&#49;&#x30;&#56;&#46;&#51;&#x39;">&#117;&#x73;&#x65;&#x72;&#64;&#x31;&#48;&#x32;&#46;&#x31;&#48;&#51;&#x2e;&#49;&#x30;&#56;&#46;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#x6f;&#58;&#x75;&#x73;&#101;&#114;&#64;&#49;&#x30;&#50;&#x2e;&#49;&#48;&#51;&#46;&#49;&#48;&#56;&#46;&#51;&#x39;">&#117;&#115;&#101;&#114;&#64;&#x31;&#x30;&#50;&#46;&#49;&#x30;&#x33;&#46;&#x31;&#x30;&#56;&#x2e;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -2285,110 +2316,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <p>Apparently, this works with older browsers that do not support HTML5.</p>
 
 <p>Source: <a href="http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser">http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
-    <link href="http://dnando.github.io/blog/2014/09/12/octopress-cheat-sheet/"/>
-    <updated>2014-09-12T12:45:32+02:00</updated>
-    <id>http://dnando.github.io/blog/2014/09/12/octopress-cheat-sheet</id>
-    <content type="html"><![CDATA[<p>Here&rsquo;s my quick and dirty cheat sheet for using the Octopress blogging framework.</p>
-
-<h3>Command Line</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["Post title here"]
-</span><span class='line'>rake preview ( http://localhost:4000 )
-</span><span class='line'>rake generate
-</span><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Markdown Syntax</h3>
-
-<h4>Headers</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># This is an &lt;h1&gt; tag
-</span><span class='line'>## This is an &lt;h2&gt; tag
-</span><span class='line'>###### This is an &lt;h6&gt; tag</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>Emphasis</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>*This text will be italic*
-</span><span class='line'>_This will also be italic_
-</span><span class='line'>
-</span><span class='line'>**This text will be bold**
-</span><span class='line'>__This will also be bold__
-</span><span class='line'>
-</span><span class='line'>*You **can** combine them*</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>Unordered Lists</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>* Item 1
-</span><span class='line'>* Item 2
-</span><span class='line'>  * Item 2a
-</span><span class='line'>  * Item 2b</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>Ordered Lists</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>1. Item 1
-</span><span class='line'>2. Item 2
-</span><span class='line'>3. Item 3
-</span><span class='line'>   * Item 3a
-</span><span class='line'>   * Item 3b
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>Images</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>![GitHub Logo](/images/logo.png)
-</span><span class='line'>Format: ![Alt Text](url)</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>Links</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://github.com - automatic!
-</span><span class='line'>[GitHub](http://github.com)</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>Inline code</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>I think you should use an
-</span><span class='line'>`&lt;addr&gt;` element here instead.</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="http://dreamrunner.org/wiki/public_html/docs/Web/octopress.html">Reference Octopress Cheat Sheet</a></p>
 ]]></content>
   </entry>
   
