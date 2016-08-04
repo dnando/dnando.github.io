@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2016-08-05T01:04:04+02:00</updated>
+  <updated>2016-08-05T01:07:40+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -20,7 +20,8 @@
     <id>http://dnando.github.io/blog/2016/08/05/scale-attribute-is-essential-with-decimal-cfsqltype</id>
     <content type="html"><![CDATA[<p>I just ran across something important to know regarding the cfsqltype cf_sql_decimal. Here&rsquo;s the code I was testing:</p>
 
-<pre><code>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );
+<pre><code>params.insert( 'previousNumericDuration',
+    { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );
 </code></pre>
 
 <p>Here&rsquo;s what it would look like if you are using the cfqueryparam tag:</p>
@@ -32,11 +33,12 @@
 
 <p>Digging into the documentation for cfqueryparam I found a scale attribute that until today I hadn&rsquo;t realized was absolutely essential to use for decimal fields like this. Scale defines the &hellip; &ldquo;Number of decimal places in parameter. Applies to CF_SQL_NUMERIC and CF_SQL_DECIMAL.&rdquo; Its default is 0, so my values were being rounded to 0 decimal places. After changing my code to the following:
 <code>
-params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );
+params.insert( 'previousNumericDuration',
+    { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );
 </code>
 the decimal portion of the values was then persisted correctly.</p>
 
-<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere.</p>
+<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere!</p>
 ]]></content>
   </entry>
   

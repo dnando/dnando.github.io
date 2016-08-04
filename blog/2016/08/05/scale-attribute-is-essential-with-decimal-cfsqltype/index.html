@@ -10,6 +10,7 @@
 
   
   <meta name="description" content="I just ran across something important to know regarding the cfsqltype cf_sql_decimal. Here&rsquo;s the code I was testing: 1
+2
 params.insert( ' &hellip;">
   
 
@@ -94,7 +95,9 @@ params.insert( ' &hellip;">
 <div class="entry-content"><p>I just ran across something important to know regarding the cfsqltype cf_sql_decimal. Here&rsquo;s the code I was testing:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration',
+</span><span class='line'>  { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Here&rsquo;s what it would look like if you are using the cfqueryparam tag:</p>
@@ -108,12 +111,14 @@ params.insert( ' &hellip;">
 <p>Digging into the documentation for cfqueryparam I found a scale attribute that until today I hadn&rsquo;t realized was absolutely essential to use for decimal fields like this. Scale defines the &hellip; &ldquo;Number of decimal places in parameter. Applies to CF_SQL_NUMERIC and CF_SQL_DECIMAL.&rdquo; Its default is 0, so my values were being rounded to 0 decimal places. After changing my code to the following:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration',
+</span><span class='line'>  { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );</span></code></pre></td></tr></table></div></figure>
 
 
 <p>the decimal portion of the values was then persisted correctly.</p>
 
-<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere.</p>
+<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere!</p>
 </div>
 
 

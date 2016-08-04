@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2016-08-05T01:04:04+02:00</updated>
+  <updated>2016-08-05T01:07:40+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -21,7 +21,9 @@
     <content type="html"><![CDATA[<p>I just ran across something important to know regarding the cfsqltype cf_sql_decimal. Here&rsquo;s the code I was testing:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration',
+</span><span class='line'>  { value: preNDuration, cfsqltype: 'cf_sql_decimal' } );</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Here&rsquo;s what it would look like if you are using the cfqueryparam tag:</p>
@@ -35,12 +37,14 @@
 <p>Digging into the documentation for cfqueryparam I found a scale attribute that until today I hadn&rsquo;t realized was absolutely essential to use for decimal fields like this. Scale defines the &hellip; &ldquo;Number of decimal places in parameter. Applies to CF_SQL_NUMERIC and CF_SQL_DECIMAL.&rdquo; Its default is 0, so my values were being rounded to 0 decimal places. After changing my code to the following:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration', { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>params.insert( 'previousNumericDuration',
+</span><span class='line'>  { value: preNDuration, cfsqltype: 'cf_sql_decimal', scale: 2 } );</span></code></pre></td></tr></table></div></figure>
 
 
 <p>the decimal portion of the values was then persisted correctly.</p>
 
-<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere.</p>
+<p>So the <em>scale</em> attribute is absolutely essential for a <em>decimal</em> cfsqltype. I might have tripped over this before, I&rsquo;m not sure. Perhaps this blog post will help me remember it next time. Now I should search my code to see if I&rsquo;ve neglected this attribute elsewhere!</p>
 ]]></content>
   </entry>
   
@@ -2045,7 +2049,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#105;&#108;&#x74;&#x6f;&#58;&#117;&#115;&#x65;&#114;&#x40;&#x31;&#48;&#x32;&#x2e;&#x31;&#48;&#x33;&#46;&#49;&#x30;&#x38;&#x2e;&#x33;&#x39;">&#x75;&#x73;&#x65;&#x72;&#x40;&#x31;&#x30;&#x32;&#x2e;&#49;&#48;&#x33;&#46;&#x31;&#48;&#56;&#46;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#x3a;&#117;&#x73;&#101;&#114;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#48;&#x33;&#46;&#49;&#48;&#x38;&#x2e;&#51;&#57;">&#x75;&#115;&#101;&#114;&#64;&#x31;&#x30;&#x32;&#46;&#49;&#48;&#x33;&#46;&#x31;&#48;&#x38;&#46;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
