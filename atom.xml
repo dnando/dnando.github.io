@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2016-08-05T01:07:40+02:00</updated>
+  <updated>2017-03-21T16:02:16+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,162 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hot Browser Reloading With Browsersync]]></title>
+    <link href="http://dnando.github.io/blog/2017/03/20/hot-browser-reloading/"/>
+    <updated>2017-03-20T00:06:28+01:00</updated>
+    <id>http://dnando.github.io/blog/2017/03/20/hot-browser-reloading</id>
+    <content type="html"><![CDATA[<p>I&rsquo;ve fallen down the rabbit hole of front end development in the last few weeks, and in that time <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">Flexbox CSS</a>, <a href="http://blog.getbootstrap.com/2017/01/06/bootstrap-4-alpha-6/">Bootstrap v4</a>, <a href="http://foundation.zurb.com/">Foundation</a>, <a href="http://sass-lang.com/guide">Sass / SCSS</a>, and <a href="http://gulpjs.com/">Gulp</a> have all whizzed by as I&rsquo;ve taught myself bits and pieces of each, enough to get by, and today I landed at the bottom, <a href="https://www.browsersync.io/">Browsersync</a>.</p>
+
+<p>In a nutshell, Browsersync will live reload one or more browsers for you whenever your project&rsquo;s files change. It will also live reload external devices pointed at the same web application. This allows you to simultaneously and efficiently test a responsive design in multiple browsers, phones and tablets - without needing to touch or reload any of them. It also synchronizes form entries and clicks across browsers and devices. For example, with my phone and tablet connected to Browsersync, I log into the app I&rsquo;m developing on the tablet, and my keystrokes and touch gestures are replicated on the phone, and I&rsquo;m logged in on both. Then I start navigating in the application in Chrome on my desktop, and the phone, tablet and other browsers follow as &ldquo;slaves&rdquo;. Interacting with any interface causes the rest of them to follow. What an incredible tool! In the few minutes I&rsquo;ve been experimenting with it, I was able to easily and quickly fix a layout issue on the tablet and phone for the login screen.</p>
+
+<p>Browsersync works by wrapping your application or website in its own Node server process, on another port. You can start Browsersync on the command line, or via a Grunt or Gulp task. During startup, you specify the local url of your app, the files you want it to watch - a number of other options are possible - and then a browser window opens, on port 3000 by default, and browsersync is activated for that browser. To add others, you simply use the same url. To add external devices, on localhost:3001 there is an admin panel for Browsersync that will list the external url to use. Navigate to that external url on your phone or tablet or another computer, for me it currently <a href="http://192.168.1.103:3000/,">http://192.168.1.103:3000/,</a> and Browsersync is set up on these devices as well. Once you have it configured, it is really simple to use.</p>
+
+<p>A quick overview on installation and configuration: Basic instructions are on the homepage <a href="https://www.browsersync.io/.">https://www.browsersync.io/.</a></p>
+
+<ol>
+<li>Install or upgrade Node.js</li>
+<li>Install Browsersync using npm</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm install -g browser-sync</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The -g flag means global so it is available from anywhere.</p>
+
+<ol>
+<li>Start Browsersync</li>
+</ol>
+
+
+<p>There are 2 start modes, &ndash;server and &ndash;proxy. <em>server</em> is for static files, <em>proxy</em> is for applications running on a server. Here&rsquo;s a simplified example starting Browsersync from the command line:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>browser-sync start --proxy "myproject.dev" --files "css/*.css"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&hellip; assuming you have your local host file set up to point your app at myproject.dev. Or you can also start Browsersync using a localhost:port url, like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>browser-sync start --proxy "localhost:8500/myproject" --files "css/*.css"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are a few real world ways to do this, but what I&rsquo;ve done is to create a gulpfile.js in the root of my project so I can configure Browsersync conveniently and start it with a simple gulp command after cd&#8217;ing in to my project directory. That way I don&rsquo;t have to remember much. Here&rsquo;s my first working gulpfile.js for a real development scenario. I have ACF (Adobe ColdFusion) installed on port 8501 on my dev laptop, and  gulp.watch() is configured for an FW/1 app. I&rsquo;m not sure if I actually want to watch the controllers and services directories, perhaps the views directory and CSS directory is enough. But for now I will leave it like this and see how it goes.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var gulp = require('gulp');
+</span><span class='line'>var browserSync = require('browser-sync').create();
+</span><span class='line'>var reload = browserSync.reload;
+</span><span class='line'>
+</span><span class='line'>gulp.task('browser-sync', function() {
+</span><span class='line'>  browserSync.init({
+</span><span class='line'>      proxy: "localhost:8501/myproject"
+</span><span class='line'>  });
+</span><span class='line'>
+</span><span class='line'>  gulp.watch([
+</span><span class='line'>      'controllers/*.cfc', 'services/*.cfc', 'views/**/*.cfm', 'dist/*.css'
+</span><span class='line'>  ]).on("change", function() {
+</span><span class='line'>      console.log("Watch hit");
+</span><span class='line'>      browserSync.reload();
+</span><span class='line'>  });
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>gulp.task('default', ['browser-sync']);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note carefully the syntax of gulp.watch() for multiple directories / files. It&rsquo;s an array of strings separated by commas. Note also that the root of the relative paths specified is where the gulpfile.js is located.</p>
+
+<p>But wait, wouldn&rsquo;t it be better if I could use Browsersync to develop against both ACF and Lucee? Here&rsquo;s a solution that I have working that creates named instances of Browsersync so they don&rsquo;t step on each other:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var gulp = require('gulp');
+</span><span class='line'>var bsacf = require('browser-sync').create('browserSyncACF');
+</span><span class='line'>var bslucee = require('browser-sync').create('browserSyncLucee');
+</span><span class='line'>
+</span><span class='line'>gulp.task('browser-sync', function() {
+</span><span class='line'>  bsacf.init({
+</span><span class='line'>      proxy: "localhost:8501/myproject",
+</span><span class='line'>      browser: "google chrome",
+</span><span class='line'>      reloadOnRestart: true
+</span><span class='line'>  });
+</span><span class='line'>
+</span><span class='line'>  bslucee.init({
+</span><span class='line'>      proxy: "localhost:8888/myproject",
+</span><span class='line'>      browser: "vivaldi",
+</span><span class='line'>      port: 3010,
+</span><span class='line'>      reloadOnRestart: true,
+</span><span class='line'>      ui: {
+</span><span class='line'>          port: 3011
+</span><span class='line'>      }
+</span><span class='line'>  });
+</span><span class='line'>
+</span><span class='line'>  gulp.watch([
+</span><span class='line'>      'controllers/*.cfc', 'services/*.cfc', 'views/**/*.cfm', 'dist/*.css'
+</span><span class='line'>  ]).on("change", function() {
+</span><span class='line'>      console.log("Watch hit");
+</span><span class='line'>      bsacf.reload();
+</span><span class='line'>      bslucee.reload();
+</span><span class='line'>  });
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>gulp.task('default', ['browser-sync']);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I specify separate browsers for each so that ACF and Lucee sessions don&rsquo;t step on one another, and separate ports for the Lucee instance of Browsersync so they can coexist. The advantage to doing it this way is I can start both instances with a single <em>gulp</em> command on the command line. Unfortunately the ACF and Lucee instances of Browsersync will not mirror or ghost each other, so I will still have to click and enter test data on forms separately while developing, but this is still much better than needing to reload both browsers manually all the time.</p>
+
+<p>Comments or suggestions welcome!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Scale Attribute Is Essential With Decimal Cfsqltype]]></title>
@@ -2049,7 +2205,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#x3a;&#117;&#x73;&#101;&#114;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#48;&#x33;&#46;&#49;&#48;&#x38;&#x2e;&#51;&#57;">&#x75;&#115;&#101;&#114;&#64;&#x31;&#x30;&#x32;&#46;&#49;&#48;&#x33;&#46;&#x31;&#48;&#x38;&#46;&#x33;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#x75;&#115;&#x65;&#114;&#x40;&#x31;&#48;&#x32;&#x2e;&#49;&#x30;&#x33;&#46;&#x31;&#x30;&#56;&#46;&#x33;&#x39;">&#x75;&#115;&#101;&#x72;&#64;&#49;&#48;&#50;&#46;&#49;&#x30;&#x33;&#x2e;&#x31;&#x30;&#56;&#46;&#51;&#57;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -2248,78 +2404,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
     <updated>2014-09-17T12:18:16+02:00</updated>
     <id>http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript</id>
     <content type="html"><![CDATA[<p>Adam Cameron posted an excellent resource yesterday that has been lacking until now, <a href="http://blog.adamcameron.me/2014/09/documentation-for-cfscript.html">Documentation for CFScript</a>. <del>A few minor areas could be enhanced, but it is, in all, quite comprehensive.</del> Update: He&rsquo;s moved the <a href="https://github.com/daccfml/cfscript/blob/master/cfscript.md">CFScript documentation</a> to GitHub, so we can all have a go at improving it. That said, it is still quite comprensive and very helpful indeed. Thanks very much Adam.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Disabling Browser Back Button]]></title>
-    <link href="http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button/"/>
-    <updated>2014-09-16T17:53:31+02:00</updated>
-    <id>http://dnando.github.io/blog/2014/09/16/disabling-browser-back-button</id>
-    <content type="html"><![CDATA[<p>I&rsquo;m working on a particular process in a web application where the user could unintentionally create duplicate content using the browser back button. Here&rsquo;s a handy way I ran across to disable the back button, or indeed handle it in any way needed.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span> <span class="o">===</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span><span class="p">(</span><span class="s2">&quot;jibberish&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-</span><span class='line'>        <span class="nb">window</span><span class="p">.</span><span class="nx">onpopstate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span><span class="p">(</span><span class="s1">&#39;newjibberish&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-</span><span class='line'>            <span class="c1">// Handle the back (or forward) buttons here</span>
-</span><span class='line'>            <span class="c1">// Will NOT handle refresh, use onbeforeunload for this.</span>
-</span><span class='line'>            <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links instead.&#39;</span><span class="p">);</span>
-</span><span class='line'>        <span class="p">};</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kd">var</span> <span class="nx">ignoreHashChange</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-</span><span class='line'>        <span class="nb">window</span><span class="p">.</span><span class="nx">onhashchange</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ignoreHashChange</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                <span class="nx">ignoreHashChange</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-</span><span class='line'>                <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">();</span>
-</span><span class='line'>                <span class="c1">// Detect and redirect change here</span>
-</span><span class='line'>                <span class="c1">// Works in older FF and IE9</span>
-</span><span class='line'>                <span class="c1">// * it does mess with your hash symbol (anchor?) pound sign</span>
-</span><span class='line'>                <span class="c1">// delimiter on the end of the URL</span>
-</span><span class='line'>                <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Back button disabled. Please use navigation links instead.&#39;</span><span class="p">);</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>            <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>                <span class="nx">ignoreHashChange</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>        <span class="p">};</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Apparently, this works with older browsers that do not support HTML5.</p>
-
-<p>Source: <a href="http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser">http://stackoverflow.com/questions/6359327/detect-back-button-click-in-browser</a></p>
 ]]></content>
   </entry>
   
