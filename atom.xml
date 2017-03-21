@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-03-21T16:02:16+01:00</updated>
+  <updated>2017-03-21T16:05:11+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -18,7 +18,7 @@
     <link href="http://dnando.github.io/blog/2017/03/20/hot-browser-reloading/"/>
     <updated>2017-03-20T00:06:28+01:00</updated>
     <id>http://dnando.github.io/blog/2017/03/20/hot-browser-reloading</id>
-    <content type="html"><![CDATA[<p>I&rsquo;ve fallen down the rabbit hole of front end development in the last few weeks, and in that time <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">Flexbox CSS</a>, <a href="http://blog.getbootstrap.com/2017/01/06/bootstrap-4-alpha-6/">Bootstrap v4</a>, <a href="http://foundation.zurb.com/">Foundation</a>, <a href="http://sass-lang.com/guide">Sass / SCSS</a>, and <a href="http://gulpjs.com/">Gulp</a> have all whizzed by as I&rsquo;ve taught myself bits and pieces of each, enough to get by, and today I landed at the bottom, <a href="https://www.browsersync.io/">Browsersync</a>.</p>
+    <content type="html"><![CDATA[<p>I&rsquo;ve fallen down the rabbit hole of front end development in the last few weeks, and in that time <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">Flexbox CSS</a>, <a href="http://blog.getbootstrap.com/2017/01/06/bootstrap-4-alpha-6/">Bootstrap v4</a>, <a href="http://foundation.zurb.com/">Foundation</a>, <a href="http://sass-lang.com/guide">Sass / SCSS</a>, and <a href="http://gulpjs.com/">Gulp</a> have all whizzed by as I&rsquo;ve taught myself portions of each, and today I landed at the bottom, <a href="https://www.browsersync.io/">Browsersync</a>.</p>
 
 <p>In a nutshell, Browsersync will live reload one or more browsers for you whenever your project&rsquo;s files change. It will also live reload external devices pointed at the same web application. This allows you to simultaneously and efficiently test a responsive design in multiple browsers, phones and tablets - without needing to touch or reload any of them. It also synchronizes form entries and clicks across browsers and devices. For example, with my phone and tablet connected to Browsersync, I log into the app I&rsquo;m developing on the tablet, and my keystrokes and touch gestures are replicated on the phone, and I&rsquo;m logged in on both. Then I start navigating in the application in Chrome on my desktop, and the phone, tablet and other browsers follow as &ldquo;slaves&rdquo;. Interacting with any interface causes the rest of them to follow. What an incredible tool! In the few minutes I&rsquo;ve been experimenting with it, I was able to easily and quickly fix a layout issue on the tablet and phone for the login screen.</p>
 
@@ -2205,7 +2205,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#x75;&#115;&#x65;&#114;&#x40;&#x31;&#48;&#x32;&#x2e;&#49;&#x30;&#x33;&#46;&#x31;&#x30;&#56;&#46;&#x33;&#x39;">&#x75;&#115;&#101;&#x72;&#64;&#49;&#48;&#50;&#46;&#49;&#x30;&#x33;&#x2e;&#x31;&#x30;&#56;&#46;&#51;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#105;&#108;&#116;&#x6f;&#58;&#117;&#115;&#x65;&#114;&#x40;&#49;&#48;&#x32;&#x2e;&#49;&#48;&#x33;&#x2e;&#49;&#48;&#56;&#46;&#51;&#x39;">&#x75;&#x73;&#x65;&#114;&#64;&#x31;&#48;&#50;&#x2e;&#49;&#x30;&#51;&#46;&#49;&#x30;&#x38;&#x2e;&#x33;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
