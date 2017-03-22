@@ -239,7 +239,7 @@
 
 <h5>Update:</h5>
 
-<p>I&rsquo;ve noticed one other feature of Browsersync that I wanted to see if I could get working - injecting modified CSS into the browser to avoid reloading the DOM. I&rsquo;ve now rearranged my gulpfile.js to be the following, adding a second gulp.watch() call to inject the minified bootstrap css directly into the browser, and removing the <em>dist</em> directory from the first gulp.watch() call so the browsers are not reloaded</p>
+<p>I&rsquo;ve noticed one other feature of Browsersync that I wanted to see if I could get working - injecting modified CSS into the browser to avoid reloading the DOM. I&rsquo;ve now rearranged my gulpfile.js to be the following, adding a second gulp.watch() call to inject the minified bootstrap css directly into the browser, and removing the <em>dist</em> directory from the first gulp.watch() call so the browsers are not reloaded.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -324,6 +324,8 @@
 </span><span class='line'>
 </span><span class='line'>gulp.task('default', ['browser-sync']);</span></code></pre></td></tr></table></div></figure>
 
+
+<p>I like how this is shaping up now. :-)</p>
 
 <p>Comments or suggestions welcome!</p>
 </div>
