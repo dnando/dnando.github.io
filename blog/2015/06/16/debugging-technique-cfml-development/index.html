@@ -138,7 +138,17 @@
 
 <p>Immediately upon running this code <code>dateToUTC : {ts '2015-06-16 22:00:00'}</code> appeared in my tail output, which is what I expected. The bug was elsewhere, . I find this very useful. It&rsquo;s simple and effective, and it works in the same way across ACF, Lucee and Railo. I don&rsquo;t have to fiddle around with an admin setting to turn on trace output, check if trace output is enabled, remember the syntax used for cftrace / trace, and I can use it directly on a production server in a pinch in case of need.</p>
 
-<p>Of course, you can tail any log file necessary, or use WriteLog() or Trace() if you prefer.</p>
+<p>Of course, you can tail any log file necessary, or use WriteLog() if you prefer. WriteLog() does the exact same thing as stdout.println(), and it&rsquo;s easier to remember. So taking the above example, I could also use</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>WriteLog( "dateToUTC : #dateToUTC #" );</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>WriteLog( "dateToUTC : "  & dateToUTC );</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 

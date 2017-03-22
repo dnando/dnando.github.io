@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="The ColdFusion and Railo Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important &hellip;">
+  <meta name="description" content="The ColdFusion and Lucee Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -90,7 +90,7 @@
   </header>
 
 
-<div class="entry-content"><p>The ColdFusion and Railo Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important to do because many security vulnerabilities have been discovered that exploit open access to admin directories. It is fairly easy to accomplish, using a directive in the Apache configuration for example. It would look something like this on ACF:</p>
+<div class="entry-content"><p>The ColdFusion and Lucee Lockdown Guides recommend that access is restricted to all administrative areas of the server. This is especially important to do because many security vulnerabilities have been discovered that exploit open access to admin directories. It is fairly easy to accomplish, using a directive in the Apache configuration for example. It would look something like this on ACF:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -103,13 +103,13 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>or this on Railo:</p>
+<p>or this on Lucee:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /railo-context&gt;
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /lucee-context&gt;
 </span><span class='line'>  Order Deny,Allow
 </span><span class='line'>  Deny from all
 </span><span class='line'>&lt;/Location&gt;</span></code></pre></td></tr></table></div></figure>
@@ -122,7 +122,7 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /railo-context&gt;
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /lucee-context&gt;
 </span><span class='line'>  Order Deny,Allow
 </span><span class='line'>  Deny from all
 </span><span class='line'>  Allow from 84.16.156.99
@@ -133,7 +133,7 @@
 
 <p>There&rsquo;s another &ldquo;small&rdquo; problem here. Best security practice dictates that all access to admin areas should be over an encrypted connection. I cannot ensure that the modem installed here in my office, or wherever else I happen to be when needing to admin my servers, a hotel for instance, is not compromised by a packet sniffer. In fact, I recently installed an update on our modem here specifically for a packet sniffing vulnerability, and I only ran across it by chance. No idea how long that remained unpatched, and I&rsquo;m simply not prepared to invest the time to learn how to monitor this sort of thing. This implies that I <em>definitely should</em> install SSL certificates and set up secure https access for all administrative areas on each server I maintain. That&rsquo;s painful.</p>
 
-<p>Put all that together, and it helps to explain why ACF and Railo servers are often not locked down.</p>
+<p>Put all that together, and it helps to explain why ACF and Lucee servers are often not locked down.</p>
 
 <p>Here&rsquo;s where SSH tunneling comes to the rescue. In a nutshell, it allows you to securely browse a remote server as localhost, as if the server was under your desk and your keyboard and monitor where connected to it, even if it&rsquo;s located halfway around the world. The icing on the cake is it is very simple to set up, and the same setup will work for every server you admin!</p>
 
@@ -154,14 +154,14 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>or for Railo:</p>
+<p>or for Lucee:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /railo-context&gt;
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Location /lucee-context&gt;
 </span><span class='line'>  Order Deny,Allow
 </span><span class='line'>  Deny from all
 </span><span class='line'>  Allow from localhost
@@ -187,7 +187,7 @@
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#x3a;&#x75;&#115;&#101;&#114;&#x40;&#49;&#x30;&#50;&#46;&#49;&#x30;&#x33;&#x2e;&#49;&#48;&#56;&#x2e;&#x33;&#57;">&#117;&#x73;&#x65;&#114;&#64;&#x31;&#48;&#x32;&#46;&#x31;&#x30;&#x33;&#46;&#x31;&#x30;&#56;&#x2e;&#51;&#x39;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x75;&#115;&#x65;&#114;&#x40;&#49;&#x30;&#50;&#46;&#49;&#x30;&#x33;&#46;&#49;&#x30;&#x38;&#46;&#51;&#57;">&#x75;&#115;&#101;&#114;&#x40;&#x31;&#48;&#x32;&#46;&#x31;&#x30;&#51;&#x2e;&#49;&#48;&#x38;&#x2e;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Nginx | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-03-22T21:39:29+01:00</updated>
+  <updated>2017-03-22T22:05:17+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -18,7 +18,7 @@
     <link href="http://dnando.github.io/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives/"/>
     <updated>2015-01-15T13:05:56+01:00</updated>
     <id>http://dnando.github.io/blog/2015/01/15/nginx-tweaks-using-proxy-redirect-and-rewrite-directives</id>
-    <content type="html"><![CDATA[<p>I ran across a few niggles in setting up ColdFusion and Railo behind a Nginx web server, and thought it might be helpful to document the solutions I came to.</p>
+    <content type="html"><![CDATA[<p>I ran across a few niggles in setting up ColdFusion and Lucee behind a Nginx web server, and thought it might be helpful to document the solutions I came to.</p>
 
 <p>The first small problem was that when users logged out of an FW/1 app, they would encounter a blank screen rather than being redirected to the login screen. Further investigation, using Chrome&rsquo;s Developer Tools Network panel, showed that Nginx was returning a blank location response header on the redirect to the login screen. I&rsquo;m still not exactly clear why this is occuring - other 302 redirects within the app work as expected, but the solution I came up with worked like a charm. All I needed to do was use the proxy_redirect directive alongside the proxy_pass directive, redirecting a blank location to the root location, like so:</p>
 
@@ -43,7 +43,7 @@
     <link href="http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives/"/>
     <updated>2015-01-09T11:50:19+01:00</updated>
     <id>http://dnando.github.io/blog/2015/01/09/testing-nginx-config-directives</id>
-    <content type="html"><![CDATA[<p>After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
+    <content type="html"><![CDATA[<p>After setting up both Lucee and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
 
 <p>Here&rsquo;s the configuration I wanted to test:</p>
 
@@ -189,11 +189,11 @@ Accept-Ranges: bytes
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Using Nginx With ColdFusion or Railo]]></title>
+    <title type="html"><![CDATA[Using Nginx With ColdFusion or Lucee]]></title>
     <link href="http://dnando.github.io/blog/2015/01/05/advantages-of-nginx/"/>
     <updated>2015-01-05T20:26:47+01:00</updated>
     <id>http://dnando.github.io/blog/2015/01/05/advantages-of-nginx</id>
-    <content type="html"><![CDATA[<p>Over the past few weeks I&rsquo;ve installed and experimented with the Nginx webserver. At this point it seems to me there are some significant advantages to using Nginx over Apache, advantages that aren&rsquo;t often highlighted, specifically when using either ColdFusion or Railo as your application server.</p>
+    <content type="html"><![CDATA[<p>Over the past few weeks I&rsquo;ve installed and experimented with the Nginx webserver. At this point it seems to me there are some significant advantages to using Nginx over Apache, advantages that aren&rsquo;t often highlighted, specifically when using either ColdFusion or Lucee as your application server.</p>
 
 <p>First up, it was very easy to install, start, and enable so that it always starts at boot time. These are the commands I used for CentOS 7, adapt as necessary for your operating system:</p>
 
@@ -207,7 +207,7 @@ systemctl enable nginx.service
 
 <p>It then took me a bit of time for me to grok how the configuration setup works. However, compared to Apache&rsquo;s massive conf file, the fact that I could easily see the entire main configuration in a single screen immediately put me at ease. Basically, Nginx has a main config file, located at /etc/nginx/nginx.conf on my CentOS install, which can be extended with includes. Before I started messing with it, the main conf file looked something like this:</p>
 
-<pre><code class="">user  nginx;
+<pre><code>user  nginx;
 worker_processes  1;
 error_log  /var/log/nginx/error.log warn;
 pid        /var/run/nginx.pid;
@@ -322,7 +322,7 @@ http {
     }
 
     server {
-        # configuration for another virtual server, 
+        # configuration for another virtual server,
         # defined by a unique server_name or listen directive
     }
 
@@ -335,7 +335,7 @@ http {
 
 <p>See the <a href="http://nginx.com/resources/admin-guide/web-server/">Nginx Web Server configuration guide</a> for more details.</p>
 
-<p>To use Nginx with either ColdFusion or Railo, the <code>proxy_pass</code> directive is used, as in the following example:</p>
+<p>To use Nginx with either ColdFusion or Lucee, the <code>proxy_pass</code> directive is used, as in the following example:</p>
 
 <pre><code>server {
     listen 80;   # port to listen on
@@ -361,13 +361,13 @@ http {
 
 <p>In the above example, Nginx passes the request to ColdFusion, running on the same server, via port 8500. It gets the response back from CF, immediately terminates the connection to CF so it is available to handle the next request, and then serves the static files using the settings in the second location directive, along with the rendered html from ColdFusion to the user that made the request. Note that this configuration assumes that you&rsquo;ve <a href="http://dnando.github.io/blog/2014/12/04/change-location-of-cf11-webroot/">changed the location of the CF webroot</a>.</p>
 
-<p>The first advantage here is that there is no connector needed between ACF or Railo and the webserver. We don&rsquo;t need to install a connector as part of the initial server setup, and we avoid any bugs or configuration problems that might crop up with these connectors. We also avoid the necessity to sometimes manually reinstall connectors when updating ACF/Railo. All that is needed is to add the proxy_pass directive and reload the configuration using <code>nginx -s reload</code>.</p>
+<p>The first advantage here is that there is no connector needed between ACF or Lucee and the webserver. We don&rsquo;t need to install a connector as part of the initial server setup, and we avoid any bugs or configuration problems that might crop up with these connectors. We also avoid the necessity to sometimes manually reinstall connectors when updating ACF/Lucee. All that is needed is to add the proxy_pass directive and reload the configuration using <code>nginx -s reload</code>.</p>
 
-<p>The second advantage is that as long as you have a firewall in place that only allows public access via ports 80, ( plus maybe port 443, and whatever port you are using for ssh access), your ACF or Railo server is secured, simply because without a connector between the webserver and your application server, there is no direct access via port 80 or port 443 to your application server. In our example above, anyone browsing to domain.com/CFIDE/administrator/ will get a 404 error. The CFIDE directory isn&rsquo;t in the root specified. Port 8500 is closed, so ip:8500/CFIDE/administrator/ won&rsquo;t return a response. The ACF admin directory is not contained in the default site Nginx root, so ip:/CFIDE/administrator/, for instance, will simply return a 404.</p>
+<p>The second advantage is that as long as you have a firewall in place that only allows public access via ports 80, ( plus maybe port 443, and whatever port you are using for ssh access), your ACF or Lucee server is secured, simply because without a connector between the webserver and your application server, there is no direct access via port 80 or port 443 to your application server. In our example above, anyone browsing to domain.com/CFIDE/administrator/ will get a 404 error. The CFIDE directory isn&rsquo;t in the root specified. Port 8500 is closed, so ip:8500/CFIDE/administrator/ won&rsquo;t return a response. The ACF admin directory is not contained in the default site Nginx root, so ip:/CFIDE/administrator/, for instance, will simply return a 404.</p>
 
-<p>How do you gain access to the admin areas of ColdFusion or Railo on a remote server if ports 8500 or port 8888 are closed? Simple. Use <a href="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/">SSH Tunneling</a>.</p>
+<p>How do you gain access to the admin areas of ColdFusion or Lucee on a remote server if ports 8500 or port 8888 are closed? Simple. Use <a href="http://dnando.github.io/blog/2014/11/04/ssh-tunneling-coldfusion-lockdown-technique/">SSH Tunneling</a>.</p>
 
-<p>In the event that the CFIDE, WEB-INF, or railo-context directories are exposed through a particular configuration setup in a particular server block, there is a simple way to handle this using location directives that can be set globally or included in each server block necessary, for example:</p>
+<p>In the event that the CFIDE, WEB-INF, or lucee-context directories are exposed through a particular configuration setup in a particular server block, there is a simple way to handle this using location directives that can be set globally or included in each server block necessary, for example:</p>
 
 <pre><code>location ~ /WEB-INF/  { access_log off; log_not_found off; deny all; }
 location ~ /META-INF/  { access_log off; log_not_found off; deny all; }
@@ -389,7 +389,7 @@ location ~ /META-INF/  { return 404; }
 
 <p>Very few developers spend significant time configuring servers. Hence, it often may happen that the servers we maintain for our clients are not as secure as they could be. The simplicity with which we can secure a ColdFusion server behind Nginx seems a definite advantage.</p>
 
-<p>However, the biggest advantage, to me, seems to be the ease of configuring strong SSL https security on Nginx. Because Nginx uses a reverse proxy setup, Nginx can be configured to handle the https connection with the requestor in isolation. What this implies is that SSL certificates do not need to be imported into the Java keystore. Nor do your SSL certs need to be reimported every time the JVM is updated. Of course, if you require a very secure setup, in a load balanced configuration to multiple application servers, you might need to ensure an SSL connection between Nginx and ColdFusion / Railo. But if, for instance, Nginx and ColdFusion / Railo are located on the same server, or you trust the internal network, this would not be necessary.</p>
+<p>However, the biggest advantage, to me, seems to be the ease of configuring strong SSL https security on Nginx. Because Nginx uses a reverse proxy setup, Nginx can be configured to handle the https connection with the requestor in isolation. What this implies is that SSL certificates do not need to be imported into the Java keystore. Nor do your SSL certs need to be reimported every time the JVM is updated. Of course, if you require a very secure setup, in a load balanced configuration to multiple application servers, you might need to ensure an SSL connection between Nginx and ColdFusion / Lucee. But if, for instance, Nginx and ColdFusion / Lucee are located on the same server, or you trust the internal network, this would not be necessary.</p>
 
 <p>Following this <a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html">excellent guide</a> by Remy van Elst, I was able to relatively easily setup SSL for a web application to an A+ level as graded by <a href="https://www.ssllabs.com/ssltest/index.html">Qualys SSL Labs</a>. Here&rsquo;s what the SSL portion of my Nginx configuration looks like:</p>
 
@@ -453,7 +453,7 @@ openssl dhparam -out dhparam.pem 4096
     keepalive       32;         ## number of upstream connections to keep alive
 }
 
-upstream    railo_servers {
+upstream    lucee_servers {
     #ip_hash;                   ## uncomment ip_hash for load balancing         
     server          127.0.0.1:8888;
     #server         192.168.0.30:8888;  ## add more application servers for load balancing
@@ -468,10 +468,10 @@ upstream    railo_servers {
 }
 </code></pre>
 
-<p>If you get caught in a bind and can&rsquo;t use ColdFusion for some reason, then hot swapping an application over to Railo is as simply as changing the above to this:</p>
+<p>If you get caught in a bind and can&rsquo;t use ColdFusion for some reason, then hot swapping an application over to Lucee is as simply as changing the above to this:</p>
 
 <pre><code>location / {
-    proxy_pass  http://railo_servers/domain/;
+    proxy_pass  http://lucee_servers/domain/;
 }
 </code></pre>
 
@@ -492,20 +492,20 @@ upstream    railo_servers {
 <pre><code>server {
     listen 80;
     server_name .domain.com;
-    root /var/www/domain; 
+    root /var/www/domain;
 
     location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
         # specific settings for files ending in suffixes .ico, .css, .js, gif, etc
     }
 
     location / {
-        proxy_pass  http://railo_servers/;
+        proxy_pass  http://lucee_servers/;
     }
 
 }
 </code></pre>
 
-<p>For this to work, Nginx needs to pass the host name to the app server used, either Railo or ColdFusion. Your application may also require this information. Here is a suggested set of directives to accomplish this:</p>
+<p>For this to work, Nginx needs to pass the host name to the app server used, either Lucee or ColdFusion. Your application may also require this information. Here is a suggested set of directives to accomplish this:</p>
 
 <pre><code>    proxy_http_version  1.1;
     proxy_set_header    Connection "";
@@ -521,26 +521,26 @@ upstream    railo_servers {
 <p>&hellip; which could be placed in a separate conf file and included with each proxy_pass directive, like so:</p>
 
 <pre><code>location / {
-    proxy_pass  http://railo_servers/;
+    proxy_pass  http://lucee_servers/;
     include     /var/inc/nginx-cf-proxy-settings.conf;
 }
 </code></pre>
 
-<p>If you are using Railo, adding a host configuration block to server.xml will cause Railo to create a WEB-INF directory under the docBase path specified along with an additional context. You&rsquo;d then want to block public access to that directory in some way as I&rsquo;ve explained above.</p>
+<p>If you are using Lucee, adding a host configuration block to server.xml will cause Lucee to create a WEB-INF directory under the docBase path specified along with an additional context. You&rsquo;d then want to block public access to that directory in some way as I&rsquo;ve explained above.</p>
 
-<p>You can also use a regex to ensure you only pass CFML templates to Railo or ColdFusion, as the following example demonstrates:</p>
+<p>You can also use a regex to ensure you only pass CFML templates to Lucee or ColdFusion, as the following example demonstrates:</p>
 
 <pre><code>location ~ \.(cfm|cfml|cfc)$ {
-    proxy_pass  http://railo_servers/;
+    proxy_pass  http://lucee_servers/;
     include     /var/inc/nginx-cf-proxy-settings.conf;
 }
 </code></pre>
 
-<p>You can put whatever file extensions you&rsquo;d like Railo / ACF to process in the pipe delimited list within the regex, so <code>~ \.(cfm|cfml|cfc)$</code> or <code>~ \.(cfm|cfml|htm|html)$</code> could be used, for example.</p>
+<p>You can put whatever file extensions you&rsquo;d like Lucee / ACF to process in the pipe delimited list within the regex, so <code>~ \.(cfm|cfml|cfc)$</code> or <code>~ \.(cfm|cfml|htm|html)$</code> could be used, for example.</p>
 
 <p>A couple of small gotcha&rsquo;s I ran into setting the path to the website&rsquo;s files in the proxy_pass directive. One is that directories with dots in them can confuse mappings. The solution I used was to remove the dots from directory names and use hyphens instead ( my-domain-com ). I also had trouble with redirects in FW/1, since they rely on the value of cgi.script_name. The simple solution was to change the baseURL parameter of FW/1&rsquo;s config to <code>baseURL = ''</code> from the default <code>baseURL = 'useCgiScriptName'</code>. Problems such as these might be avoided by using the server.xml configuration option.</p>
 
-<p>I have 2 production servers running Nginx at the moment, one ACF and one Railo server, and so far it seems to be working very well. I&rsquo;m particularly happy with the choice because Nginx has a very small memory footprint, which leaves more memory available for the JVM, which indeed yet another advantage.</p>
+<p>I have 2 production servers running Nginx at the moment, one ACF and one Lucee server, and so far it seems to be working very well. I&rsquo;m particularly happy with the choice because Nginx has a very small memory footprint, which leaves more memory available for the JVM, which indeed yet another advantage.</p>
 
 <p>References:</p>
 

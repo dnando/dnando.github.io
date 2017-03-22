@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="I ran across a few niggles in setting up ColdFusion and Railo behind a Nginx web server, and thought it might be helpful to document the solutions I &hellip;">
+  <meta name="description" content="I ran across a few niggles in setting up ColdFusion and Lucee behind a Nginx web server, and thought it might be helpful to document the solutions I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -90,7 +90,7 @@
   </header>
 
 
-<div class="entry-content"><p>I ran across a few niggles in setting up ColdFusion and Railo behind a Nginx web server, and thought it might be helpful to document the solutions I came to.</p>
+<div class="entry-content"><p>I ran across a few niggles in setting up ColdFusion and Lucee behind a Nginx web server, and thought it might be helpful to document the solutions I came to.</p>
 
 <p>The first small problem was that when users logged out of an FW/1 app, they would encounter a blank screen rather than being redirected to the login screen. Further investigation, using Chrome&rsquo;s Developer Tools Network panel, showed that Nginx was returning a blank location response header on the redirect to the login screen. I&rsquo;m still not exactly clear why this is occuring - other 302 redirects within the app work as expected, but the solution I came up with worked like a charm. All I needed to do was use the proxy_redirect directive alongside the proxy_pass directive, redirecting a blank location to the root location, like so:</p>
 
@@ -147,7 +147,7 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/" title="Previous Post: UTF-8 Extended Character File Names in Railo">&laquo; UTF-8 Extended Character File Names in Railo</a>
+        <a class="basic-alignment left" href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/" title="Previous Post: UTF-8 Extended Character File Names in Railo / Lucee">&laquo; UTF-8 Extended Character File Names in Railo / Lucee</a>
       
       
         <a class="basic-alignment right" href="/blog/2015/06/16/debugging-technique-cfml-development/" title="Next Post: Debugging Technique CFML Development">Debugging Technique CFML Development &raquo;</a>

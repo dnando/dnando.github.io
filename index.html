@@ -1064,7 +1064,17 @@
 
 <p>Immediately upon running this code <code>dateToUTC : {ts '2015-06-16 22:00:00'}</code> appeared in my tail output, which is what I expected. The bug was elsewhere, . I find this very useful. It&rsquo;s simple and effective, and it works in the same way across ACF, Lucee and Railo. I don&rsquo;t have to fiddle around with an admin setting to turn on trace output, check if trace output is enabled, remember the syntax used for cftrace / trace, and I can use it directly on a production server in a pinch in case of need.</p>
 
-<p>Of course, you can tail any log file necessary, or use WriteLog() or Trace() if you prefer.</p>
+<p>Of course, you can tail any log file necessary, or use WriteLog() if you prefer. WriteLog() does the exact same thing as stdout.println(), and it&rsquo;s easier to remember. So taking the above example, I could also use</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>WriteLog( "dateToUTC : #dateToUTC #" );</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>WriteLog( "dateToUTC : "  & dateToUTC );</span></code></pre></td></tr></table></div></figure>
+
 </div>
   
   
@@ -1096,7 +1106,7 @@
   </header>
 
 
-  <div class="entry-content"><p>I ran across a few niggles in setting up ColdFusion and Railo behind a Nginx web server, and thought it might be helpful to document the solutions I came to.</p>
+  <div class="entry-content"><p>I ran across a few niggles in setting up ColdFusion and Lucee behind a Nginx web server, and thought it might be helpful to document the solutions I came to.</p>
 
 <p>The first small problem was that when users logged out of an FW/1 app, they would encounter a blank screen rather than being redirected to the login screen. Further investigation, using Chrome&rsquo;s Developer Tools Network panel, showed that Nginx was returning a blank location response header on the redirect to the login screen. I&rsquo;m still not exactly clear why this is occuring - other 302 redirects within the app work as expected, but the solution I came up with worked like a charm. All I needed to do was use the proxy_redirect directive alongside the proxy_pass directive, redirecting a blank location to the root location, like so:</p>
 
@@ -1127,7 +1137,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/">UTF-8 Extended Character File Names in Railo</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/">UTF-8 Extended Character File Names in Railo / Lucee</a></h1>
     
     
       <p class="meta">
@@ -1188,7 +1198,7 @@
   </header>
 
 
-  <div class="entry-content"><p>After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
+  <div class="entry-content"><p>After setting up both Lucee and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
 
 <p>Here&rsquo;s the configuration I wanted to test:</p>
 
@@ -1255,7 +1265,7 @@
 </span><span class='line'>      gzip_disable ~@~\MSIE [1-6].(?!.*SV1)~@~];
 </span><span class='line'>      expires modified +90d;
 </span><span class='line'>  }
-</span><span class='line'>  
+</span><span class='line'>
 </span><span class='line'>  location / {
 </span><span class='line'>      proxy_pass  http://cf_servers/domain.com/;
 </span><span class='line'>      proxy_redirect '' /;

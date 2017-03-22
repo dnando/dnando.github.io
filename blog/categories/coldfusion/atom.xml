@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-03-22T21:39:29+01:00</updated>
+  <updated>2017-03-22T22:05:17+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -355,7 +355,15 @@ OCRB=ob______.ttf
 
 <p>Immediately upon running this code <code>dateToUTC : {ts '2015-06-16 22:00:00'}</code> appeared in my tail output, which is what I expected. The bug was elsewhere, . I find this very useful. It&rsquo;s simple and effective, and it works in the same way across ACF, Lucee and Railo. I don&rsquo;t have to fiddle around with an admin setting to turn on trace output, check if trace output is enabled, remember the syntax used for cftrace / trace, and I can use it directly on a production server in a pinch in case of need.</p>
 
-<p>Of course, you can tail any log file necessary, or use WriteLog() or Trace() if you prefer.</p>
+<p>Of course, you can tail any log file necessary, or use WriteLog() if you prefer. WriteLog() does the exact same thing as stdout.println(), and it&rsquo;s easier to remember. So taking the above example, I could also use</p>
+
+<pre><code>WriteLog( "dateToUTC : #dateToUTC #" );
+</code></pre>
+
+<p>or
+<code>
+WriteLog( "dateToUTC : "  &amp; dateToUTC );
+</code></p>
 ]]></content>
   </entry>
   
@@ -372,7 +380,7 @@ OCRB=ob______.ttf
 
 <p>The bigger problem was that it broke the application - it was no longer possible to login. #$%&amp;@!!!!</p>
 
-<p>Nothing I did for the next 6 hours helped. The template was obviously in the right location. It simply didn&rsquo;t make any sense. I ran through permissions issues, hard disk failure issues, considered cloning the server, wondered how the fact that I had just installed SSL certs might have somehow caused CF to not find a template I had just changed, bizarre as that might seem, thought about updating the JVM or removing the certs from the java keystore, looked at permission issues again, checked and rechecked which user CF was running under, the group it was assigned to, considered whether the server had been hacked somehow, planned how I was going to roll back the entire application to CF9 and shift the data that had changed, thought about switching to Railo and telling my clients they simply have to bear with me while I work through some compatibility issues. I had to get the server back up by this morning. My clients run their businesses with it. I tried yelling at the server through my monitor. &ldquo;Bloody well just look, open your eyes, dammit!! It&rsquo;s right there in front of your nose!!!&rdquo; Didn&rsquo;t help.</p>
+<p>Nothing I did for the next 6 hours helped. The template was obviously in the right location. It simply didn&rsquo;t make any sense. I ran through permissions issues, hard disk failure issues, considered cloning the server, wondered how the fact that I had just installed SSL certs might have somehow caused CF to not find a template I had just changed, bizarre as that might seem, thought about updating the JVM or removing the certs from the java keystore, looked at permission issues again, checked and rechecked which user CF was running under, the group it was assigned to, considered whether the server had been hacked somehow, planned how I was going to roll back the entire application to CF9 and shift the data that had changed, thought about switching to Lucee and telling my clients they simply have to bear with me while I work through some compatibility issues. I had to get the server back up by this morning. My clients run their businesses with it. I tried yelling at the server through my monitor. &ldquo;Bloody well just look, open your eyes, dammit!! It&rsquo;s right there in front of your nose!!!&rdquo; Didn&rsquo;t help.</p>
 
 <p>In the end, I got lucky with my Google foo and found someone else who has run into this issue. Turns out the problem was an option in ColdFusion administrator. The &ldquo;Save class files&rdquo; option was checked by default on install. I didn&rsquo;t change any settings in the Caching section on install, assuming that the defaults would be &ldquo;safe&rdquo;, they would not cache anything in a way that would make the server &ldquo;un-updateable&rdquo;. I was wrong. The defaults can easily break your application, and leave you no clue at all as to why.</p>
 

@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it &hellip;">
+  <meta name="description" content="After setting up both Lucee and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -90,7 +90,7 @@
   </header>
 
 
-<div class="entry-content"><p>After setting up both Railo and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
+<div class="entry-content"><p>After setting up both Lucee and ColdFusion web apps behind Nginx, I wanted to prove to myself that the configuration was functioning how I thought it should. The apps worked, but there were several issues I was concerned about.</p>
 
 <p>Here&rsquo;s the configuration I wanted to test:</p>
 
@@ -157,7 +157,7 @@
 </span><span class='line'>      gzip_disable ~@~\MSIE [1-6].(?!.*SV1)~@~];
 </span><span class='line'>      expires modified +90d;
 </span><span class='line'>  }
-</span><span class='line'>  
+</span><span class='line'>
 </span><span class='line'>  location / {
 </span><span class='line'>      proxy_pass  http://cf_servers/domain.com/;
 </span><span class='line'>      proxy_redirect '' /;
@@ -363,7 +363,7 @@
         <a class="basic-alignment left" href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/" title="Previous Post: Getting Railo I/O functions to work with utf-8 file names">&laquo; Getting Railo I/O functions to work with utf-8 file names</a>
       
       
-        <a class="basic-alignment right" href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/" title="Next Post: UTF-8 Extended Character File Names in Railo">UTF-8 Extended Character File Names in Railo &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2015/01/15/utf-8-extended-character-file-names-in-railo/" title="Next Post: UTF-8 Extended Character File Names in Railo / Lucee">UTF-8 Extended Character File Names in Railo / Lucee &raquo;</a>
       
     </p>
   </footer>
