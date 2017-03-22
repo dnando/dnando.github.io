@@ -237,6 +237,94 @@
 
 <p>I specify separate browsers for each so that ACF and Lucee sessions don&rsquo;t step on one another, and separate ports for the Lucee instance of Browsersync so they can coexist. The advantage to doing it this way is I can start both instances with a single <em>gulp</em> command on the command line. Unfortunately the ACF and Lucee instances of Browsersync will not mirror or ghost each other, so I will still have to click and enter test data on forms separately while developing, but this is still much better than needing to reload both browsers manually all the time.</p>
 
+<h5>Update:</h5>
+
+<p>I&rsquo;ve noticed one other feature of Browsersync that I wanted to see if I could get working - injecting modified CSS into the browser to avoid reloading the DOM. I&rsquo;ve now rearranged my gulpfile.js to be the following, adding a second gulp.watch() call to inject the minified bootstrap css directly into the browser, and removing the <em>dist</em> directory from the first gulp.watch() call so the browsers are not reloaded</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var gulp = require('gulp');
+</span><span class='line'>var bsacf = require('browser-sync').create('browserSyncACF');
+</span><span class='line'>var bslucee = require('browser-sync').create('browserSyncLucee');
+</span><span class='line'>
+</span><span class='line'>gulp.task('browser-sync', function() {
+</span><span class='line'>  bsacf.init({
+</span><span class='line'>      proxy: "localhost:8501/easycal",
+</span><span class='line'>      browser: "google chrome",
+</span><span class='line'>      reloadOnRestart: true
+</span><span class='line'>  });
+</span><span class='line'>
+</span><span class='line'>  bslucee.init({
+</span><span class='line'>      proxy: "localhost:8888/easycal",
+</span><span class='line'>      browser: "vivaldi",
+</span><span class='line'>      port: 3010,
+</span><span class='line'>      reloadOnRestart: true,
+</span><span class='line'>      ui: {
+</span><span class='line'>          port: 3011
+</span><span class='line'>      }
+</span><span class='line'>  });
+</span><span class='line'>
+</span><span class='line'>  gulp.watch([
+</span><span class='line'>      'controllers/*.cfc', 'services/*.cfc', 'views/**/*.cfm',
+</span><span class='line'>      'layouts/**/*.cfm', 'dist/*.css', 'easycal-app.css'
+</span><span class='line'>  ]).on("change", function() {
+</span><span class='line'>      console.log("Watch hit");
+</span><span class='line'>      bsacf.reload();
+</span><span class='line'>      bslucee.reload();
+</span><span class='line'>  });
+</span><span class='line'>
+</span><span class='line'>  gulp.watch([
+</span><span class='line'>      'dist/toolkit.min.css'
+</span><span class='line'>  ]).on("change", function() {
+</span><span class='line'>      console.log("CSS hit");
+</span><span class='line'>      return gulp.src(['dist/toolkit.min.css'])
+</span><span class='line'>          .pipe(bsacf.stream())
+</span><span class='line'>          .pipe(bslucee.stream());
+</span><span class='line'>  });
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>gulp.task('default', ['browser-sync']);</span></code></pre></td></tr></table></div></figure>
+
+
 <p>Comments or suggestions welcome!</p>
 </div>
 
