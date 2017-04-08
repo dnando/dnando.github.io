@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Lucee | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/lucee/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-04-09T01:50:42+02:00</updated>
+  <updated>2017-04-09T01:52:25+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -31,7 +31,7 @@
     var q = queryExecute( sql, params );
 </code></pre>
 
-<p>Thanks to Ben Nadel&rsquo;s post [here] (<a href="https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm">https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm</a>) for this crucial tidbit of information!</p>
+<p>Thanks to Ben Nadel&rsquo;s post <a href="https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm">here</a> for this crucial tidbit of information!</p>
 ]]></content>
   </entry>
   
