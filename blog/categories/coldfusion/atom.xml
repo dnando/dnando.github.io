@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-03-22T22:05:43+01:00</updated>
+  <updated>2017-04-09T01:50:42+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,28 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Cfqueryparam Setting for SQL in Statements]]></title>
+    <link href="http://dnando.github.io/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements/"/>
+    <updated>2017-04-09T01:32:33+02:00</updated>
+    <id>http://dnando.github.io/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements</id>
+    <content type="html"><![CDATA[<p>When using an SQL IN statement within a ColdFusion query, it is necessary to add the attribute <code>list="true"</code> to the param used for the list. See the example below that selects all employees that have a birthdate in March, April or May.</p>
+
+<pre><code>    var params = {};
+    var monthList = "3,4,5";
+    params.insert( "monthList", { value: ml, cfsqltype="CF_SQL_INTEGER", list="true" } );
+    var sql = "
+        select employeeId, firstName, lastName, birthdate
+        from Employee
+        where month( birthdate ) in ( :monthList )
+    ";
+    var q = queryExecute( sql, params );
+</code></pre>
+
+<p>Thanks to Ben Nadel&rsquo;s post [here] (<a href="https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm">https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm</a>) for this crucial tidbit of information!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Scale Attribute Is Essential With Decimal Cfsqltype]]></title>
@@ -364,39 +386,6 @@ OCRB=ob______.ttf
 <code>
 WriteLog( "dateToUTC : "  &amp; dateToUTC );
 </code></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Cannot Find Template CF11]]></title>
-    <link href="http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11/"/>
-    <updated>2015-01-08T10:05:36+01:00</updated>
-    <id>http://dnando.github.io/blog/2015/01/08/cannot-find-template-cf11</id>
-    <content type="html"><![CDATA[<p>Charlie Arehart has a now famous series of talks he presents titled &ldquo;Hidden Gems in ColdFusion xx&rdquo;. I&rsquo;m not sure what the opposite of a &ldquo;gem&rdquo; is. For now, a turd will do. If someone has a better suggestion, let me know.</p>
-
-<h2>Hidden Turd in ColdFusion 11</h2>
-
-<p>I&rsquo;ve recently moved a production application from CF9 to CF11. I didn&rsquo;t catch all the compatibility issues in my testing, so users have been reporting minor bugs and I&rsquo;ve been fixing them and the uploading them to the CF11 server as necessary. Yesterday, late in the afternoon, I uploaded a template with a very minor change to it and got a cannot find template error. Actually it was a cannot find component error. After repeated attempts to replace the file, and careful double checking (it was in the right place, I could find and read the file via the command line) to try and work around it, I changed another template. Now CF couldn&rsquo;t find that one either. Huh???</p>
-
-<p>The bigger problem was that it broke the application - it was no longer possible to login. #$%&amp;@!!!!</p>
-
-<p>Nothing I did for the next 6 hours helped. The template was obviously in the right location. It simply didn&rsquo;t make any sense. I ran through permissions issues, hard disk failure issues, considered cloning the server, wondered how the fact that I had just installed SSL certs might have somehow caused CF to not find a template I had just changed, bizarre as that might seem, thought about updating the JVM or removing the certs from the java keystore, looked at permission issues again, checked and rechecked which user CF was running under, the group it was assigned to, considered whether the server had been hacked somehow, planned how I was going to roll back the entire application to CF9 and shift the data that had changed, thought about switching to Lucee and telling my clients they simply have to bear with me while I work through some compatibility issues. I had to get the server back up by this morning. My clients run their businesses with it. I tried yelling at the server through my monitor. &ldquo;Bloody well just look, open your eyes, dammit!! It&rsquo;s right there in front of your nose!!!&rdquo; Didn&rsquo;t help.</p>
-
-<p>In the end, I got lucky with my Google foo and found someone else who has run into this issue. Turns out the problem was an option in ColdFusion administrator. The &ldquo;Save class files&rdquo; option was checked by default on install. I didn&rsquo;t change any settings in the Caching section on install, assuming that the defaults would be &ldquo;safe&rdquo;, they would not cache anything in a way that would make the server &ldquo;un-updateable&rdquo;. I was wrong. The defaults can easily break your application, and leave you no clue at all as to why.</p>
-
-<p>I needed to uncheck it, restart CF, and then the app worked again.</p>
-
-<p>The text next to the checkbox says this:</p>
-
-<p><em>When you select this option, the class files generated by ColdFusion are saved to disk for reuse after the server restarts. Adobe recommends this for production systems. During development, Adobe recommends that you do not select this option.</em></p>
-
-<p>It should say:</p>
-
-<p><em>When you select this option, any changes you make to your files may break your application. The error messages you will get will give you no clue at all what the underlying cause is - namely this checkbox enabling the poorly designed functionality behind it.</em></p>
-
-<p>I expect options for production systems to make CF more performant, stable or secure. Options that potentially take production applications down with no warning, rhyme or reason are neither expected nor welcome. Given that I now am fully aware of the consequences of checking this box, I would recommend leaving it always unchecked. Otherwise, every time I need to make a minor change to a production server I have to remember to uncheck it, reboot the server, make my change, check it again, and perhaps reboot the server again. How does that improve the experience of my users? And if I somehow forget this arcane procedure, whatever it actually is, and take the app down again with a minor change, perhaps for hours and even days, it&rsquo;s even worse!</p>
-
-<p>Someone will invariably blame me. I should have known this - and remembered it. Well, maybe this blog post will help both me and perhaps others in this regard. That said, I think the fact that this option causes CF to break production applications is a <a href="https://bugbase.adobe.com/index.cfm?event=bug&amp;id=3917793">bug.</a> Feel free to vote for it if you agree.</p>
 ]]></content>
   </entry>
   

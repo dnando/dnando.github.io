@@ -9,7 +9,7 @@
   <meta name="author" content="Nando @ Aria Media">
 
   
-  <meta name="description" content="Charlie Arehart has a now famous series of talks he presents titled &ldquo;Hidden Gems in ColdFusion xx&rdquo;. I&rsquo;m not sure what the opposite &hellip;">
+  <meta name="description" content="I ran into an issue moving an application from CF9 to Railo 4.2 with file names that use extended utf-8 characters, such as Banner_Küste.jpg for &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +68,52 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/">Getting Railo I/O Functions to Work With Utf-8 File Names</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-01-08T17:36:40+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:36 pm</span></time>
+        
+           | <a href="/blog/2015/01/08/railo-i-o-functions-in-utf-8/#disqus_thread"
+             data-disqus-identifier="http://dnando.github.io/blog/2015/01/08/railo-i-o-functions-in-utf-8/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I ran into an issue moving an application from CF9 to Railo 4.2 with file names that use extended utf-8 characters, such as Banner_Küste.jpg for example. The extended characters weren&rsquo;t being correctly interpreted, rendered as ��. Hence in any file operation, Railo couldn&rsquo;t find them, and the application would error out. Railo was also unable to render these images because they were not being found on the file system.</p>
+
+<p>Since I&rsquo;m in Switzerland, and all my clients use extended characters, in French, German and Italian, I needed a solution. Telling them not to use extended characters in their file names wasn&rsquo;t palatable. It seemed particularly odd to me that Railo didn&rsquo;t play well here, since its primary developers are European.</p>
+
+<p>Adjusting the Charset settings panel to ensure UTF-8 was used didn&rsquo;t help, but I found a simple solution in a <a href="https://issues.jboss.org/browse/RAILO-3090">bug report that Michel Gallant filed</a> that did the trick for me.</p>
+
+<p>As per Michel comment in the bug report, I added the following line to the end of the tomcat setenv.sh script, which you will find at <railo install path>/tomcat/bin/setenv.sh :</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>export LC_CTYPE="en_US.UTF-8"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and then I restarted Railo to pick up the change. I was delighted it worked. Thanks very much Michel!</p>
+
+<p>This server&rsquo;s OS is Linux CentOS 7, and the above should work for any other Linux install as well. I&rsquo;m not sure where this might be set on a Windows server, but it is the same file used to adjust the Tomcat/Java memory settings ( -Xms512m -Xmx1024m -XX:MaxPermSize=256m ).</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1311,7 +1357,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#x3a;&#117;&#x73;&#101;&#114;&#x40;&#49;&#48;&#x32;&#x2e;&#49;&#x30;&#51;&#46;&#49;&#48;&#56;&#46;&#x33;&#57;">&#117;&#115;&#x65;&#114;&#x40;&#x31;&#48;&#x32;&#x2e;&#x31;&#x30;&#51;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#58;&#x75;&#x73;&#101;&#x72;&#64;&#49;&#48;&#50;&#46;&#x31;&#48;&#x33;&#46;&#49;&#x30;&#x38;&#x2e;&#51;&#57;">&#117;&#x73;&#x65;&#114;&#x40;&#49;&#48;&#x32;&#x2e;&#49;&#48;&#x33;&#x2e;&#x31;&#x30;&#56;&#x2e;&#51;&#57;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -1577,38 +1623,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/09/17/documentation-for-cfscript/">Documentation for CFScript</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-09-17T12:18:16+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>12:18 pm</span></time>
-        
-           | <a href="/blog/2014/09/17/documentation-for-cfscript/#disqus_thread"
-             data-disqus-identifier="http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Adam Cameron posted an excellent resource yesterday that has been lacking until now, <a href="http://blog.adamcameron.me/2014/09/documentation-for-cfscript.html">Documentation for CFScript</a>. <del>A few minor areas could be enhanced, but it is, in all, quite comprehensive.</del> Update: He&rsquo;s moved the <a href="https://github.com/daccfml/cfscript/blob/master/cfscript.md">CFScript documentation</a> to GitHub, so we can all have a go at improving it. That said, it is still quite comprensive and very helpful indeed. Thanks very much Adam.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -1626,6 +1640,10 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements/">Cfqueryparam Setting for SQL in Statements</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/20/hot-browser-reloading/">Hot Browser Reloading With Browsersync</a>
       </li>
     
@@ -1639,10 +1657,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
     
       <li class="post">
         <a href="/blog/2015/07/01/generating-accurate-pdfs-using-cfdocument/">Generating Accurate PDFs Using Cfdocument</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/06/16/cfml-queries-in-script/">CFML Queries in Script</a>
       </li>
     
   </ul>

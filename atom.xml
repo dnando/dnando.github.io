@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-03-22T22:05:43+01:00</updated>
+  <updated>2017-04-09T01:50:42+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -12,6 +12,37 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Cfqueryparam Setting for SQL in Statements]]></title>
+    <link href="http://dnando.github.io/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements/"/>
+    <updated>2017-04-09T01:32:33+02:00</updated>
+    <id>http://dnando.github.io/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements</id>
+    <content type="html"><![CDATA[<p>When using an SQL IN statement within a ColdFusion query, it is necessary to add the attribute <code>list="true"</code> to the param used for the list. See the example below that selects all employees that have a birthdate in March, April or May.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var params = {};
+</span><span class='line'>var monthList = "3,4,5";
+</span><span class='line'>params.insert( "monthList", { value: ml, cfsqltype="CF_SQL_INTEGER", list="true" } );
+</span><span class='line'>var sql = "
+</span><span class='line'>  select employeeId, firstName, lastName, birthdate
+</span><span class='line'>  from Employee
+</span><span class='line'>  where month( birthdate ) in ( :monthList )
+</span><span class='line'>";
+</span><span class='line'>var q = queryExecute( sql, params );</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Thanks to Ben Nadel&rsquo;s post [here] (<a href="https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm">https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm</a>) for this crucial tidbit of information!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hot Browser Reloading With Browsersync]]></title>
@@ -2305,7 +2336,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#x3a;&#117;&#x73;&#101;&#114;&#x40;&#49;&#48;&#x32;&#x2e;&#49;&#x30;&#51;&#46;&#49;&#48;&#56;&#46;&#x33;&#57;">&#117;&#115;&#x65;&#114;&#x40;&#x31;&#48;&#x32;&#x2e;&#x31;&#x30;&#51;&#x2e;&#49;&#48;&#x38;&#x2e;&#x33;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#58;&#x75;&#x73;&#101;&#x72;&#64;&#49;&#48;&#50;&#46;&#x31;&#48;&#x33;&#46;&#49;&#x30;&#x38;&#x2e;&#51;&#57;">&#117;&#x73;&#x65;&#114;&#x40;&#49;&#48;&#x32;&#x2e;&#49;&#48;&#x33;&#x2e;&#x31;&#x30;&#56;&#x2e;&#51;&#57;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 
@@ -2495,15 +2526,6 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <p><a href="https://www.postfinance.ch/binp/postfinance/public/dam.M26m_i6_6ceYcN2XtAN4w8OHMynQG7FKxJVK8TtQzr0.spool/content/dam/pf/de/doc/consult/manual/dlserv/inpayslip_isr_man_en.pdf">Manual ISR - Orange Inpayment Slip with reference number</a> - the clearest explanation I&rsquo;ve found regarding how the data is structured and placed on the pay slip.</p>
 
 <p><a href="https://www.postfinance.ch/binp/postfinance/public/dam.kDeM1NfdktHxsoPgqxBgbWOwXjqUmZZMUW52ZpIhfU0.spool/content/dam/pf/de/doc/consult/manual/dldata/efin_recdescr_man_en.pdf">Record Description Electronic services</a> - the only information currently here is reproduced in the logic diagram above.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Documentation for CFScript]]></title>
-    <link href="http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript/"/>
-    <updated>2014-09-17T12:18:16+02:00</updated>
-    <id>http://dnando.github.io/blog/2014/09/17/documentation-for-cfscript</id>
-    <content type="html"><![CDATA[<p>Adam Cameron posted an excellent resource yesterday that has been lacking until now, <a href="http://blog.adamcameron.me/2014/09/documentation-for-cfscript.html">Documentation for CFScript</a>. <del>A few minor areas could be enhanced, but it is, in all, quite comprehensive.</del> Update: He&rsquo;s moved the <a href="https://github.com/daccfml/cfscript/blob/master/cfscript.md">CFScript documentation</a> to GitHub, so we can all have a go at improving it. That said, it is still quite comprensive and very helpful indeed. Thanks very much Adam.</p>
 ]]></content>
   </entry>
   
