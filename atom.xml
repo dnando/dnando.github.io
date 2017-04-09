@@ -4,7 +4,7 @@
   <title><![CDATA[Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-04-09T02:05:29+02:00</updated>
+  <updated>2017-04-10T00:26:57+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -29,15 +29,19 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var params = {};
-</span><span class='line'>var ml = "3,4,5";
-</span><span class='line'>params.insert( "monthList", { value: ml, cfsqltype="CF_SQL_INTEGER", list="true" } );
-</span><span class='line'>var sql = "
-</span><span class='line'>  select employeeId, firstName, lastName, birthdate
-</span><span class='line'>  from Employee
-</span><span class='line'>  where month( birthdate ) in ( :monthList )
-</span><span class='line'>";
-</span><span class='line'>var q = queryExecute( sql, params );</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public query function findUpcomingBirthdates() {
+</span><span class='line'>  var params = {};
+</span><span class='line'>  var ml = "3,4,5";
+</span><span class='line'>  params.insert( "monthList", { value: ml, cfsqltype: "cf_sql_integer", list: true } );
+</span><span class='line'>  var sql = "
+</span><span class='line'>      select employeeId, firstName, lastName, birthdate
+</span><span class='line'>      from Employee
+</span><span class='line'>      where month( birthdate ) in ( :monthList )
+</span><span class='line'>  ";
+</span><span class='line'>  return queryExecute( sql, params );
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Thanks to Ben Nadel&rsquo;s post <a href="https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm">here</a> for this crucial tidbit of information!</p>
@@ -2336,7 +2340,7 @@ Effectively, any .conf file you drop in that directory becomes part of the confi
 <li>Click OK</li>
 </ul>
 </li>
-<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#108;&#x74;&#x6f;&#58;&#117;&#115;&#x65;&#x72;&#64;&#49;&#x30;&#x32;&#x2e;&#49;&#x30;&#51;&#x2e;&#49;&#x30;&#56;&#x2e;&#x33;&#x39;">&#x75;&#115;&#x65;&#114;&#64;&#49;&#48;&#50;&#46;&#x31;&#48;&#51;&#x2e;&#49;&#x30;&#56;&#46;&#x33;&#57;</a></p></li>
+<li><p>ssh into any server you admin using Terminal or Putty, etc.  Use the -D flag set to the same port as above, example: ssh -D 60001 <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x75;&#115;&#x65;&#x72;&#64;&#49;&#48;&#50;&#46;&#x31;&#48;&#51;&#x2e;&#x31;&#x30;&#x38;&#46;&#51;&#x39;">&#x75;&#x73;&#101;&#x72;&#x40;&#x31;&#x30;&#x32;&#46;&#49;&#x30;&#51;&#46;&#x31;&#48;&#x38;&#46;&#51;&#x39;</a></p></li>
 <li><p>You can now access admin areas of the server in this browser using localhost urls such as <a href="http://127.0.0.1/CFIDE/administrator/enter.cfm,">http://127.0.0.1/CFIDE/administrator/enter.cfm,</a> as long as you remain logged in via SSH. The connection is through an SSH &ldquo;tunnel&rdquo;, so between your local machine and the server, all traffic is encypted.</p></li>
 </ol>
 

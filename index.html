@@ -104,15 +104,19 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var params = {};
-</span><span class='line'>var ml = "3,4,5";
-</span><span class='line'>params.insert( "monthList", { value: ml, cfsqltype="CF_SQL_INTEGER", list="true" } );
-</span><span class='line'>var sql = "
-</span><span class='line'>  select employeeId, firstName, lastName, birthdate
-</span><span class='line'>  from Employee
-</span><span class='line'>  where month( birthdate ) in ( :monthList )
-</span><span class='line'>";
-</span><span class='line'>var q = queryExecute( sql, params );</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public query function findUpcomingBirthdates() {
+</span><span class='line'>  var params = {};
+</span><span class='line'>  var ml = "3,4,5";
+</span><span class='line'>  params.insert( "monthList", { value: ml, cfsqltype: "cf_sql_integer", list: true } );
+</span><span class='line'>  var sql = "
+</span><span class='line'>      select employeeId, firstName, lastName, birthdate
+</span><span class='line'>      from Employee
+</span><span class='line'>      where month( birthdate ) in ( :monthList )
+</span><span class='line'>  ";
+</span><span class='line'>  return queryExecute( sql, params );
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Thanks to Ben Nadel&rsquo;s post <a href="https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm">here</a> for this crucial tidbit of information!</p>

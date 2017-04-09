@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Lucee | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/lucee/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-04-09T02:05:29+02:00</updated>
+  <updated>2017-04-10T00:26:57+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -20,15 +20,17 @@
     <id>http://dnando.github.io/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements</id>
     <content type="html"><![CDATA[<p>When using an SQL IN statement within a ColdFusion query, it is necessary to add the attribute <code>list="true"</code> to the param used for the list. See the example below that selects all employees that have a birthdate in March, April or May.</p>
 
-<pre><code>    var params = {};
+<pre><code>public query function findUpcomingBirthdates() {
+    var params = {};
     var ml = "3,4,5";
-    params.insert( "monthList", { value: ml, cfsqltype="CF_SQL_INTEGER", list="true" } );
+    params.insert( "monthList", { value: ml, cfsqltype: "cf_sql_integer", list: true } );
     var sql = "
         select employeeId, firstName, lastName, birthdate
         from Employee
         where month( birthdate ) in ( :monthList )
     ";
-    var q = queryExecute( sql, params );
+    return queryExecute( sql, params );
+}
 </code></pre>
 
 <p>Thanks to Ben Nadel&rsquo;s post <a href="https://www.bennadel.com/blog/425-coldfusion-cfqueryparam-list-attribute-is-sweeet.htm">here</a> for this crucial tidbit of information!</p>
