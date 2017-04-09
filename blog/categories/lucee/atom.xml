@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Lucee | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/lucee/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-04-09T01:52:25+02:00</updated>
+  <updated>2017-04-09T02:02:31+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Cfqueryparam Setting for SQL in Statements]]></title>
+    <title type="html"><![CDATA[Cfqueryparam Setting for SQL 'in' Statements]]></title>
     <link href="http://dnando.github.io/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements/"/>
     <updated>2017-04-09T01:32:33+02:00</updated>
     <id>http://dnando.github.io/blog/2017/04/09/cfqueryparam-setting-for-sql-in-statements</id>
