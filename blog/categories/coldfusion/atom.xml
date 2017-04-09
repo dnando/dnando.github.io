@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Coldfusion | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/coldfusion/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-04-09T02:02:31+02:00</updated>
+  <updated>2017-04-09T02:05:29+02:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -21,7 +21,7 @@
     <content type="html"><![CDATA[<p>When using an SQL IN statement within a ColdFusion query, it is necessary to add the attribute <code>list="true"</code> to the param used for the list. See the example below that selects all employees that have a birthdate in March, April or May.</p>
 
 <pre><code>    var params = {};
-    var monthList = "3,4,5";
+    var ml = "3,4,5";
     params.insert( "monthList", { value: ml, cfsqltype="CF_SQL_INTEGER", list="true" } );
     var sql = "
         select employeeId, firstName, lastName, birthdate
