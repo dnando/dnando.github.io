@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Nginx | Nando @ Aria Media]]></title>
   <link href="http://dnando.github.io/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://dnando.github.io/"/>
-  <updated>2017-04-10T00:26:57+02:00</updated>
+  <updated>2017-11-20T22:19:35+01:00</updated>
   <id>http://dnando.github.io/</id>
   <author>
     <name><![CDATA[Nando @ Aria Media]]></name>
@@ -545,7 +545,7 @@ upstream    lucee_servers {
 <p>References:</p>
 
 <ol>
-<li><a href="http://nginx.com/resources/admin-guide/web-server/">Nginx Web Server configuration guide</a></li>
+<li><a href="https://www.nginx.com/resources/admin-guide/nginx-web-server/">Nginx Web Server configuration guide</a></li>
 <li><a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html">Remy van Elst Strong SSL Security on Nginx</a></li>
 <li><a href="https://gist.github.com/igal-getrailo/6981111">Igal&rsquo;s Nginx config example</a></li>
 <li><a href="http://www.amazon.com/Mastering-Nginx-Dimitri-Aivaliotis/dp/1849517444">Mastering NGINX by Dimitri Aivaliotis</a></li>
